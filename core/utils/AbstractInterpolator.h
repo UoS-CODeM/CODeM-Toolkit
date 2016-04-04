@@ -18,19 +18,19 @@
 
 
 
-// Qt Includes
+
 #include <QtMath>
-#include <QVector>
+#include <vector>
 
 class AbstractInterpolator
 {
 public:
-    explicit AbstractInterpolator(QVector<double> x, QVector<double> y, int m);
+    explicit AbstractInterpolator(vector<double> x, vector<double> y, int m);
     virtual ~AbstractInterpolator();
 
     double interpolate(double xq);
-    QVector<double> interpolateV(QVector<double> xq);
-    virtual void defineXY(QVector<double> x, QVector<double> y);
+    vector<double> interpolateV(vector<double> xq);
+    virtual void defineXY(vector<double> x, vector<double> y);
     bool isConfigured();
 
 protected:
@@ -45,8 +45,8 @@ protected:
     int cor;
     int dj;
     bool m_isConfigured;
-    QVector<double> xx;
-    QVector<double> yy;
+    vector<double> xx;
+    vector<double> yy;
 };
 
 #endif // ABSTRACTINTERPOLATOR_H

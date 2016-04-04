@@ -13,11 +13,12 @@
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ****************************************************************************/
-#include <core/Distributions/IDistribution.h>
+#include <core/distributions/RandomDistributions.h>
 #include <random>
-#include <tigon/Utils/LinearInterpolator.h>
-#include <tigon/Utils/TigonUtils.h>
+#include <core/utils/LinearInterpolator.h>
+//#include <tigon/Utils/TigonUtils.h>
 
+namespace CODeM {
 IDistribution::IDistribution()
 {
     m_type = Tigon::GenericDistType;
@@ -82,9 +83,9 @@ Tigon::DistributionType IDistribution::type() const
     return m_type;
 }
 
-QVector<double> IDistribution::parameters()
+vector<double> IDistribution::parameters()
 {
-    return QVector<double>();
+    return vector<double>();
 }
 
 double IDistribution::sample()
@@ -161,7 +162,7 @@ double IDistribution::std()
     return sqrt(variance());
 }
 
-QVector<double> IDistribution::pdf()
+vector<double> IDistribution::pdf()
 {
     if(m_pdf.isEmpty() || m_pdf.size() != m_nSamples) {
         generatePDF();
@@ -169,7 +170,7 @@ QVector<double> IDistribution::pdf()
     return m_pdf;
 }
 
-QVector<double> IDistribution::cdf()
+vector<double> IDistribution::cdf()
 {
     if(m_cdf.isEmpty() || m_cdf.size() != m_nSamples) {
         calculateCDF();
@@ -177,18 +178,18 @@ QVector<double> IDistribution::cdf()
     return m_cdf;
 }
 
-QVector<double> IDistribution::pdf(const QVector<double> zVec)
+vector<double> IDistribution::pdf(const vector<double> zVec)
 {
-    QVector<double> ret(zVec.size());
+    vector<double> ret(zVec.size());
     for(int i=0; i< zVec.size(); i++) {
         ret[i] = pdf(zVec[i]);
     }
     return ret;
 }
 
-QVector<double> IDistribution::cdf(const QVector<double> zVec)
+vector<double> IDistribution::cdf(const vector<double> zVec)
 {
-    QVector<double> ret(zVec.size());
+    vector<double> ret(zVec.size());
     for(int i=0; i< zVec.size(); i++) {
         ret[i] = cdf(zVec[i]);
     }
@@ -292,7 +293,7 @@ double IDistribution::upperBound() const
     return m_ub;
 }
 
-void IDistribution::defineZ(QVector<double> z)
+void IDistribution::defineZ(vector<double> z)
 {
     std::sort(z.begin(),z.end());
     QMutableVectorIterator<double> i(z);
@@ -321,7 +322,7 @@ void IDistribution::defineZ(QVector<double> z)
     }
 }
 
-QVector<double> IDistribution::zSamples()
+vector<double> IDistribution::zSamples()
 {
     if(m_z.isEmpty()) {
         generateZ();
@@ -374,7 +375,7 @@ void IDistribution::calculateCDF()
         return;
     } else if(factor == 0.0) {
         double probability = 1.0/(m_ub - m_lb);
-        m_pdf = QVector<double>(m_nSamples, probability);
+        m_pdf = vector<double>(m_nSamples, probability);
         calculateCDF();
     } else {
         for(int i=0; i<m_cdf.size(); i++) {
@@ -402,7 +403,7 @@ void IDistribution::negate()
     if(m_z.isEmpty()) {
         return;
     }
-    QVector<double> newZ(m_nSamples);
+    vector<double> newZ(m_nSamples);
     for(int i=0; i<m_nSamples; i++) {
         newZ[i] = -m_z[m_nSamples-1-i];
     }
@@ -411,7 +412,7 @@ void IDistribution::negate()
     if(m_pdf.isEmpty()) {
         return;
     }
-    QVector<double> newPdf(m_nSamples);
+    vector<double> newPdf(m_nSamples);
     for(int i=0; i<m_nSamples; i++) {
         newPdf[i] = m_pdf[m_nSamples-1-i];
     }
@@ -454,7 +455,7 @@ void IDistribution::add(const IDistribution* other)
     double dzO = (ubO - lbO) / (nSampO-1);
 
     // evenly distributed samples for convoluted distribution
-    QVector<double> z(nSamples);
+    vector<double> z(nSamples);
     double zz = lb;
     for(int i=0; i<nSamples-1; i++) {
         z[i] = zz;
@@ -463,7 +464,7 @@ void IDistribution::add(const IDistribution* other)
     z[nSamples-1] = ub;
 
     // and for original distributions
-    QVector<double> pdfT(nSampT);
+    vector<double> pdfT(nSampT);
     zz = m_lb;
     for(int i=0; i<nSampT-1; i++) {
         pdfT[i] = pdf(zz);
@@ -471,7 +472,7 @@ void IDistribution::add(const IDistribution* other)
     }
     pdfT[nSampT-1] = pdf(m_ub);
 
-    QVector<double> pdfO(nSampO);
+    vector<double> pdfO(nSampO);
     zz = lbO;
     for(int i=0; i<nSampO-1; i++) {
         pdfO[i] = other->pdf(zz);
@@ -550,7 +551,7 @@ void IDistribution::multiply(const IDistribution* other)
     double dzT = (m_ub-m_lb) / (nSamples-1);
 
     // evenly distributed samples for joint multiplied distribution
-    QVector<double> z(nSamples);
+    vector<double> z(nSamples);
     double zz = lb;
     for(int i=0; i<nSamples-1; i++) {
         z[i] = zz;
@@ -559,7 +560,7 @@ void IDistribution::multiply(const IDistribution* other)
     z[nSamples-1] = ub;
 
     // and for original distributions
-    QVector<double> zT(nSamples);
+    vector<double> zT(nSamples);
     zz = m_lb;
     for(int i=0; i<nSamples-1; i++) {
         zT[i] = zz;
@@ -568,7 +569,7 @@ void IDistribution::multiply(const IDistribution* other)
     zT[nSamples-1] = m_ub;
 
     // multiply the two distributions
-    QVector<double> newPDF(nSamples);
+    vector<double> newPDF(nSamples);
     for(int i=0; i<nSamples; i++) {
         for(int j=0; j<nSamples; j++) {
             double zt = zT[j];
@@ -658,7 +659,7 @@ void IDistribution::divide(const IDistribution* other)
     double dzO = (ubO-lbO) / (nSamples-1);
 
     // evenly distributed samples for joint divided distribution
-    QVector<double> z(nSamples);
+    vector<double> z(nSamples);
     double zz = lb;
     for(int i=0; i<nSamples-1; i++) {
         z[i] = zz;
@@ -667,7 +668,7 @@ void IDistribution::divide(const IDistribution* other)
     z[nSamples-1] = ub;
 
     // and for original distribution
-    QVector<double> zO(nSamples);
+    vector<double> zO(nSamples);
     zz = lbO;
     for(int i=0; i<nSamples-1; i++) {
         zO[i] = zz;
@@ -676,7 +677,7 @@ void IDistribution::divide(const IDistribution* other)
     zO[nSamples-1] = ubO;
 
     // divide the two distributions
-    QVector<double> newPDF(nSamples);
+    vector<double> newPDF(nSamples);
     for(int i=0; i<nSamples; i++) {
         for(int j=0; j<nSamples; j++) {
             double zo = zO[j];
@@ -729,7 +730,7 @@ void IDistribution::reciprocal()
     double dz  = (ub-lb) / (nSamples-1);
 
     // evenly distributed samples for reciprocal distribution
-    QVector<double> z(nSamples);
+    vector<double> z(nSamples);
     double zz = lb;
     for(int i=0; i<nSamples-1; i++) {
         z[i] = zz;
@@ -738,7 +739,7 @@ void IDistribution::reciprocal()
     z[nSamples-1] = ub;
 
 //    // and for original distribution
-//    QVector<double> zT(nSamples);
+//    vector<double> zT(nSamples);
 //    zz = m_lb;
 //    for(int i=0; i<nSamples-1; i++) {
 //        zT[i] = zz;
@@ -747,7 +748,7 @@ void IDistribution::reciprocal()
 //    zT[nSamples-1] = m_ub;
 
     // invert the distribution
-    QVector<double> newPDF(nSamples);
+    vector<double> newPDF(nSamples);
     for(int i=0; i<nSamples; i++) {
         double zt = 1.0 / z[i];
         newPDF[i] = pdf(zt) * qAbs(zt*zt);
@@ -763,3 +764,391 @@ void IDistribution::reciprocal()
 
     normalise();
 }
+
+
+UniformDistribution::UniformDistribution()
+{
+    m_uniDist = 0;
+    m_type = Tigon::UniformDistType;
+    defineBoundaries(0.0, 1.0);
+    defineResolution(m_ub-m_lb);
+}
+
+UniformDistribution::UniformDistribution(const UniformDistribution& dist)
+    : IDistribution(dist)
+{
+    m_type = Tigon::UniformDistType;
+    m_uniDist = new boost::math::uniform_distribution<double>(m_lb, m_ub);
+}
+
+UniformDistribution::UniformDistribution(double lb, double ub)
+{
+    m_uniDist = 0;
+    m_type = Tigon::UniformDistType;
+    defineBoundaries(lb, ub);
+    defineResolution(m_ub-m_lb);
+}
+
+UniformDistribution::UniformDistribution(vector<double> parameters)
+{
+    m_uniDist = 0;
+    m_type = Tigon::UniformDistType;
+    double lb = 0.0;
+    double ub = 1.0;
+    if(parameters.size() > 0) {
+        lb = parameters[0];
+        if((parameters.size() > 1) && (parameters[1] > lb)) {
+            ub = parameters[1];
+        } else {
+            ub = lb + Tigon::DistMinInterval;
+        }
+    }
+    defineBoundaries(lb, ub);
+    defineResolution((m_ub-m_lb)/(Tigon::DistNSamples-1));
+}
+
+UniformDistribution::~UniformDistribution()
+{
+    delete m_uniDist;
+    m_uniDist = 0;
+}
+
+UniformDistribution* UniformDistribution::clone() const
+{
+    return (new UniformDistribution(*this));
+}
+
+void UniformDistribution::defineBoundaries(double lb, double ub)
+{
+    if(lb >= ub) {
+        if(lb == 0) {
+            ub = Tigon::DistMinInterval;
+        } else if(lb > 0) {
+            ub = lb * (1 + Tigon::DistMinInterval);
+        } else {
+            lb = ub * (1 + Tigon::DistMinInterval);
+        }
+    }
+
+    IDistribution::defineBoundaries(lb, ub);
+
+    if(m_uniDist != 0) {
+        delete m_uniDist;
+        m_uniDist = 0;
+    }
+
+    m_uniDist = new boost::math::uniform_distribution<double>(m_lb, m_ub);
+}
+
+
+double UniformDistribution::sample()
+{
+    return TRAND.randUni(m_ub - m_lb, m_lb);
+}
+
+double UniformDistribution::mean()
+{
+    return (m_ub + m_lb) / 2.0;
+}
+
+double UniformDistribution::median()
+{
+    return boost::math::median(*m_uniDist);
+}
+
+double UniformDistribution::percentile(double p)
+{
+    if(p >= 1.0) {
+        return m_ub;
+    } else if(p <= 0.0) {
+        return m_lb;
+    }
+    return boost::math::quantile(*m_uniDist, p);
+}
+
+double UniformDistribution::variance()
+{
+    return boost::math::variance(*m_uniDist);
+}
+
+double UniformDistribution::std()
+{
+    return boost::math::standard_deviation(*m_uniDist);
+}
+
+double UniformDistribution::pdf(double z)
+{
+    return boost::math::pdf(*m_uniDist, z);
+}
+
+double UniformDistribution::cdf(double z)
+{
+    return boost::math::cdf(*m_uniDist, z);
+}
+
+void UniformDistribution::generateZ()
+{
+    generateEquallySpacedZ();
+}
+
+void UniformDistribution::generatePDF()
+{
+    if(m_z.isEmpty()) {
+        generateZ();
+    }
+
+    double probability = 1.0/(m_ub - m_lb);
+    m_pdf = vector<double>(m_nSamples, probability);
+}
+
+vector<double> UniformDistribution::parameters()
+{
+    vector<double> params;
+    params << lowerBound() << upperBound();
+    return params;
+}
+
+
+
+LinearDistribution::LinearDistribution()
+{
+    m_type = Tigon::LinearDistType;
+    defineResolution((m_ub-m_lb)/(Tigon::DistNSamples-1));
+    m_ascend = true;
+}
+
+LinearDistribution::LinearDistribution(const LinearDistribution& dist)
+    : IDistribution(dist)
+{
+    m_type = Tigon::LinearDistType;
+    m_ascend = dist.m_ascend;
+}
+
+LinearDistribution::LinearDistribution(double lb, double ub)
+{
+    m_type = Tigon::LinearDistType;
+    defineBoundaries(lb, ub);
+    defineResolution((m_ub-m_lb)/(Tigon::DistNSamples-1));
+    m_ascend = true;
+}
+
+LinearDistribution::LinearDistribution(vector<double> parameters)
+{
+    m_type = Tigon::LinearDistType;
+    double lb = 0.0;
+    double ub = 1.0;
+    m_ascend = true;
+    if(parameters.size() > 0) {
+        lb = parameters[0];
+        if((parameters.size() > 1) && (parameters[1] > lb)) {
+            ub = parameters[1];
+            if((parameters.size() < 3) && (parameters[2] <= 0.0)) {
+                m_ascend =  false;
+            }
+        } else {
+            ub = lb + Tigon::DistMinInterval;
+        }
+    }
+    defineBoundaries(lb, ub);
+}
+
+LinearDistribution::~LinearDistribution()
+{
+
+}
+
+LinearDistribution* LinearDistribution::clone() const
+{
+    return (new LinearDistribution(*this));
+}
+
+double LinearDistribution::sample()
+{
+    double r = TRAND.randUni();
+    double samp;
+    if(m_ascend) {
+        samp = m_lb + sqrt(r)*(m_ub-m_lb);
+    } else {
+        samp = m_ub - sqrt(1-r)*(m_ub-m_lb);
+    }
+    return samp;
+}
+
+void LinearDistribution::generateZ()
+{
+    generateEquallySpacedZ();
+}
+
+void LinearDistribution::generatePDF()
+{
+    if(m_z.isEmpty()) {
+        generateZ();
+    }
+
+    double maxProbability = 2/(m_ub - m_lb);
+    m_pdf = vector<double>(m_nSamples);
+    if(isAscend()) {
+        for(int i=0; i<m_nSamples; i++) {
+            m_pdf[i] = maxProbability * (m_z[i] - m_lb) / (m_ub - m_lb);
+        }
+    } else {
+        for(int i=0; i<m_nSamples; i++) {
+            m_pdf[i] = maxProbability * (m_ub - m_z[i]) / (m_ub - m_lb);
+        }
+    }
+}
+
+bool LinearDistribution::isAscend() const
+{
+    return m_ascend;
+}
+
+void LinearDistribution::defineAscend(bool a)
+{
+    bool oldDir = m_ascend;
+    m_ascend = a;
+    if(m_ascend != oldDir && !m_pdf.isEmpty()) {
+        generatePDF();
+    }
+}
+
+vector<double> LinearDistribution::parameters()
+{
+    vector<double> params;
+    params << lowerBound() << upperBound() << (double)isAscend();
+    return params;
+}
+
+
+
+PeakDistribution::PeakDistribution()
+{
+    m_type = Tigon::PeakDistType;
+    defineTendencyAndLocality(0.5, 1.0);
+}
+
+PeakDistribution::PeakDistribution(const PeakDistribution& dist)
+    : IDistribution(dist)
+{
+    m_type = Tigon::PeakDistType;
+    m_tendency = dist.m_tendency;
+    m_locality = dist.m_locality;
+
+}
+
+PeakDistribution::PeakDistribution(double tendency, double locality)
+{
+    m_type = Tigon::PeakDistType;
+    defineTendencyAndLocality(tendency, locality);
+}
+
+PeakDistribution::PeakDistribution(vector<double> parameters)
+{
+    m_type = Tigon::PeakDistType;
+    double tendency = 0.5;
+    double locality = 1.0;
+    if(parameters.size() > 0) {
+        tendency = parameters[0];
+    }
+    if(parameters.size() > 1) {
+        locality = parameters[1];
+    }
+    defineTendencyAndLocality(tendency, locality);
+}
+
+PeakDistribution::~PeakDistribution()
+{
+
+}
+
+PeakDistribution* PeakDistribution::clone() const
+{
+    return (new PeakDistribution(*this));
+}
+
+void PeakDistribution::defineTendencyAndLocality(double tendency, double locality)
+{
+    if(tendency < 0.0) {
+        tendency = 0.0;
+    } else if(tendency > 1.0) {
+        tendency = 1.0;
+    }
+    m_tendency = tendency;
+
+    if(locality < 0.0) {
+        locality = 0.0;
+    } else if(locality > 1.0) {
+        locality = 1.0;
+    }
+
+    m_locality = locality;
+
+    //TODO: define high resolution at the peak and low at the rest
+    defineResolution(1.0/(m_locality+0.1)/(Tigon::DistNSamples-1));
+}
+
+double PeakDistribution::tendency() const
+{
+    return m_tendency;
+}
+
+double PeakDistribution::locality() const
+{
+    return m_locality;
+}
+
+void PeakDistribution::generateZ()
+{
+    generateEquallySpacedZ();
+}
+
+void PeakDistribution::generatePDF()
+{
+    using namespace std;
+
+    if(m_z.isEmpty()) {
+        generateZ();
+    }
+
+    m_pdf = vector<double>(m_nSamples);
+
+    double shift = boost::math::constants::pi<double>() * m_tendency;
+    double N = Tigon::DistPeakMinN + m_locality
+            * (Tigon::DistPeakMaxN - Tigon::DistPeakMinN);
+    vector<qcomplex> psiN(m_nSamples,qcomplex(0,0));
+    double nMax = qMax(3*N,Tigon::DistPeakMinNBasisFunc);
+    nMax = qMin(nMax,Tigon::DistPeakMaxNBasisFunc);
+    for(double n=1.0; n<=nMax; n++) {
+        double cNn = sqrt( (qPow(N, n) * exp(-N) / boost::math::factorial<double>(n)));
+        vector<double> psi = eigenFunction(n);
+        for(int i=0; i<m_nSamples; i++) {
+            qcomplex j(0, 1);
+            psiN[i] += cNn * exp(-j*shift*(n+0.5)) * psi[i];
+        }
+    }
+    for(int i=0; i<m_nSamples; i++) {
+        m_pdf[i] = real(conj(psiN[i]) * psiN[i]);
+    }
+    normalise();
+}
+
+vector<double> PeakDistribution::parameters()
+{
+    vector<double> params;
+    params << m_tendency << m_locality;
+    return params;
+}
+
+vector<double> PeakDistribution::eigenFunction(int n)
+{
+    double Lz = m_ub - m_lb;
+    double An = qPow(2.0/Lz, 0.5);
+
+    vector<double> psi(m_nSamples, 0);
+    for(int i=1; i<m_nSamples-1; i++) {
+        psi[i] = An*sin(boost::math::constants::pi<double>()*n*(m_z[i]-m_lb)/Lz);
+    }
+    return psi;
+}
+
+} // namespace CODeM

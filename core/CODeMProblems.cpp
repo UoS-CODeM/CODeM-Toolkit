@@ -31,31 +31,31 @@ using namespace WFGT::Toolkit::Examples::Problems;
 
 namespace CODeM {
 
-QVector<double> CODeM1(QVector<double> iVec, int k, int nObj)
+vector<double> CODeM1(vector<double> iVec, int k, int nObj)
 
 {
     // Evaluate the decision vector
-    QVector<double> oVec =
-            QVector<double>::fromStdVector(WFG4(iVec.toStdVector(), k, nObj));
+    vector<double> oVec =
+            vector<double>::fromStdVector(WFG4(iVec.toStdVector(), k, nObj));
 
     return CODeM1Perturb(oVec)[0];
 }
 
-QVector<QVector<double> > CODeM1(QVector<double> iVec,
+vector<vector<double> > CODeM1(vector<double> iVec,
                                 int k, int nObj, int nSamp)
 {
     // Evaluate the decision vector
-    QVector<double> oVec =
-            QVector<double>::fromStdVector(WFG4(iVec.toStdVector(), k, nObj));
+    vector<double> oVec =
+            vector<double>::fromStdVector(WFG4(iVec.toStdVector(), k, nObj));
 
     return CODeM1Perturb(oVec, nSamp);
 }
 
-QVector<QVector<double> > CODeM1Perturb(QVector<double> oVec, int nSamp)
+vector<vector<double> > CODeM1Perturb(vector<double> oVec, int nSamp)
 {
     // Set the uncertainty kernel
-    QVector<double> ideal(oVec.size(), 0);
-    QVector<double> antiIdeal(oVec.size());
+    vector<double> ideal(oVec.size(), 0);
+    vector<double> antiIdeal(oVec.size());
     for(int i=0; i<oVec.size(); i++) {
         antiIdeal[i] = 3*(i+1);
     }
@@ -81,37 +81,37 @@ QVector<QVector<double> > CODeM1Perturb(QVector<double> oVec, int nSamp)
     CODeMDistribution cd(d, oVec, lb, ub, ideal, antiIdeal, dirPertRad, distanceNorm);
 
     // Sample the distribution
-    QVector<QVector<double> > samples;
+    vector<vector<double> > samples;
     for(int i=0; i<nSamp; i++) {
         samples.append(cd.sampleDistribution());
     }
     return samples;
 }
 
-QVector<double> CODeM2(QVector<double> iVec, int k, int nObj)
+vector<double> CODeM2(vector<double> iVec, int k, int nObj)
 {
     // Evaluate the decision vector
-    QVector<double> oVec =
-            QVector<double>::fromStdVector(WFG4(iVec.toStdVector(), k, nObj));
+    vector<double> oVec =
+            vector<double>::fromStdVector(WFG4(iVec.toStdVector(), k, nObj));
 
     return CODeM2Perturb(oVec)[0];
 }
 
-QVector<QVector<double> > CODeM2(QVector<double> iVec,
+vector<vector<double> > CODeM2(vector<double> iVec,
                                 int k, int nObj, int nSamp)
 {
     // Evaluate the decision vector
-    QVector<double> oVec =
-            QVector<double>::fromStdVector(WFG4(iVec.toStdVector(), k, nObj));
+    vector<double> oVec =
+            vector<double>::fromStdVector(WFG4(iVec.toStdVector(), k, nObj));
 
     return CODeM2Perturb(oVec, nSamp);
 }
 
-QVector<QVector<double> > CODeM2Perturb(QVector<double> oVec, int nSamp)
+vector<vector<double> > CODeM2Perturb(vector<double> oVec, int nSamp)
 {
     // Set the uncertainty kernel
-    QVector<double> ideal(oVec.size(), 0.0);
-    QVector<double> antiIdeal(oVec.size());
+    vector<double> ideal(oVec.size(), 0.0);
+    vector<double> antiIdeal(oVec.size());
     for(int i=0; i<oVec.size(); i++) {
         antiIdeal[i] = 3.0*(i+1);
     }
@@ -137,37 +137,37 @@ QVector<QVector<double> > CODeM2Perturb(QVector<double> oVec, int nSamp)
     CODeMDistribution cd(d, oVec, lb, ub, ideal, antiIdeal, dirPertRad, distanceNorm);
 
     // Sample the distribution
-    QVector<QVector<double> > samples;
+    vector<vector<double> > samples;
     for(int i=0; i<nSamp; i++) {
         samples.append(cd.sampleDistribution());
     }
     return samples;
 }
 
-QVector<double> CODeM3(QVector<double> iVec, int k, int nObj)
+vector<double> CODeM3(vector<double> iVec, int k, int nObj)
 {
     // Evaluate the decision vector
-    QVector<double> oVec =
-            QVector<double>::fromStdVector(WFG4(iVec.toStdVector(), k, nObj));
+    vector<double> oVec =
+            vector<double>::fromStdVector(WFG4(iVec.toStdVector(), k, nObj));
 
     return CODeM3Perturb(oVec)[0];
 }
 
-QVector<QVector<double> > CODeM3(QVector<double> iVec,
+vector<vector<double> > CODeM3(vector<double> iVec,
                                 int k, int nObj, int nSamp)
 {
     // Evaluate the decision vector
-    QVector<double> oVec =
-            QVector<double>::fromStdVector(WFG4(iVec.toStdVector(), k, nObj));
+    vector<double> oVec =
+            vector<double>::fromStdVector(WFG4(iVec.toStdVector(), k, nObj));
 
     return CODeM3Perturb(oVec, nSamp);
 }
 
-QVector<QVector<double> > CODeM3Perturb(QVector<double> oVec, int nSamp)
+vector<vector<double> > CODeM3Perturb(vector<double> oVec, int nSamp)
 {
     // Set the uncertainty kernel
-    QVector<double> ideal(oVec.size(), 0);
-    QVector<double> antiIdeal(oVec.size());
+    vector<double> ideal(oVec.size(), 0);
+    vector<double> antiIdeal(oVec.size());
     for(int i=0; i<oVec.size(); i++) {
         antiIdeal[i] = 3.0*(i+1);
     }
@@ -201,37 +201,37 @@ QVector<QVector<double> > CODeM3Perturb(QVector<double> oVec, int nSamp)
     CODeMDistribution cd(d, oVec, lb, ub, ideal, antiIdeal, dirPertRad, distanceNorm);
 
     // Sample the distribution
-    QVector<QVector<double> > samples;
+    vector<vector<double> > samples;
     for(int i=0; i<nSamp; i++) {
         samples.append(cd.sampleDistribution());
     }
     return samples;
 }
 
-QVector<double> CODeM4(QVector<double> iVec, int k, int nObj)
+vector<double> CODeM4(vector<double> iVec, int k, int nObj)
 {
     // Evaluate the decision vector
-    QVector<double> oVec =
-            QVector<double>::fromStdVector(WFG6(iVec.toStdVector(), k, nObj));
+    vector<double> oVec =
+            vector<double>::fromStdVector(WFG6(iVec.toStdVector(), k, nObj));
 
     return CODeM4Perturb(oVec)[0];
 }
 
-QVector<QVector<double> > CODeM4(QVector<double> iVec,
+vector<vector<double> > CODeM4(vector<double> iVec,
                                 int k, int nObj, int nSamp)
 {
     // Evaluate the decision vector
-    QVector<double> oVec =
-            QVector<double>::fromStdVector(WFG6(iVec.toStdVector(), k, nObj));
+    vector<double> oVec =
+            vector<double>::fromStdVector(WFG6(iVec.toStdVector(), k, nObj));
 
     return CODeM4Perturb(oVec, nSamp);
 }
 
-QVector<QVector<double> > CODeM4Perturb(QVector<double> oVec, int nSamp)
+vector<vector<double> > CODeM4Perturb(vector<double> oVec, int nSamp)
 {
     // Set the uncertainty kernel
-    QVector<double> ideal(oVec.size(), 0.0);
-    QVector<double> antiIdeal(oVec.size());
+    vector<double> ideal(oVec.size(), 0.0);
+    vector<double> antiIdeal(oVec.size());
     for(int i=0; i<oVec.size(); i++) {
         antiIdeal[i] = 3.0*(i+1);
     }
@@ -257,39 +257,39 @@ QVector<QVector<double> > CODeM4Perturb(QVector<double> oVec, int nSamp)
     CODeMDistribution cd(d, oVec, lb, ub, ideal, antiIdeal, dirPertRad, distanceNorm);
 
     // Sample the distribution
-    QVector<QVector<double> > samples;
+    vector<vector<double> > samples;
     for(int i=0; i<nSamp; i++) {
         samples.append(cd.sampleDistribution());
     }
     return samples;
 }
 
-QVector<double> CODeM5(QVector<double> iVec, int k, int nObj)
+vector<double> CODeM5(vector<double> iVec, int k, int nObj)
 {
     // Evaluate the decision vector
-    QVector<double> oVec =
-            QVector<double>::fromStdVector(WFG8(iVec.toStdVector(), k, nObj));
+    vector<double> oVec =
+            vector<double>::fromStdVector(WFG8(iVec.toStdVector(), k, nObj));
 
     return CODeM5Perturb(iVec, oVec)[0];
 }
 
-QVector<QVector<double> > CODeM5(QVector<double> iVec,
+vector<vector<double> > CODeM5(vector<double> iVec,
                                 int k, int nObj, int nSamp)
 {
     // Evaluate the decision vector
-    QVector<double> oVec =
-            QVector<double>::fromStdVector(WFG8(iVec.toStdVector(), k, nObj));
+    vector<double> oVec =
+            vector<double>::fromStdVector(WFG8(iVec.toStdVector(), k, nObj));
 
     return CODeM5Perturb(iVec, oVec, nSamp);
 }
 
-QVector<QVector<double> > CODeM5Perturb(QVector<double> iVec,
-                                       QVector<double> oVec,
+vector<vector<double> > CODeM5Perturb(vector<double> iVec,
+                                       vector<double> oVec,
                                        int nSamp)
 {
     // Set the uncertainty kernel
-    QVector<double> ideal(oVec.size(), 0.0);
-    QVector<double> antiIdeal(oVec.size());
+    vector<double> ideal(oVec.size(), 0.0);
+    vector<double> antiIdeal(oVec.size());
     for(int i=0; i<oVec.size(); i++) {
         antiIdeal[i] = 4.0*(i+1);
     }
@@ -318,42 +318,42 @@ QVector<QVector<double> > CODeM5Perturb(QVector<double> iVec,
     CODeMDistribution cd(d, oVec, lb, ub, ideal, antiIdeal, dirPertRad, distanceNorm);
 
     // Sample the distribution
-    QVector<QVector<double> > samples;
+    vector<vector<double> > samples;
     for(int i=0; i<nSamp; i++) {
         samples.append(cd.sampleDistribution());
     }
     return samples;
 }
 
-QVector<double> CODeM6(QVector<double> iVec, int nObj)
+vector<double> CODeM6(vector<double> iVec, int nObj)
 {
     // Evaluate the decision vector
-    QVector<double> oVec = DTLZ::DTLZ1(iVec, nObj);
+    vector<double> oVec = DTLZ::DTLZ1(iVec, nObj);
 
     return CODeM6Perturb(iVec, oVec)[0];
 }
 
-QVector<QVector<double> > CODeM6(QVector<double> iVec,
+vector<vector<double> > CODeM6(vector<double> iVec,
                                 int nObj, int nSamp)
 {
     // Evaluate the decision vector
-    QVector<double> oVec = DTLZ::DTLZ1(iVec, nObj);
+    vector<double> oVec = DTLZ::DTLZ1(iVec, nObj);
 
     return CODeM6Perturb(iVec, oVec, nSamp);
 }
 
-QVector<QVector<double> > CODeM6Perturb(QVector<double> iVec, QVector<double> oVec,
+vector<vector<double> > CODeM6Perturb(vector<double> iVec, vector<double> oVec,
                                        int nSamp)
 {
     // Set the uncertainty kernel
-    QVector<double> ideal(oVec.size(), 0.0);
+    vector<double> ideal(oVec.size(), 0.0);
 
     // DTLZ1 is modified so the 100 scale of the distance function
     // is not included
     double maxVal = 1.125 * iVec.size();
-    QVector<double> antiIdeal(oVec.size(), maxVal);
+    vector<double> antiIdeal(oVec.size(), maxVal);
 
-    QVector<double> normVec(oVec);
+    vector<double> normVec(oVec);
     toUnitVec(normVec, 2.0);
     double sFactor = magnitudeAndDirectionP(normVec, 1);
 
@@ -380,28 +380,28 @@ QVector<QVector<double> > CODeM6Perturb(QVector<double> iVec, QVector<double> oV
     CODeMDistribution cd(d, oVec, lb, ub, ideal, antiIdeal, dirPertRad, distanceNorm);
 
     // Sample the distribution
-    QVector<QVector<double> > samples;
+    vector<vector<double> > samples;
     for(int i=0; i<nSamp; i++) {
         samples.append(cd.sampleDistribution());
     }
     return samples;
 }
 
-QVector<double> deterministicOVec(int prob, QVector<double> iVec, int nObj, int k)
+vector<double> deterministicOVec(int prob, vector<double> iVec, int nObj, int k)
 {
-    QVector<double> oVec;
+    vector<double> oVec;
 
     switch(prob) {
     case 1: case 2: case 3:
-        oVec = QVector<double>::fromStdVector(WFG4(iVec.toStdVector(), k, nObj));
+        oVec = vector<double>::fromStdVector(WFG4(iVec.toStdVector(), k, nObj));
         break;
 
     case 4:
-        oVec = QVector<double>::fromStdVector(WFG6(iVec.toStdVector(), k, nObj));
+        oVec = vector<double>::fromStdVector(WFG6(iVec.toStdVector(), k, nObj));
         break;
 
     case 5:
-        oVec = QVector<double>::fromStdVector(WFG8(iVec.toStdVector(), k, nObj));
+        oVec = vector<double>::fromStdVector(WFG8(iVec.toStdVector(), k, nObj));
         break;
 
     case 6:
@@ -416,8 +416,8 @@ QVector<double> deterministicOVec(int prob, QVector<double> iVec, int nObj, int 
 
 BoxConstraintsData* createBoxConstraints(int prob, int nVar)
 {
-    QVector<IElement> lowerBounds;
-    QVector<IElement> upperBounds;
+    vector<IElement> lowerBounds;
+    vector<IElement> upperBounds;
 
     switch(prob) {
 

@@ -18,8 +18,8 @@
 
 
 
-// Qt Includes
-#include <QVector>
+
+#include <vector>
 
 namespace CODeM {
 
@@ -30,8 +30,8 @@ double skewedDecrease(double val, double alpha);
 double lowOnValue(double val, double zeroVal, double width);
 double highOnValue(double val, double oneVal, double width);
 
-QVector<double> directionPerturbation(
-        const QVector<double> oVec, double maxRadius, double pNorm=2);
+vector<double> directionPerturbation(
+        const vector<double> oVec, double maxRadius, double pNorm=2);
 
 
 } // namespace CODeM

@@ -20,7 +20,7 @@
 
 namespace DTLZ {
 
-QVector<double > DTLZ1(const QVector<double >& x, const int M)
+vector<double > DTLZ1(const vector<double >& x, const int M)
 {
     int n = x.size();
     int k = n - M + 1;
@@ -28,11 +28,11 @@ QVector<double > DTLZ1(const QVector<double >& x, const int M)
     for (int i = n - k; i < n; i++) {
         g += (x[i] - 0.5)*(x[i] - 0.5) - qCos(20.0 * pi<double>() * (x[i] - 0.5));
     }
-    // This is the paper version, but the huge scaling has no added value
+    // This is the DTLZ paper version, but the huge scaling has no added value
 //    g = 100.0 * ((double)k + g);
     g = ((double)k + g);
 
-    QVector<double> y(M, (1.0 + g) * 0.5);
+    vector<double> y(M, (1.0 + g) * 0.5);
 
     for (int i = 0; i < M; i++) {
         int aux = M - (i + 1);
@@ -47,7 +47,7 @@ QVector<double > DTLZ1(const QVector<double >& x, const int M)
     return y;
 }
 
-QVector<double > DTLZ2(const QVector<double >& x, const int M)
+vector<double > DTLZ2(const vector<double >& x, const int M)
 {
     int i,j;
     int n = x.size();
@@ -58,7 +58,7 @@ QVector<double > DTLZ2(const QVector<double >& x, const int M)
         g += (x[i] - 0.5)*(x[i] - 0.5);
     }
 
-    QVector<double> y(M, 0.0);
+    vector<double> y(M, 0.0);
 
     for (j=(M-1); j >= 0; j--) {
         coss = 1.0;

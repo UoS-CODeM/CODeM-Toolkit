@@ -19,14 +19,14 @@
 
 #include <tigon/Utils/AbstractInterpolator.h>
 
-// Qt Includes
+
 #include <QtMath>
-#include <QVector>
+#include <vector>
 
 class LinearInterpolator : public AbstractInterpolator
 {
 public:
-    LinearInterpolator(QVector<double> xv, QVector<double> yv);
+    LinearInterpolator(vector<double> xv, vector<double> yv);
     ~LinearInterpolator();
 
 protected:

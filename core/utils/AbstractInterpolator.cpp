@@ -13,10 +13,10 @@
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ****************************************************************************/
-#include <tigon/Utils/AbstractInterpolator.h>
+#include <core/utils/AbstractInterpolator.h>
 
-AbstractInterpolator::AbstractInterpolator(QVector<double> x,
-                                           QVector<double> y, int m)
+AbstractInterpolator::AbstractInterpolator(vector<double> x,
+                                           vector<double> y, int m)
 {
     n    = x.size();
     mm   = m;
@@ -39,9 +39,9 @@ double AbstractInterpolator::interpolate(double xq)
     return baseInterpolate(jlo,xq);
 }
 
-QVector<double> AbstractInterpolator::interpolateV(QVector<double> xq)
+vector<double> AbstractInterpolator::interpolateV(vector<double> xq)
 {
-    QVector<double> yq;
+    vector<double> yq;
     int sz = xq.size();
     yq.resize(sz);
     for(int i=0; i<sz; i++) {
@@ -51,7 +51,7 @@ QVector<double> AbstractInterpolator::interpolateV(QVector<double> xq)
     return yq;
 }
 
-void AbstractInterpolator::defineXY(QVector<double> x, QVector<double> y)
+void AbstractInterpolator::defineXY(vector<double> x, vector<double> y)
 {
     if(x.size() == y.size()) {
         xx = x;

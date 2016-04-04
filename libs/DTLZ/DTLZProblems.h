@@ -16,14 +16,14 @@
 #ifndef DTLZPROBLEMS_H
 #define DTLZPROBLEMS_H
 
-// Qt Includes
-#include <QVector>
+
+#include <vector>
 
 namespace DTLZ {
 
-//QVector<double > DTLZ1(const QVector<double >& x, const int M);
-QVector<double > DTLZ1(const QVector<double >& x, const int M);
-QVector<double > DTLZ2(const QVector<double >& x, const int M);
+//vector<double > DTLZ1(const vector<double >& x, const int M);
+vector<double > DTLZ1(const vector<double >& x, const int M);
+vector<double > DTLZ2(const vector<double >& x, const int M);
 
 }  // namespace DTLZ
 

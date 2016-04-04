@@ -18,8 +18,8 @@
 
 
 
-// Qt Includes
-#include <QVector>
+
+#include <vector>
 class BoxConstraintsData;
 
 namespace CODeM {
@@ -27,31 +27,31 @@ namespace CODeM {
 class UncertaintyKernel
 {
 public:
-    UncertaintyKernel(QVector<double> inputs,
-                      QVector<double> outputs,
+    UncertaintyKernel(vector<double> inputs,
+                      vector<double> outputs,
                       BoxConstraintsData* box);
-    UncertaintyKernel(QVector<double> inputs,
-                      QVector<double> outputs,
+    UncertaintyKernel(vector<double> inputs,
+                      vector<double> outputs,
                       BoxConstraintsData* box,
                       double lb,
                       double ub);
-    UncertaintyKernel(QVector<double> inputs,
-                      QVector<double> outputs,
+    UncertaintyKernel(vector<double> inputs,
+                      vector<double> outputs,
                       BoxConstraintsData* box,
-                      QVector<double> ideal,
-                      QVector<double> antiIdeal);
-    UncertaintyKernel(QVector<double> inputs,
-                      QVector<double> outputs,
+                      vector<double> ideal,
+                      vector<double> antiIdeal);
+    UncertaintyKernel(vector<double> inputs,
+                      vector<double> outputs,
                       BoxConstraintsData* box,
                       double lb,
                       double ub,
-                      QVector<double> ideal,
-                      QVector<double> antiIdeal);
-    UncertaintyKernel(QVector<double> outputs,
+                      vector<double> ideal,
+                      vector<double> antiIdeal);
+    UncertaintyKernel(vector<double> outputs,
                       double lb,
                       double ub,
-                      QVector<double> ideal,
-                      QVector<double> antiIdeal);
+                      vector<double> ideal,
+                      vector<double> antiIdeal);
     ~UncertaintyKernel();
 
     double proximity();
@@ -59,22 +59,22 @@ public:
     double oComponent(int idx) const;
     double dComponent(int idx) const;
 
-    QVector<double> direction() const;
+    vector<double> direction() const;
 
 private:
-    void defineIdealAndAntiIdeal(QVector<double> ideal, QVector<double> antiIdeal);
+    void defineIdealAndAntiIdeal(vector<double> ideal, vector<double> antiIdeal);
     // use normalised 2-norm values in objective space
     void defineDirectedObjectiveBoundaries(double lb, double ub);
     // set the lb to 0 and the ub to the directed boxed interval length
     void defineDirectedObjectiveBoundaries();
 
     // The design and objective values of the IMapping are not normalised
-    QVector<double>       m_inputs;
-    QVector<double>      m_outputs;
+    vector<double>       m_inputs;
+    vector<double>      m_outputs;
     BoxConstraintsData*  m_box;
-    QVector<double>        m_ideal;
-    QVector<double>    m_antiIdeal;
-    QVector<double>    m_direction;
+    vector<double>        m_ideal;
+    vector<double>    m_antiIdeal;
+    vector<double>    m_direction;
     double              m_distance;
     // normalised 2-norm values
     double                    m_ub;

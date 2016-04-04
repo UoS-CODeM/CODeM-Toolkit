@@ -8,17 +8,13 @@ INCLUDEPATH += $PWD
 # FLAGS
 
 SOURCES += main.cpp \
-    core/distributions/IDistribution.cpp \
-    core/distributions/LinearDistribution.cpp \
-    core/distributions/MergedDistribution.cpp \
-    core/distributions/PeakDistribution.cpp \
-    core/distributions/UniformDistribution.cpp \
-    core/utils/AbstractInterpolator.cpp \
-    core/utils/LinearInterpolator.cpp \
+    core/RandomDistributions.cpp \
     core/CODeMDistribution.cpp \
     core/CODeMOperators.cpp \
     core/CODeMProblems.cpp \
     core/UncertaintyKernel.cpp \
+    core/utils/AbstractInterpolator.cpp \
+    core/utils/LinearInterpolator.cpp \
     libs/DTLZ/DTLZProblems.cpp \
     libs/WFG/ExampleProblems.cpp \
     libs/WFG/ExampleShapes.cpp \
@@ -29,17 +25,13 @@ SOURCES += main.cpp \
     libs/WFG/TransFunctions.cpp
 
 HEADERS += \
-    core/distributions/IDistribution.h \
-    core/distributions/LinearDistribution.h \
-    core/distributions/MergedDistribution.h \
-    core/distributions/PeakDistribution.h \
-    core/distributions/UniformDistribution.h \
-    core/utils/AbstractInterpolator.h \
-    core/utils/LinearInterpolator.h \
+    core/RandomDistributions.h \
     core/CODeMDistribution.h \
     core/CODeMOperators.h \
     core/CODeMProblems.h \
     core/UncertaintyKernel.h \
+    core/utils/AbstractInterpolator.h \
+    core/utils/LinearInterpolator.h \
     libs/DTLZ/DTLZProblems.h \
     libs/WFG/ExampleProblems.h \
     libs/WFG/ExampleShapes.h \
@@ -48,4 +40,3 @@ HEADERS += \
     libs/WFG/Misc.h \
     libs/WFG/ShapeFunctions.h \
     libs/WFG/TransFunctions.h
-

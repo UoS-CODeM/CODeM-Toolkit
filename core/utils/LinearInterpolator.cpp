@@ -15,7 +15,7 @@
 ****************************************************************************/
 #include <tigon/Utils/LinearInterpolator.h>
 
-LinearInterpolator::LinearInterpolator(QVector<double> xv, QVector<double> yv)
+LinearInterpolator::LinearInterpolator(vector<double> xv, vector<double> yv)
     : AbstractInterpolator(xv,yv,2)
 {
     m_isConfigured = AbstractInterpolator::isConfigured();

@@ -16,8 +16,7 @@
 #ifndef CODEMDISTRIBUTION_H
 #define CODEMDISTRIBUTION_H
 
-// Qt Includes
-#include <QVector>
+#include <vector>
 
 class LinearInterpolator;
 
@@ -27,32 +26,32 @@ class CODeMDistribution
 {
 public:
     CODeMDistribution(IDistribution* d,
-                      const QVector<double> oVec,
+                      const vector<double> oVec,
                       double lowerBound,
                       double upperBound,
-                      const QVector<double> ideal,
-                      const QVector<double> antiIdeal,
+                      const vector<double> ideal,
+                      const vector<double> antiIdeal,
                       double dirPertRad,
                       double dirPertNorm);
     ~CODeMDistribution();
 
-    QVector<double> sampleDistribution();
+    vector<double> sampleDistribution();
 
     void defineDirectionPertRadius(double r);
     void definePerturbationNorm(double p);
     // 2-norm direction
-    void defineDirection(const QVector<double> oVec);
-    void defineIdealAndAntiIdeal(const QVector<double> ideal,
-                                 const QVector<double> antiIdeal);
+    void defineDirection(const vector<double> oVec);
+    void defineIdealAndAntiIdeal(const vector<double> ideal,
+                                 const vector<double> antiIdeal);
     void defineDistribution(IDistribution* d);
 
 
 private:
     IDistribution*    m_distribution;
     double                m_directionPertRadius;
-    QVector<double>       m_direction;
-    QVector<double>       m_ideal;
-    QVector<double>       m_antiIdeal;
+    vector<double>       m_direction;
+    vector<double>       m_ideal;
+    vector<double>       m_antiIdeal;
     double                m_lb;
     double                m_ub;
     double                m_pNorm;

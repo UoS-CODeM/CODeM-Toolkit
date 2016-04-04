@@ -18,58 +18,58 @@
 
 
 
-// Qt Includes
-#include <QVector>
+
+#include <vector>
 
 namespace CODeM {
 
-QVector<double>           CODeM1(QVector<double> iVec,
+vector<double>           CODeM1(vector<double> iVec,
                                                    int k, int nObj);
-QVector<QVector<double> > CODeM1(QVector<double> iVec,
+vector<vector<double> > CODeM1(vector<double> iVec,
                                                    int k, int nObj, int nSamp);
-QVector<QVector<double> > CODeM1Perturb(QVector<double> oVec,
+vector<vector<double> > CODeM1Perturb(vector<double> oVec,
                                                           int nSamp = 1);
 
-QVector<double>           CODeM2(QVector<double> iVec,
+vector<double>           CODeM2(vector<double> iVec,
                                                    int k, int nObj);
-QVector<QVector<double> > CODeM2(QVector<double> iVec,
+vector<vector<double> > CODeM2(vector<double> iVec,
                                                    int k, int nObj, int nSamp);
-QVector<QVector<double> > CODeM2Perturb(QVector<double> oVec,
+vector<vector<double> > CODeM2Perturb(vector<double> oVec,
                                                           int nSamp = 1);
 
-QVector<double>           CODeM3(QVector<double> iVec,
+vector<double>           CODeM3(vector<double> iVec,
                                                    int k, int nObj);
-QVector<QVector<double> > CODeM3(QVector<double> iVec,
+vector<vector<double> > CODeM3(vector<double> iVec,
                                                    int k, int nObj, int nSamp);
-QVector<QVector<double> > CODeM3Perturb(QVector<double> oVec,
+vector<vector<double> > CODeM3Perturb(vector<double> oVec,
                                                           int nSamp = 1);
 
-QVector<double>           CODeM4(QVector<double> iVec,
+vector<double>           CODeM4(vector<double> iVec,
                                                    int k, int nObj);
-QVector<QVector<double> > CODeM4(QVector<double> iVec,
+vector<vector<double> > CODeM4(vector<double> iVec,
                                                    int k, int nObj, int nSamp);
-QVector<QVector<double> > CODeM4Perturb(QVector<double> oVec,
+vector<vector<double> > CODeM4Perturb(vector<double> oVec,
                                                           int nSamp = 1);
 
 // CODeM5Perturb must have both decision and objective vectors defined
-QVector<double>           CODeM5(QVector<double> iVec,
+vector<double>           CODeM5(vector<double> iVec,
                                                    int k, int nObj);
-QVector<QVector<double> > CODeM5(QVector<double> iVec,
+vector<vector<double> > CODeM5(vector<double> iVec,
                                                    int k, int nObj, int nSamp);
-QVector<QVector<double> > CODeM5Perturb(QVector<double> iVec,
-                                                          QVector<double> oVec,
+vector<vector<double> > CODeM5Perturb(vector<double> iVec,
+                                                          vector<double> oVec,
                                                           int nSamp = 1);
 
-QVector<double>           CODeM6(QVector<double> iVec,
+vector<double>           CODeM6(vector<double> iVec,
                                                    int nObj);
-QVector<QVector<double> > CODeM6(QVector<double> iVec,
+vector<vector<double> > CODeM6(vector<double> iVec,
                                                    int nObj, int nSamp);
-QVector<QVector<double> > CODeM6Perturb(QVector<double> iVec,
-                                                          QVector<double> oVec,
+vector<vector<double> > CODeM6Perturb(vector<double> iVec,
+                                                          vector<double> oVec,
                                                           int nSamp = 1);
 
-QVector<double> deterministicOVec(int prob,
-                                                    QVector<double> iVec,
+vector<double> deterministicOVec(int prob,
+                                                    vector<double> iVec,
                                                     int nObj, int k=0);
 
 BoxConstraintsData* createBoxConstraints(int prob, int nVar);

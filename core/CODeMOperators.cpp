@@ -47,15 +47,15 @@ double highOnValue(double val, double oneVal, double width)
     return (ret<0.0) ? 0.0 : ret;
 }
 
-QVector<double> directionPerturbation(const QVector<double> oVec,
+vector<double> directionPerturbation(const vector<double> oVec,
                                      double maxRadius, double pNorm)
 {
     // project on the k-1 simplex
-    QVector<double> newObjVec(oVec);
+    vector<double> newObjVec(oVec);
     toUnitVec(newObjVec, 1.0);
 
     // calculate the p-distance
-    QVector<double> vec(oVec);
+    vector<double> vec(oVec);
     double dist = magnitudeAndDirectionP(vec, pNorm);
 
     // perturb within a sphere with r=maxRadius

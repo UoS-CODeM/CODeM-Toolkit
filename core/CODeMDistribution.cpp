@@ -21,11 +21,11 @@
 namespace CODeM {
 
 CODeMDistribution::CODeMDistribution(IDistribution* d,
-                                     const QVector<double> oVec,
+                                     const vector<double> oVec,
                                      double lowerBound,
                                      double upperBound,
-                                     const QVector<double> ideal,
-                                     const QVector<double> antiIdeal,
+                                     const vector<double> ideal,
+                                     const vector<double> antiIdeal,
                                      double dirPertRad,
                                      double dirPertNorm)
     : m_lb(lowerBound),
@@ -44,10 +44,10 @@ CODeMDistribution::~CODeMDistribution()
 
 }
 
-QVector<double> CODeMDistribution::sampleDistribution()
+vector<double> CODeMDistribution::sampleDistribution()
 {
     if(m_distribution.isNull()) {
-        return QVector<double>(0);
+        return vector<double>(0);
     }
     double sFactor = m_distribution->sample();
 
@@ -55,7 +55,7 @@ QVector<double> CODeMDistribution::sampleDistribution()
     sFactor = m_lb + sFactor*(m_ub-m_lb);
 
     // scale the 2-norm direction vector
-    QVector<double> samp = m_direction;
+    vector<double> samp = m_direction;
     scale(samp,sFactor);
 
     samp = directionPerturbation(samp, m_directionPertRadius, m_pNorm);
@@ -79,15 +79,15 @@ void CODeMDistribution::definePerturbationNorm(double p)
     }
 }
 
-void CODeMDistribution::defineDirection(const QVector<double> oVec)
+void CODeMDistribution::defineDirection(const vector<double> oVec)
 {
     m_direction = oVec;
     normaliseToUnitBox(m_direction, m_ideal, m_antiIdeal);
     toUnitVec(m_direction);
 }
 
-void CODeMDistribution::defineIdealAndAntiIdeal(const QVector<double> ideal,
-                                                const QVector<double> antiIdeal)
+void CODeMDistribution::defineIdealAndAntiIdeal(const vector<double> ideal,
+                                                const vector<double> antiIdeal)
 {
     m_ideal = ideal;
     m_antiIdeal = antiIdeal;

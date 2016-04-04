@@ -15,9 +15,7 @@
 ****************************************************************************/
 #include <tigon/Utils/LinearInterpolator.h>
 
-namespace Tigon {
-
-LinearInterpolator::LinearInterpolator(QVector<qreal> xv, QVector<qreal> yv)
+LinearInterpolator::LinearInterpolator(QVector<double> xv, QVector<double> yv)
     : AbstractInterpolator(xv,yv,2)
 {
     m_isConfigured = AbstractInterpolator::isConfigured();
@@ -28,7 +26,7 @@ LinearInterpolator::~LinearInterpolator()
 
 }
 
-qreal LinearInterpolator::baseInterpolate(int j, qreal x)
+double LinearInterpolator::baseInterpolate(int j, double x)
 {
     if (xx[j]==xx[j+1]) {
         return yy[j];
@@ -36,6 +34,3 @@ qreal LinearInterpolator::baseInterpolate(int j, qreal x)
 
     return yy[j] + ((x-xx[j])/(xx[j+1]-xx[j]))*(yy[j+1]-yy[j]);
 }
-
-} // namespace Tigon
-

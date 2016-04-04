@@ -16,28 +16,15 @@
 #ifndef DTLZPROBLEMS_H
 #define DTLZPROBLEMS_H
 
-//#include <tigon/tigon_global.h>
-//#include <tigon/tigonconstants.h>
 // Qt Includes
 #include <QVector>
 
-//namespace Tigon {
-//namespace Operators {
 namespace DTLZ {
 
-//QVector<double > LIGER_TIGON_EXPORT DTLZ1(const QVector<double >& x, const int M);
+//QVector<double > DTLZ1(const QVector<double >& x, const int M);
 QVector<double > DTLZ1(const QVector<double >& x, const int M);
 QVector<double > DTLZ2(const QVector<double >& x, const int M);
 
-// TODO: implement these
-//QVector<double > DTLZ3(const QVector<double >& x, const int M);
-//QVector<double > DTLZ4(const QVector<double >& x, const int M);
-//QVector<double > DTLZ5(const QVector<double >& x, const int M);
-//QVector<double > DTLZ6(const QVector<double >& x, const int M);
-//QVector<double > DTLZ7(const QVector<double >& x, const int M);
-
 }  // namespace DTLZ
-//}  // namespace Tigon
-//}  // namespace Operators
 
 #endif // DTLZPROBLEMS_H

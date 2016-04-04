@@ -15,18 +15,15 @@
 ****************************************************************************/
 #ifndef MERGEDDISTRIBUTION_H
 #define MERGEDDISTRIBUTION_H
-#include <tigon/tigon_global.h>
-#include <tigon/tigonconstants.h>
-#include <tigon/Representation/Distributions/IDistribution.h>
+
+
+#include <core/Distributions/IDistribution.h>
 
 // Qt Includes
 #include <QVector>
 #include <QString>
 
-namespace Tigon {
-namespace Representation {
-
-class LIGER_TIGON_EXPORT MergedDistribution : public IDistribution
+class MergedDistribution : public IDistribution
 {
 public:
     MergedDistribution();
@@ -38,25 +35,22 @@ public:
     void generateZ();
     void generatePDF();
 
-    void appendDistribution(IDistributionSPtr d);
-    void appendDistribution(IDistributionSPtr d, qreal ratio);
+    void appendDistribution(IDistribution* d);
+    void appendDistribution(IDistribution* d, double ratio);
 
-    void removeDistribution(IDistributionSPtr d);
+    void removeDistribution(IDistribution* d);
     void removeDistribution(int             idx);
 
 
-    void changeRatio(IDistributionSPtr d, qreal newRatio);
-    void changeRatio(int             idx, qreal newRatio);
+    void changeRatio(IDistribution* d, double newRatio);
+    void changeRatio(int             idx, double newRatio);
 
 private:
-    QVector<IDistributionSPtr> m_distributions;
-    QVector<qreal>             m_ratios;
+    QVector<IDistribution*> m_distributions;
+    QVector<double>             m_ratios;
 
-    void addZSamplesOfOneDistribution(IDistributionSPtr d);
-    void addOnePDF(IDistributionSPtr d,       qreal ratio);
+    void addZSamplesOfOneDistribution(IDistribution* d);
+    void addOnePDF(IDistribution* d,       double ratio);
 };
-
-} // namespace Representation
-} // namespace Tigon
 
 #endif // MERGEDDISTRIBUTION_H

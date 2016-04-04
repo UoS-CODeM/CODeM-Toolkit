@@ -13,23 +13,21 @@
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ****************************************************************************/
-#include <tigon/Representation/Functions/CODeM/CODeMDistribution.h>
-#include <tigon/Representation/Functions/CODeM/CODeMOperators.h>
-#include <tigon/Representation/Distributions/IDistribution.h>
+#include <core/CODeMDistribution.h>
+#include <core/CODeMOperators.h>
+#include <core/Distributions/IDistribution.h>
 #include <tigon/Utils/NormalisationUtils.h>
-
-using namespace Tigon;
 
 namespace CODeM {
 
-CODeMDistribution::CODeMDistribution(IDistributionSPtr d,
-                                     const QVector<qreal> oVec,
-                                     qreal lowerBound,
-                                     qreal upperBound,
-                                     const QVector<qreal> ideal,
-                                     const QVector<qreal> antiIdeal,
-                                     qreal dirPertRad,
-                                     qreal dirPertNorm)
+CODeMDistribution::CODeMDistribution(IDistribution* d,
+                                     const QVector<double> oVec,
+                                     double lowerBound,
+                                     double upperBound,
+                                     const QVector<double> ideal,
+                                     const QVector<double> antiIdeal,
+                                     double dirPertRad,
+                                     double dirPertNorm)
     : m_lb(lowerBound),
       m_ub(upperBound),
       m_pNorm(1)
@@ -46,18 +44,18 @@ CODeMDistribution::~CODeMDistribution()
 
 }
 
-QVector<qreal> CODeMDistribution::sampleDistribution()
+QVector<double> CODeMDistribution::sampleDistribution()
 {
     if(m_distribution.isNull()) {
-        return QVector<qreal>(0);
+        return QVector<double>(0);
     }
-    qreal sFactor = m_distribution->sample();
+    double sFactor = m_distribution->sample();
 
     // scale to the interval [lb ub]
     sFactor = m_lb + sFactor*(m_ub-m_lb);
 
     // scale the 2-norm direction vector
-    QVector<qreal> samp = m_direction;
+    QVector<double> samp = m_direction;
     scale(samp,sFactor);
 
     samp = directionPerturbation(samp, m_directionPertRadius, m_pNorm);
@@ -67,34 +65,34 @@ QVector<qreal> CODeMDistribution::sampleDistribution()
     return samp;
 }
 
-void CODeMDistribution::defineDirectionPertRadius(qreal r)
+void CODeMDistribution::defineDirectionPertRadius(double r)
 {
     if(r >= 0.0) {
         m_directionPertRadius = r;
     }
 }
 
-void CODeMDistribution::definePerturbationNorm(qreal p)
+void CODeMDistribution::definePerturbationNorm(double p)
 {
     if(p > 0.0) {
         m_pNorm = p;
     }
 }
 
-void CODeMDistribution::defineDirection(const QVector<qreal> oVec)
+void CODeMDistribution::defineDirection(const QVector<double> oVec)
 {
     m_direction = oVec;
     normaliseToUnitBox(m_direction, m_ideal, m_antiIdeal);
     toUnitVec(m_direction);
 }
 
-void CODeMDistribution::defineIdealAndAntiIdeal(const QVector<qreal> ideal,
-                                                const QVector<qreal> antiIdeal)
+void CODeMDistribution::defineIdealAndAntiIdeal(const QVector<double> ideal,
+                                                const QVector<double> antiIdeal)
 {
     m_ideal = ideal;
     m_antiIdeal = antiIdeal;
 }
-void CODeMDistribution::defineDistribution(IDistributionSPtr d)
+void CODeMDistribution::defineDistribution(IDistribution* d)
 {
     m_distribution = d;
 }

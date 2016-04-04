@@ -15,8 +15,8 @@
 ****************************************************************************/
 #ifndef CODEMOPERATORS_H
 #define CODEMOPERATORS_H
-#include <tigon/tigon_global.h>
-#include <tigon/tigonconstants.h>
+
+
 
 // Qt Includes
 #include <QVector>
@@ -24,14 +24,14 @@
 namespace CODeM {
 
 // Relations between UncertaintyKernel properties and uncertainty parameters
-qreal LIGER_TIGON_EXPORT linearDecrease(qreal val);
-qreal LIGER_TIGON_EXPORT skewedIncrease(qreal val, qreal alpha);
-qreal LIGER_TIGON_EXPORT skewedDecrease(qreal val, qreal alpha);
-qreal LIGER_TIGON_EXPORT lowOnValue(qreal val, qreal zeroVal, qreal width);
-qreal LIGER_TIGON_EXPORT highOnValue(qreal val, qreal oneVal, qreal width);
+double linearDecrease(double val);
+double skewedIncrease(double val, double alpha);
+double skewedDecrease(double val, double alpha);
+double lowOnValue(double val, double zeroVal, double width);
+double highOnValue(double val, double oneVal, double width);
 
-QVector<qreal> LIGER_TIGON_EXPORT directionPerturbation(
-        const QVector<qreal> oVec, qreal maxRadius, qreal pNorm=2);
+QVector<double> directionPerturbation(
+        const QVector<double> oVec, double maxRadius, double pNorm=2);
 
 
 } // namespace CODeM

@@ -15,66 +15,64 @@
 ****************************************************************************/
 #ifndef CODEMPROBLEMS_H
 #define CODEMPROBLEMS_H
-#include <tigon/tigon_global.h>
-#include <tigon/tigonconstants.h>
+
+
 
 // Qt Includes
 #include <QVector>
 
-using namespace Tigon::Representation;
-
 namespace CODeM {
 
-LIGER_TIGON_EXPORT QVector<qreal>           CODeM1(QVector<qreal> iVec,
+QVector<double>           CODeM1(QVector<double> iVec,
                                                    int k, int nObj);
-LIGER_TIGON_EXPORT QVector<QVector<qreal> > CODeM1(QVector<qreal> iVec,
+QVector<QVector<double> > CODeM1(QVector<double> iVec,
                                                    int k, int nObj, int nSamp);
-LIGER_TIGON_EXPORT QVector<QVector<qreal> > CODeM1Perturb(QVector<qreal> oVec,
+QVector<QVector<double> > CODeM1Perturb(QVector<double> oVec,
                                                           int nSamp = 1);
 
-LIGER_TIGON_EXPORT QVector<qreal>           CODeM2(QVector<qreal> iVec,
+QVector<double>           CODeM2(QVector<double> iVec,
                                                    int k, int nObj);
-LIGER_TIGON_EXPORT QVector<QVector<qreal> > CODeM2(QVector<qreal> iVec,
+QVector<QVector<double> > CODeM2(QVector<double> iVec,
                                                    int k, int nObj, int nSamp);
-LIGER_TIGON_EXPORT QVector<QVector<qreal> > CODeM2Perturb(QVector<qreal> oVec,
+QVector<QVector<double> > CODeM2Perturb(QVector<double> oVec,
                                                           int nSamp = 1);
 
-LIGER_TIGON_EXPORT QVector<qreal>           CODeM3(QVector<qreal> iVec,
+QVector<double>           CODeM3(QVector<double> iVec,
                                                    int k, int nObj);
-LIGER_TIGON_EXPORT QVector<QVector<qreal> > CODeM3(QVector<qreal> iVec,
+QVector<QVector<double> > CODeM3(QVector<double> iVec,
                                                    int k, int nObj, int nSamp);
-LIGER_TIGON_EXPORT QVector<QVector<qreal> > CODeM3Perturb(QVector<qreal> oVec,
+QVector<QVector<double> > CODeM3Perturb(QVector<double> oVec,
                                                           int nSamp = 1);
 
-LIGER_TIGON_EXPORT QVector<qreal>           CODeM4(QVector<qreal> iVec,
+QVector<double>           CODeM4(QVector<double> iVec,
                                                    int k, int nObj);
-LIGER_TIGON_EXPORT QVector<QVector<qreal> > CODeM4(QVector<qreal> iVec,
+QVector<QVector<double> > CODeM4(QVector<double> iVec,
                                                    int k, int nObj, int nSamp);
-LIGER_TIGON_EXPORT QVector<QVector<qreal> > CODeM4Perturb(QVector<qreal> oVec,
+QVector<QVector<double> > CODeM4Perturb(QVector<double> oVec,
                                                           int nSamp = 1);
 
 // CODeM5Perturb must have both decision and objective vectors defined
-LIGER_TIGON_EXPORT QVector<qreal>           CODeM5(QVector<qreal> iVec,
+QVector<double>           CODeM5(QVector<double> iVec,
                                                    int k, int nObj);
-LIGER_TIGON_EXPORT QVector<QVector<qreal> > CODeM5(QVector<qreal> iVec,
+QVector<QVector<double> > CODeM5(QVector<double> iVec,
                                                    int k, int nObj, int nSamp);
-LIGER_TIGON_EXPORT QVector<QVector<qreal> > CODeM5Perturb(QVector<qreal> iVec,
-                                                          QVector<qreal> oVec,
+QVector<QVector<double> > CODeM5Perturb(QVector<double> iVec,
+                                                          QVector<double> oVec,
                                                           int nSamp = 1);
 
-LIGER_TIGON_EXPORT QVector<qreal>           CODeM6(QVector<qreal> iVec,
+QVector<double>           CODeM6(QVector<double> iVec,
                                                    int nObj);
-LIGER_TIGON_EXPORT QVector<QVector<qreal> > CODeM6(QVector<qreal> iVec,
+QVector<QVector<double> > CODeM6(QVector<double> iVec,
                                                    int nObj, int nSamp);
-LIGER_TIGON_EXPORT QVector<QVector<qreal> > CODeM6Perturb(QVector<qreal> iVec,
-                                                          QVector<qreal> oVec,
+QVector<QVector<double> > CODeM6Perturb(QVector<double> iVec,
+                                                          QVector<double> oVec,
                                                           int nSamp = 1);
 
-LIGER_TIGON_EXPORT QVector<qreal> deterministicOVec(int prob,
-                                                    QVector<qreal> iVec,
+QVector<double> deterministicOVec(int prob,
+                                                    QVector<double> iVec,
                                                     int nObj, int k=0);
 
-BoxConstraintsDataSPtr createBoxConstraints(int prob, int nVar);
+BoxConstraintsData* createBoxConstraints(int prob, int nVar);
 } // namespace CODeM
 
 #endif // CODEMPROBLEMS_H

@@ -15,30 +15,28 @@
 ****************************************************************************/
 #ifndef ABSTRACTINTERPOLATOR_H
 #define ABSTRACTINTERPOLATOR_H
-#include <tigon/tigon_global.h>
-#include <tigon/tigonconstants.h>
+
+
 
 // Qt Includes
 #include <QtMath>
 #include <QVector>
 
-namespace Tigon {
-
-class LIGER_TIGON_EXPORT AbstractInterpolator
+class AbstractInterpolator
 {
 public:
-    explicit AbstractInterpolator(QVector<qreal> x, QVector<qreal> y, int m);
+    explicit AbstractInterpolator(QVector<double> x, QVector<double> y, int m);
     virtual ~AbstractInterpolator();
 
-    qreal interpolate(qreal xq);
-    QVector<qreal> interpolateV(QVector<qreal> xq);
-    virtual void defineXY(QVector<qreal> x, QVector<qreal> y);
+    double interpolate(double xq);
+    QVector<double> interpolateV(QVector<double> xq);
+    virtual void defineXY(QVector<double> x, QVector<double> y);
     bool isConfigured();
 
 protected:
-    int locate(const qreal x);
-    int hunt(const qreal x);
-    virtual qreal baseInterpolate(int jlo, qreal x) = 0;
+    int locate(const double x);
+    int hunt(const double x);
+    virtual double baseInterpolate(int jlo, double x) = 0;
     virtual bool checkConfiguration();
 
     int n;
@@ -47,10 +45,8 @@ protected:
     int cor;
     int dj;
     bool m_isConfigured;
-    QVector<qreal> xx;
-    QVector<qreal> yy;
+    QVector<double> xx;
+    QVector<double> yy;
 };
-
-} // namespace Tigon
 
 #endif // ABSTRACTINTERPOLATOR_H

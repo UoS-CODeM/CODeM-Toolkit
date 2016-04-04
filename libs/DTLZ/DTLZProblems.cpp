@@ -18,11 +18,6 @@
 
 #include <QtMath>
 
-#include <boost/math/constants/constants.hpp>
-
-//namespace Tigon {
-//namespace Operators {
-using namespace boost::math::constants;
 namespace DTLZ {
 
 QVector<double > DTLZ1(const QVector<double >& x, const int M)
@@ -31,7 +26,7 @@ QVector<double > DTLZ1(const QVector<double >& x, const int M)
     int k = n - M + 1;
     double g = 0.0;
     for (int i = n - k; i < n; i++) {
-        g += (x[i] - 0.5)*(x[i] - 0.5) - qCos(20.0 * pi<qreal>() * (x[i] - 0.5));
+        g += (x[i] - 0.5)*(x[i] - 0.5) - qCos(20.0 * pi<double>() * (x[i] - 0.5));
     }
     // This is the paper version, but the huge scaling has no added value
 //    g = 100.0 * ((double)k + g);
@@ -68,9 +63,9 @@ QVector<double > DTLZ2(const QVector<double >& x, const int M)
     for (j=(M-1); j >= 0; j--) {
         coss = 1.0;
         for (i=0; i<M-j-1; i++) {
-            coss *= qCos(x[i]*pi<qreal>()/2.0) ;
+            coss *= qCos(x[i]*pi<double>()/2.0) ;
         }
-        sine = (j>0) ? ((j==M-1) ? qSin(x[M-j-1]*pi<qreal>()/2.0) : qSin(x[i]*pi<qreal>()/2.0)) : 1.0;
+        sine = (j>0) ? ((j==M-1) ? qSin(x[M-j-1]*pi<double>()/2.0) : qSin(x[i]*pi<double>()/2.0)) : 1.0;
         y[j] = (1.0+g) * coss * sine;
     }
 
@@ -78,5 +73,3 @@ QVector<double > DTLZ2(const QVector<double >& x, const int M)
 }
 
 }  // namespace DTLZ
-//}  // namespace Tigon
-//}  // namespace Operators

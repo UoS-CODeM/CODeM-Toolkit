@@ -13,11 +13,8 @@
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ****************************************************************************/
-#include <tigon/Representation/Distributions/UniformDistribution.h>
-#include <tigon/Random/RandomGenerator.h>
-
-namespace Tigon {
-namespace Representation {
+#include <core/Distributions/UniformDistribution.h>
+#include <random>
 
 UniformDistribution::UniformDistribution()
 {
@@ -31,10 +28,10 @@ UniformDistribution::UniformDistribution(const UniformDistribution& dist)
     : IDistribution(dist)
 {
     m_type = Tigon::UniformDistType;
-    m_uniDist = new boost::math::uniform_distribution<qreal>(m_lb, m_ub);
+    m_uniDist = new boost::math::uniform_distribution<double>(m_lb, m_ub);
 }
 
-UniformDistribution::UniformDistribution(qreal lb, qreal ub)
+UniformDistribution::UniformDistribution(double lb, double ub)
 {
     m_uniDist = 0;
     m_type = Tigon::UniformDistType;
@@ -42,12 +39,12 @@ UniformDistribution::UniformDistribution(qreal lb, qreal ub)
     defineResolution(m_ub-m_lb);
 }
 
-UniformDistribution::UniformDistribution(QVector<qreal> parameters)
+UniformDistribution::UniformDistribution(QVector<double> parameters)
 {
     m_uniDist = 0;
     m_type = Tigon::UniformDistType;
-    qreal lb = 0.0;
-    qreal ub = 1.0;
+    double lb = 0.0;
+    double ub = 1.0;
     if(parameters.size() > 0) {
         lb = parameters[0];
         if((parameters.size() > 1) && (parameters[1] > lb)) {
@@ -71,7 +68,7 @@ UniformDistribution* UniformDistribution::clone() const
     return (new UniformDistribution(*this));
 }
 
-void UniformDistribution::defineBoundaries(qreal lb, qreal ub)
+void UniformDistribution::defineBoundaries(double lb, double ub)
 {
     if(lb >= ub) {
         if(lb == 0) {
@@ -90,26 +87,26 @@ void UniformDistribution::defineBoundaries(qreal lb, qreal ub)
         m_uniDist = 0;
     }
 
-    m_uniDist = new boost::math::uniform_distribution<qreal>(m_lb, m_ub);
+    m_uniDist = new boost::math::uniform_distribution<double>(m_lb, m_ub);
 }
 
 
-qreal UniformDistribution::sample()
+double UniformDistribution::sample()
 {
     return TRAND.randUni(m_ub - m_lb, m_lb);
 }
 
-qreal UniformDistribution::mean()
+double UniformDistribution::mean()
 {
     return (m_ub + m_lb) / 2.0;
 }
 
-qreal UniformDistribution::median()
+double UniformDistribution::median()
 {
     return boost::math::median(*m_uniDist);
 }
 
-qreal UniformDistribution::percentile(qreal p)
+double UniformDistribution::percentile(double p)
 {
     if(p >= 1.0) {
         return m_ub;
@@ -119,22 +116,22 @@ qreal UniformDistribution::percentile(qreal p)
     return boost::math::quantile(*m_uniDist, p);
 }
 
-qreal UniformDistribution::variance()
+double UniformDistribution::variance()
 {
     return boost::math::variance(*m_uniDist);
 }
 
-qreal UniformDistribution::std()
+double UniformDistribution::std()
 {
     return boost::math::standard_deviation(*m_uniDist);
 }
 
-qreal UniformDistribution::pdf(qreal z)
+double UniformDistribution::pdf(double z)
 {
     return boost::math::pdf(*m_uniDist, z);
 }
 
-qreal UniformDistribution::cdf(qreal z)
+double UniformDistribution::cdf(double z)
 {
     return boost::math::cdf(*m_uniDist, z);
 }
@@ -150,16 +147,13 @@ void UniformDistribution::generatePDF()
         generateZ();
     }
 
-    qreal probability = 1.0/(m_ub - m_lb);
-    m_pdf = QVector<qreal>(m_nSamples, probability);
+    double probability = 1.0/(m_ub - m_lb);
+    m_pdf = QVector<double>(m_nSamples, probability);
 }
 
-QVector<qreal> UniformDistribution::parameters()
+QVector<double> UniformDistribution::parameters()
 {
-    QVector<qreal> params;
+    QVector<double> params;
     params << lowerBound() << upperBound();
     return params;
 }
-
-} // namespace Representation
-} // namespace Tigon

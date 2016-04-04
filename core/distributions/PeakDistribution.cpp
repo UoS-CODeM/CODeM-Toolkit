@@ -13,15 +13,12 @@
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ****************************************************************************/
-#include <tigon/Representation/Distributions/PeakDistribution.h>
+#include <core/Distributions/PeakDistribution.h>
 #include <complex>
 #include <algorithm>
 #include <boost/math/special_functions/factorials.hpp>
 #include <boost/math/constants/constants.hpp>
 #include <qmath.h>
-
-namespace Tigon {
-namespace Representation {
 
 PeakDistribution::PeakDistribution()
 {
@@ -38,17 +35,17 @@ PeakDistribution::PeakDistribution(const PeakDistribution& dist)
 
 }
 
-PeakDistribution::PeakDistribution(qreal tendency, qreal locality)
+PeakDistribution::PeakDistribution(double tendency, double locality)
 {
     m_type = Tigon::PeakDistType;
     defineTendencyAndLocality(tendency, locality);
 }
 
-PeakDistribution::PeakDistribution(QVector<qreal> parameters)
+PeakDistribution::PeakDistribution(QVector<double> parameters)
 {
     m_type = Tigon::PeakDistType;
-    qreal tendency = 0.5;
-    qreal locality = 1.0;
+    double tendency = 0.5;
+    double locality = 1.0;
     if(parameters.size() > 0) {
         tendency = parameters[0];
     }
@@ -68,7 +65,7 @@ PeakDistribution* PeakDistribution::clone() const
     return (new PeakDistribution(*this));
 }
 
-void PeakDistribution::defineTendencyAndLocality(qreal tendency, qreal locality)
+void PeakDistribution::defineTendencyAndLocality(double tendency, double locality)
 {
     if(tendency < 0.0) {
         tendency = 0.0;
@@ -89,12 +86,12 @@ void PeakDistribution::defineTendencyAndLocality(qreal tendency, qreal locality)
     defineResolution(1.0/(m_locality+0.1)/(Tigon::DistNSamples-1));
 }
 
-qreal PeakDistribution::tendency() const
+double PeakDistribution::tendency() const
 {
     return m_tendency;
 }
 
-qreal PeakDistribution::locality() const
+double PeakDistribution::locality() const
 {
     return m_locality;
 }
@@ -112,17 +109,17 @@ void PeakDistribution::generatePDF()
         generateZ();
     }
 
-    m_pdf = QVector<qreal>(m_nSamples);
+    m_pdf = QVector<double>(m_nSamples);
 
-    qreal shift = boost::math::constants::pi<qreal>() * m_tendency;
-    qreal N = Tigon::DistPeakMinN + m_locality
+    double shift = boost::math::constants::pi<double>() * m_tendency;
+    double N = Tigon::DistPeakMinN + m_locality
             * (Tigon::DistPeakMaxN - Tigon::DistPeakMinN);
     QVector<qcomplex> psiN(m_nSamples,qcomplex(0,0));
-    qreal nMax = qMax(3*N,Tigon::DistPeakMinNBasisFunc);
+    double nMax = qMax(3*N,Tigon::DistPeakMinNBasisFunc);
     nMax = qMin(nMax,Tigon::DistPeakMaxNBasisFunc);
-    for(qreal n=1.0; n<=nMax; n++) {
-        qreal cNn = sqrt( (qPow(N, n) * exp(-N) / boost::math::factorial<qreal>(n)));
-        QVector<qreal> psi = eigenFunction(n);
+    for(double n=1.0; n<=nMax; n++) {
+        double cNn = sqrt( (qPow(N, n) * exp(-N) / boost::math::factorial<double>(n)));
+        QVector<double> psi = eigenFunction(n);
         for(int i=0; i<m_nSamples; i++) {
             qcomplex j(0, 1);
             psiN[i] += cNn * exp(-j*shift*(n+0.5)) * psi[i];
@@ -134,24 +131,21 @@ void PeakDistribution::generatePDF()
     normalise();
 }
 
-QVector<qreal> PeakDistribution::parameters()
+QVector<double> PeakDistribution::parameters()
 {
-    QVector<qreal> params;
+    QVector<double> params;
     params << m_tendency << m_locality;
     return params;
 }
 
-QVector<qreal> PeakDistribution::eigenFunction(int n)
+QVector<double> PeakDistribution::eigenFunction(int n)
 {
-    qreal Lz = m_ub - m_lb;
-    qreal An = qPow(2.0/Lz, 0.5);
+    double Lz = m_ub - m_lb;
+    double An = qPow(2.0/Lz, 0.5);
 
-    QVector<qreal> psi(m_nSamples, 0);
+    QVector<double> psi(m_nSamples, 0);
     for(int i=1; i<m_nSamples-1; i++) {
-        psi[i] = An*sin(boost::math::constants::pi<qreal>()*n*(m_z[i]-m_lb)/Lz);
+        psi[i] = An*sin(boost::math::constants::pi<double>()*n*(m_z[i]-m_lb)/Lz);
     }
     return psi;
 }
-
-} // namespace Representation
-} // namespace Tigon

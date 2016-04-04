@@ -15,10 +15,8 @@
 ****************************************************************************/
 #include <tigon/Utils/AbstractInterpolator.h>
 
-namespace Tigon {
-
-AbstractInterpolator::AbstractInterpolator(QVector<qreal> x,
-                                           QVector<qreal> y, int m)
+AbstractInterpolator::AbstractInterpolator(QVector<double> x,
+                                           QVector<double> y, int m)
 {
     n    = x.size();
     mm   = m;
@@ -26,7 +24,7 @@ AbstractInterpolator::AbstractInterpolator(QVector<qreal> x,
     cor  = 0;
     xx   = x;
     yy   = y;
-    dj = qMax(1,static_cast<int>(qPow(static_cast<qreal>(n),0.25)));
+    dj = qMax(1,static_cast<int>(qPow(static_cast<double>(n),0.25)));
     m_isConfigured = checkConfiguration();
 }
 
@@ -35,15 +33,15 @@ AbstractInterpolator::~AbstractInterpolator()
 
 }
 
-qreal AbstractInterpolator::interpolate(qreal xq)
+double AbstractInterpolator::interpolate(double xq)
 {
     int jlo = cor ? hunt(xq) : locate(xq);
     return baseInterpolate(jlo,xq);
 }
 
-QVector<qreal> AbstractInterpolator::interpolateV(QVector<qreal> xq)
+QVector<double> AbstractInterpolator::interpolateV(QVector<double> xq)
 {
-    QVector<qreal> yq;
+    QVector<double> yq;
     int sz = xq.size();
     yq.resize(sz);
     for(int i=0; i<sz; i++) {
@@ -53,7 +51,7 @@ QVector<qreal> AbstractInterpolator::interpolateV(QVector<qreal> xq)
     return yq;
 }
 
-void AbstractInterpolator::defineXY(QVector<qreal> x, QVector<qreal> y)
+void AbstractInterpolator::defineXY(QVector<double> x, QVector<double> y)
 {
     if(x.size() == y.size()) {
         xx = x;
@@ -61,7 +59,7 @@ void AbstractInterpolator::defineXY(QVector<qreal> x, QVector<qreal> y)
         n  = x.size();
         jsav = 0;
         cor  = 0;
-        dj = qMax(1,static_cast<int>(qPow(static_cast<qreal>(n),0.25)));
+        dj = qMax(1,static_cast<int>(qPow(static_cast<double>(n),0.25)));
         m_isConfigured = true;
     }
 
@@ -72,7 +70,7 @@ bool AbstractInterpolator::isConfigured()
     return m_isConfigured;
 }
 
-int AbstractInterpolator::locate(const qreal x)
+int AbstractInterpolator::locate(const double x)
 {
     int ju,jm,jl;
     bool ascnd=(xx[n-1] >= xx[0]);
@@ -90,7 +88,7 @@ int AbstractInterpolator::locate(const qreal x)
     return qMax(0,qMin(n-mm,jl-((mm-2)>>1)));
 }
 
-int AbstractInterpolator::hunt(const qreal x)
+int AbstractInterpolator::hunt(const double x)
 {
     int jl=jsav, jm, ju, inc=1;
     bool ascnd=(xx[n-1] >= xx[0]);
@@ -142,5 +140,3 @@ bool AbstractInterpolator::checkConfiguration()
 
     return status;
 }
-
-} // namespace Tigon

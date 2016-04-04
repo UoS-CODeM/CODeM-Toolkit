@@ -15,54 +15,47 @@
 ****************************************************************************/
 #ifndef CODEMDISTRIBUTION_H
 #define CODEMDISTRIBUTION_H
-#include <tigon/tigon_global.h>
-#include <tigon/tigonconstants.h>
 
 // Qt Includes
 #include <QVector>
 
-namespace Tigon {
 class LinearInterpolator;
-}
-
-using namespace Tigon::Representation;
 
 namespace CODeM{
 
-
-class LIGER_TIGON_EXPORT CODeMDistribution
+class CODeMDistribution
 {
 public:
-    CODeMDistribution(IDistributionSPtr d,
-                      const QVector<qreal> oVec,
-                      qreal lowerBound,
-                      qreal upperBound,
-                      const QVector<qreal> ideal,
-                      const QVector<qreal> antiIdeal,
-                      qreal dirPertRad,
-                      qreal dirPertNorm);
+    CODeMDistribution(IDistribution* d,
+                      const QVector<double> oVec,
+                      double lowerBound,
+                      double upperBound,
+                      const QVector<double> ideal,
+                      const QVector<double> antiIdeal,
+                      double dirPertRad,
+                      double dirPertNorm);
     ~CODeMDistribution();
 
-    QVector<qreal> sampleDistribution();
+    QVector<double> sampleDistribution();
 
-    void defineDirectionPertRadius(qreal r);
-    void definePerturbationNorm(qreal p);
+    void defineDirectionPertRadius(double r);
+    void definePerturbationNorm(double p);
     // 2-norm direction
-    void defineDirection(const QVector<qreal> oVec);
-    void defineIdealAndAntiIdeal(const QVector<qreal> ideal,
-                                 const QVector<qreal> antiIdeal);
-    void defineDistribution(IDistributionSPtr d);
+    void defineDirection(const QVector<double> oVec);
+    void defineIdealAndAntiIdeal(const QVector<double> ideal,
+                                 const QVector<double> antiIdeal);
+    void defineDistribution(IDistribution* d);
 
 
 private:
-    IDistributionSPtr    m_distribution;
-    qreal                m_directionPertRadius;
-    QVector<qreal>       m_direction;
-    QVector<qreal>       m_ideal;
-    QVector<qreal>       m_antiIdeal;
-    qreal                m_lb;
-    qreal                m_ub;
-    qreal                m_pNorm;
+    IDistribution*    m_distribution;
+    double                m_directionPertRadius;
+    QVector<double>       m_direction;
+    QVector<double>       m_ideal;
+    QVector<double>       m_antiIdeal;
+    double                m_lb;
+    double                m_ub;
+    double                m_pNorm;
 };
 
 } //namespace CODeM

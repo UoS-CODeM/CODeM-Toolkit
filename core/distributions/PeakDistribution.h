@@ -15,9 +15,9 @@
 ****************************************************************************/
 #ifndef PEAKDISTRIBUTION_H
 #define PEAKDISTRIBUTION_H
-#include <tigon/tigon_global.h>
-#include <tigon/tigonconstants.h>
-#include <tigon/Representation/Distributions/IDistribution.h>
+
+
+#include <core/Distributions/IDistribution.h>
 
 //#include <boost/random/mersenne_twister.hpp>
 //#include <boost/random/lagged_fibonacci.hpp>
@@ -29,37 +29,31 @@
 #include <QVector>
 #include <QString>
 
-namespace Tigon {
-namespace Representation {
-
-class LIGER_TIGON_EXPORT PeakDistribution : public IDistribution
+class PeakDistribution : public IDistribution
 {
 public:
     PeakDistribution();
     PeakDistribution(const PeakDistribution& dist);
-    PeakDistribution(qreal tendency, qreal locality);
-    PeakDistribution(QVector<qreal> parameters);
+    PeakDistribution(double tendency, double locality);
+    PeakDistribution(QVector<double> parameters);
     virtual ~PeakDistribution();
 
     PeakDistribution* clone() const;
 
-    void  defineTendencyAndLocality(qreal tendency, qreal locality);
-    qreal tendency()  const;
-    qreal locality()  const;
+    void  defineTendencyAndLocality(double tendency, double locality);
+    double tendency()  const;
+    double locality()  const;
 
     void generateZ();
     void generatePDF();
 
-    QVector<qreal> parameters();
+    QVector<double> parameters();
 
 private:
-    qreal m_tendency;
-    qreal m_locality;
+    double m_tendency;
+    double m_locality;
 
-    QVector<qreal> eigenFunction(int n);
+    QVector<double> eigenFunction(int n);
 };
-
-} // namespace Representation
-} // namespace Tigon
 
 #endif // PEAKDISTRIBUTION_H

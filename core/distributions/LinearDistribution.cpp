@@ -13,11 +13,8 @@
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ****************************************************************************/
-#include <tigon/Representation/Distributions/LinearDistribution.h>
-#include <tigon/Random/RandomGenerator.h>
-
-namespace Tigon {
-namespace Representation {
+#include <core/Distributions/LinearDistribution.h>
+#include <random>
 
 LinearDistribution::LinearDistribution()
 {
@@ -33,7 +30,7 @@ LinearDistribution::LinearDistribution(const LinearDistribution& dist)
     m_ascend = dist.m_ascend;
 }
 
-LinearDistribution::LinearDistribution(qreal lb, qreal ub)
+LinearDistribution::LinearDistribution(double lb, double ub)
 {
     m_type = Tigon::LinearDistType;
     defineBoundaries(lb, ub);
@@ -41,11 +38,11 @@ LinearDistribution::LinearDistribution(qreal lb, qreal ub)
     m_ascend = true;
 }
 
-LinearDistribution::LinearDistribution(QVector<qreal> parameters)
+LinearDistribution::LinearDistribution(QVector<double> parameters)
 {
     m_type = Tigon::LinearDistType;
-    qreal lb = 0.0;
-    qreal ub = 1.0;
+    double lb = 0.0;
+    double ub = 1.0;
     m_ascend = true;
     if(parameters.size() > 0) {
         lb = parameters[0];
@@ -71,10 +68,10 @@ LinearDistribution* LinearDistribution::clone() const
     return (new LinearDistribution(*this));
 }
 
-qreal LinearDistribution::sample()
+double LinearDistribution::sample()
 {
-    qreal r = TRAND.randUni();
-    qreal samp;
+    double r = TRAND.randUni();
+    double samp;
     if(m_ascend) {
         samp = m_lb + sqrt(r)*(m_ub-m_lb);
     } else {
@@ -94,8 +91,8 @@ void LinearDistribution::generatePDF()
         generateZ();
     }
 
-    qreal maxProbability = 2/(m_ub - m_lb);
-    m_pdf = QVector<qreal>(m_nSamples);
+    double maxProbability = 2/(m_ub - m_lb);
+    m_pdf = QVector<double>(m_nSamples);
     if(isAscend()) {
         for(int i=0; i<m_nSamples; i++) {
             m_pdf[i] = maxProbability * (m_z[i] - m_lb) / (m_ub - m_lb);
@@ -121,12 +118,9 @@ void LinearDistribution::defineAscend(bool a)
     }
 }
 
-QVector<qreal> LinearDistribution::parameters()
+QVector<double> LinearDistribution::parameters()
 {
-    QVector<qreal> params;
-    params << lowerBound() << upperBound() << (qreal)isAscend();
+    QVector<double> params;
+    params << lowerBound() << upperBound() << (double)isAscend();
     return params;
 }
-
-} // namespace Representation
-} // namespace Tigon

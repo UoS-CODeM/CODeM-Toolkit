@@ -15,42 +15,36 @@
 ****************************************************************************/
 #ifndef LINEARDISTRIBUTION_H
 #define LINEARDISTRIBUTION_H
-#include <tigon/tigon_global.h>
-#include <tigon/tigonconstants.h>
-#include <tigon/Representation/Distributions/IDistribution.h>
+
+
+#include <core/Distributions/IDistribution.h>
 
 // Qt Includes
 #include <QVector>
 #include <QString>
 
-namespace Tigon {
-namespace Representation {
-
-class LIGER_TIGON_EXPORT LinearDistribution : public IDistribution
+class LinearDistribution : public IDistribution
 {
 public:
     LinearDistribution();
     LinearDistribution(const LinearDistribution& dist);
-    LinearDistribution(qreal lb, qreal ub);
-    LinearDistribution(QVector<qreal> parameters);
+    LinearDistribution(double lb, double ub);
+    LinearDistribution(QVector<double> parameters);
     virtual ~LinearDistribution();
 
     LinearDistribution *clone() const;
 
-    qreal sample();
+    double sample();
     void  generateZ();
     void  generatePDF();
 
     bool isAscend()     const;
     void defineAscend(bool a);
 
-    QVector<qreal> parameters();
+    QVector<double> parameters();
 
 private:
     bool m_ascend;
 };
-
-} // namespace Representation
-} // namespace Tigon
 
 #endif // LINEARDISTRIBUTION_H

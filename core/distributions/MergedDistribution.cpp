@@ -16,9 +16,6 @@
 #include <core/distributions/MergedDistribution.h>
 #include <core/utils/LinearInterpolator.h>
 
-namespace Tigon {
-namespace Representation {
-
 MergedDistribution::MergedDistribution()
 {
     m_type = Tigon::MergedDistType;
@@ -60,11 +57,11 @@ void MergedDistribution::generateZ()
     }
 }
 
-void MergedDistribution::addZSamplesOfOneDistribution(IDistributionSPtr d)
+void MergedDistribution::addZSamplesOfOneDistribution(IDistribution* d)
 {
-    QVector<qreal> newZ = d->zSamples();
+    QVector<double> newZ = d->zSamples();
     // merge newZ and m_z into augZ
-    QVector<qreal> augZ;
+    QVector<double> augZ;
     int iNew = 0; // iterator for newZ
     int iAug = 0; // iterator for m_z
 
@@ -108,7 +105,7 @@ void MergedDistribution::generatePDF()
 
     generateZ();
 
-    m_pdf = QVector<qreal>(m_nSamples, 0.0);
+    m_pdf = QVector<double>(m_nSamples, 0.0);
 
     for(int i=0; i<nDistributions; i++) {
         addOnePDF(m_distributions[i], m_ratios[i]);
@@ -116,11 +113,11 @@ void MergedDistribution::generatePDF()
     normalise();
 }
 
-void MergedDistribution::addOnePDF(IDistributionSPtr d, qreal ratio)
+void MergedDistribution::addOnePDF(IDistribution* d, double ratio)
 {
     // call this function only after the samples are integrated into m_z
-    QVector<qreal> newPDF = d->pdf();
-    QVector<qreal> newZ   = d->zSamples();
+    QVector<double> newPDF = d->pdf();
+    QVector<double> newZ   = d->zSamples();
 
     // find the range of the new pdf
     int firstIdx = 0;
@@ -143,12 +140,12 @@ void MergedDistribution::addOnePDF(IDistributionSPtr d, qreal ratio)
     }
 }
 
-void MergedDistribution::appendDistribution(IDistributionSPtr d)
+void MergedDistribution::appendDistribution(IDistribution* d)
 {
     appendDistribution(d, 1.0);
 }
 
-void MergedDistribution::appendDistribution(IDistributionSPtr d, qreal ratio)
+void MergedDistribution::appendDistribution(IDistribution* d, double ratio)
 {
     m_distributions.append(d);
     m_ratios.append(std::max(ratio, 0.0));
@@ -159,7 +156,7 @@ void MergedDistribution::appendDistribution(IDistributionSPtr d, qreal ratio)
     }
 }
 
-void MergedDistribution::removeDistribution(IDistributionSPtr d)
+void MergedDistribution::removeDistribution(IDistribution* d)
 {
     int idx = m_distributions.indexOf(d);
     if(idx >= 0) {
@@ -179,7 +176,7 @@ void MergedDistribution::removeDistribution(int idx)
     }
 }
 
-void MergedDistribution::changeRatio(IDistributionSPtr d, qreal newRatio)
+void MergedDistribution::changeRatio(IDistribution* d, double newRatio)
 {
     int idx = m_distributions.indexOf(d);
     if(idx >= 0) {
@@ -187,10 +184,7 @@ void MergedDistribution::changeRatio(IDistributionSPtr d, qreal newRatio)
     }
 }
 
-void MergedDistribution::changeRatio(int idx, qreal newRatio)
+void MergedDistribution::changeRatio(int idx, double newRatio)
 {
     m_ratios[idx] = std::max(newRatio, 0.0);
 }
-
-} // namespace Representation
-} // namespace Tigon

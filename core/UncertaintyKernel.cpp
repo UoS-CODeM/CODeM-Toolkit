@@ -13,7 +13,7 @@
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ****************************************************************************/
-#include <tigon/Representation/Functions/CODeM/UncertaintyKernel.h>
+#include <core/UncertaintyKernel.h>
 #include <tigon/Representation/Mappings/IMapping.h>
 #include <tigon/Representation/Elements/IElement.h>
 #include <tigon/Representation/Constraints/BoxConstraintsData.h>
@@ -21,82 +21,80 @@
 #include <tigon/Utils/TigonUtils.h>
 #include <qmath.h>
 
-using namespace Tigon;
-
 namespace CODeM {
 
-UncertaintyKernel::UncertaintyKernel(QVector<qreal> inputs,
-                                     QVector<qreal> outputs,
-                                     BoxConstraintsDataSPtr box)
+UncertaintyKernel::UncertaintyKernel(QVector<double> inputs,
+                                     QVector<double> outputs,
+                                     BoxConstraintsData* box)
 {
     m_inputs  = inputs;
     m_outputs = outputs;
     m_box     = box->clone();
-    defineIdealAndAntiIdeal(QVector<qreal>(outputs.size(), 0.0),
-                            QVector<qreal>(outputs.size(), 1.0));
+    defineIdealAndAntiIdeal(QVector<double>(outputs.size(), 0.0),
+                            QVector<double>(outputs.size(), 1.0));
     calcDirectionAndDistance();
     defineDirectedObjectiveBoundaries();
 }
 
-UncertaintyKernel::UncertaintyKernel(QVector<qreal> inputs,
-                                     QVector<qreal> outputs,
-                                     BoxConstraintsDataSPtr box,
-                                     qreal lb,
-                                     qreal ub)
+UncertaintyKernel::UncertaintyKernel(QVector<double> inputs,
+                                     QVector<double> outputs,
+                                     BoxConstraintsData* box,
+                                     double lb,
+                                     double ub)
 {
     m_inputs  = inputs;
     m_outputs = outputs;
     m_box     = box->clone();
-    defineIdealAndAntiIdeal(QVector<qreal>(outputs.size(), 0.0),
-                            QVector<qreal>(outputs.size(), 1.0));
+    defineIdealAndAntiIdeal(QVector<double>(outputs.size(), 0.0),
+                            QVector<double>(outputs.size(), 1.0));
     calcDirectionAndDistance();
     defineDirectedObjectiveBoundaries(lb, ub);
 }
 
-UncertaintyKernel::UncertaintyKernel(QVector<qreal> inputs,
-                                     QVector<qreal> outputs,
-                                     BoxConstraintsDataSPtr box,
-                                     QVector<qreal> ideal,
-                                     QVector<qreal> antiIdeal)
+UncertaintyKernel::UncertaintyKernel(QVector<double> inputs,
+                                     QVector<double> outputs,
+                                     BoxConstraintsData* box,
+                                     QVector<double> ideal,
+                                     QVector<double> antiIdeal)
 {
     m_inputs  = inputs;
     m_outputs = outputs;
     m_box     = box->clone();
     // default values in case of incorrect ideal and antiIdeal
-    defineIdealAndAntiIdeal(QVector<qreal>(outputs.size(), 0.0),
-                            QVector<qreal>(outputs.size(), 1.0));
+    defineIdealAndAntiIdeal(QVector<double>(outputs.size(), 0.0),
+                            QVector<double>(outputs.size(), 1.0));
     defineIdealAndAntiIdeal(ideal, antiIdeal);
     calcDirectionAndDistance();
     defineDirectedObjectiveBoundaries();
 }
 
-UncertaintyKernel::UncertaintyKernel(QVector<qreal> inputs,
-                                     QVector<qreal> outputs,
-                                     BoxConstraintsDataSPtr box,
-                                     qreal lb,
-                                     qreal ub,
-                                     QVector<qreal> ideal,
-                                     QVector<qreal> antiIdeal)
+UncertaintyKernel::UncertaintyKernel(QVector<double> inputs,
+                                     QVector<double> outputs,
+                                     BoxConstraintsData* box,
+                                     double lb,
+                                     double ub,
+                                     QVector<double> ideal,
+                                     QVector<double> antiIdeal)
 {
     m_inputs  = inputs;
     m_outputs = outputs;
     m_box     = box->clone();
-    defineIdealAndAntiIdeal(QVector<qreal>(outputs.size(), 0.0),
-                            QVector<qreal>(outputs.size(), 1.0));
+    defineIdealAndAntiIdeal(QVector<double>(outputs.size(), 0.0),
+                            QVector<double>(outputs.size(), 1.0));
     defineIdealAndAntiIdeal(ideal, antiIdeal);
     calcDirectionAndDistance();
     defineDirectedObjectiveBoundaries(lb, ub);
 }
 
-UncertaintyKernel::UncertaintyKernel(QVector<qreal> outputs,
-                                     qreal lb,
-                                     qreal ub,
-                                     QVector<qreal> ideal,
-                                     QVector<qreal> antiIdeal)
+UncertaintyKernel::UncertaintyKernel(QVector<double> outputs,
+                                     double lb,
+                                     double ub,
+                                     QVector<double> ideal,
+                                     QVector<double> antiIdeal)
 {
     m_outputs = outputs;
-    defineIdealAndAntiIdeal(QVector<qreal>(outputs.size(), 0.0),
-                            QVector<qreal>(outputs.size(), 1.0));
+    defineIdealAndAntiIdeal(QVector<double>(outputs.size(), 0.0),
+                            QVector<double>(outputs.size(), 1.0));
     defineIdealAndAntiIdeal(ideal, antiIdeal);
     calcDirectionAndDistance();
     defineDirectedObjectiveBoundaries(lb, ub);
@@ -124,7 +122,7 @@ void UncertaintyKernel::calcDirectionAndDistance()
     toUnitVec(m_direction, 1.0);
 }
 
-qreal UncertaintyKernel::proximity()
+double UncertaintyKernel::proximity()
 {
     if(m_distance <= m_lb) {
         return 0.0;
@@ -135,48 +133,48 @@ qreal UncertaintyKernel::proximity()
     }
 }
 
-qreal UncertaintyKernel::symmetry()
+double UncertaintyKernel::symmetry()
 {
-    qreal euclideanDist = 0.0;
+    double euclideanDist = 0.0;
     for(int i=0; i < m_direction.size(); i++) {
         euclideanDist += m_direction[i] * m_direction[i];
     }
     euclideanDist = sqrt(euclideanDist);
 
-    qreal symmetryVal = (1.0 - euclideanDist) /
+    double symmetryVal = (1.0 - euclideanDist) /
             (1.0 - 1.0/sqrt(m_direction.size()));
 
     return qPow(symmetryVal, 2.0);
 }
 
-qreal UncertaintyKernel::oComponent(int idx) const
+double UncertaintyKernel::oComponent(int idx) const
 {
     if(!isInRange(idx, m_outputs.size())) {
         return -1.0;
     }
-    qreal oc = (m_outputs[idx]-m_ideal[idx]) / (m_antiIdeal[idx]-m_ideal[idx]);
+    double oc = (m_outputs[idx]-m_ideal[idx]) / (m_antiIdeal[idx]-m_ideal[idx]);
     return oc;
 }
 
-qreal UncertaintyKernel::dComponent(int idx) const
+double UncertaintyKernel::dComponent(int idx) const
 {
     if(!isInRange(idx, m_inputs.size())) {
         return -1.0;
     }
-    qreal lb = m_box->lowerBounds().at(idx).value<qreal>();
-    qreal ub = m_box->upperBounds().at(idx).value<qreal>();
-    qreal d  = m_inputs.at(idx);
+    double lb = m_box->lowerBounds().at(idx).value<double>();
+    double ub = m_box->upperBounds().at(idx).value<double>();
+    double d  = m_inputs.at(idx);
 
-    qreal dRatio = (d-lb)/(ub-lb);
+    double dRatio = (d-lb)/(ub-lb);
     return dRatio;
 }
 
-QVector<qreal> UncertaintyKernel::direction() const
+QVector<double> UncertaintyKernel::direction() const
 {
     return m_direction;
 }
 
-void UncertaintyKernel::defineDirectedObjectiveBoundaries(qreal lb, qreal ub)
+void UncertaintyKernel::defineDirectedObjectiveBoundaries(double lb, double ub)
 {
     if(ub > lb) {
         m_lb = lb;
@@ -190,8 +188,8 @@ void UncertaintyKernel::defineDirectedObjectiveBoundaries()
     m_ub = directedBoxedIntervalLength(m_direction);
 }
 
-void UncertaintyKernel::defineIdealAndAntiIdeal(QVector<qreal> ideal,
-                                           QVector<qreal> antiIdeal)
+void UncertaintyKernel::defineIdealAndAntiIdeal(QVector<double> ideal,
+                                           QVector<double> antiIdeal)
 {
     if(ideal.size() == antiIdeal.size()) {
         for(int i=0; i<ideal.size(); i++) {

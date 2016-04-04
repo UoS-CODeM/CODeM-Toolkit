@@ -15,76 +15,70 @@
 ****************************************************************************/
 #ifndef UNCERTAINTYKERNEL_H
 #define UNCERTAINTYKERNEL_H
-#include <tigon/tigon_global.h>
-#include <tigon/tigonconstants.h>
+
+
 
 // Qt Includes
 #include <QVector>
-namespace Tigon {
-namespace Representation {
 class BoxConstraintsData;
-}
-}
-
-using namespace Tigon::Representation;
 
 namespace CODeM {
 
-class LIGER_TIGON_EXPORT UncertaintyKernel
+class UncertaintyKernel
 {
 public:
-    UncertaintyKernel(QVector<qreal> inputs,
-                      QVector<qreal> outputs,
-                      BoxConstraintsDataSPtr box);
-    UncertaintyKernel(QVector<qreal> inputs,
-                      QVector<qreal> outputs,
-                      BoxConstraintsDataSPtr box,
-                      qreal lb,
-                      qreal ub);
-    UncertaintyKernel(QVector<qreal> inputs,
-                      QVector<qreal> outputs,
-                      BoxConstraintsDataSPtr box,
-                      QVector<qreal> ideal,
-                      QVector<qreal> antiIdeal);
-    UncertaintyKernel(QVector<qreal> inputs,
-                      QVector<qreal> outputs,
-                      BoxConstraintsDataSPtr box,
-                      qreal lb,
-                      qreal ub,
-                      QVector<qreal> ideal,
-                      QVector<qreal> antiIdeal);
-    UncertaintyKernel(QVector<qreal> outputs,
-                      qreal lb,
-                      qreal ub,
-                      QVector<qreal> ideal,
-                      QVector<qreal> antiIdeal);
+    UncertaintyKernel(QVector<double> inputs,
+                      QVector<double> outputs,
+                      BoxConstraintsData* box);
+    UncertaintyKernel(QVector<double> inputs,
+                      QVector<double> outputs,
+                      BoxConstraintsData* box,
+                      double lb,
+                      double ub);
+    UncertaintyKernel(QVector<double> inputs,
+                      QVector<double> outputs,
+                      BoxConstraintsData* box,
+                      QVector<double> ideal,
+                      QVector<double> antiIdeal);
+    UncertaintyKernel(QVector<double> inputs,
+                      QVector<double> outputs,
+                      BoxConstraintsData* box,
+                      double lb,
+                      double ub,
+                      QVector<double> ideal,
+                      QVector<double> antiIdeal);
+    UncertaintyKernel(QVector<double> outputs,
+                      double lb,
+                      double ub,
+                      QVector<double> ideal,
+                      QVector<double> antiIdeal);
     ~UncertaintyKernel();
 
-    qreal proximity();
-    qreal symmetry();
-    qreal oComponent(int idx) const;
-    qreal dComponent(int idx) const;
+    double proximity();
+    double symmetry();
+    double oComponent(int idx) const;
+    double dComponent(int idx) const;
 
-    QVector<qreal> direction() const;
+    QVector<double> direction() const;
 
 private:
-    void defineIdealAndAntiIdeal(QVector<qreal> ideal, QVector<qreal> antiIdeal);
+    void defineIdealAndAntiIdeal(QVector<double> ideal, QVector<double> antiIdeal);
     // use normalised 2-norm values in objective space
-    void defineDirectedObjectiveBoundaries(qreal lb, qreal ub);
+    void defineDirectedObjectiveBoundaries(double lb, double ub);
     // set the lb to 0 and the ub to the directed boxed interval length
     void defineDirectedObjectiveBoundaries();
 
     // The design and objective values of the IMapping are not normalised
-    QVector<qreal>       m_inputs;
-    QVector<qreal>      m_outputs;
-    BoxConstraintsDataSPtr  m_box;
-    QVector<qreal>        m_ideal;
-    QVector<qreal>    m_antiIdeal;
-    QVector<qreal>    m_direction;
-    qreal              m_distance;
+    QVector<double>       m_inputs;
+    QVector<double>      m_outputs;
+    BoxConstraintsData*  m_box;
+    QVector<double>        m_ideal;
+    QVector<double>    m_antiIdeal;
+    QVector<double>    m_direction;
+    double              m_distance;
     // normalised 2-norm values
-    qreal                    m_ub;
-    qreal                    m_lb;
+    double                    m_ub;
+    double                    m_lb;
 
     void calcDirectionAndDistance();
 };

@@ -15,51 +15,45 @@
 ****************************************************************************/
 #ifndef UNIFORMDISTRIBUTION_H
 #define UNIFORMDISTRIBUTION_H
-#include <tigon/tigon_global.h>
-#include <tigon/Representation/Distributions/IDistribution.h>
+
+#include <core/Distributions/IDistribution.h>
 
 // boost does not allow to use forward declerations
 #include <boost/math/distributions/uniform.hpp>
 
-namespace Tigon {
-namespace Representation {
-
-class LIGER_TIGON_EXPORT UniformDistribution : public IDistribution
+class UniformDistribution : public IDistribution
 {
 public:
     UniformDistribution();
     UniformDistribution(const UniformDistribution& dist);
-    UniformDistribution(qreal lb, qreal ub);
-    UniformDistribution(QVector<qreal> parameters);
+    UniformDistribution(double lb, double ub);
+    UniformDistribution(QVector<double> parameters);
     virtual ~UniformDistribution();
 
     UniformDistribution* clone() const;
 
-    void defineBoundaries(qreal lb, qreal ub);
+    void defineBoundaries(double lb, double ub);
 
-    qreal sample();
-    qreal mean();
-    qreal median();
-    qreal percentile(qreal p);
-    qreal variance();
-    qreal std();
+    double sample();
+    double mean();
+    double median();
+    double percentile(double p);
+    double variance();
+    double std();
 
     //to make overrides visible to the compiler
     using IDistribution::pdf;
     using IDistribution::cdf;
-    qreal pdf(qreal       z);
-    qreal cdf(qreal       z);
+    double pdf(double       z);
+    double cdf(double       z);
 
     void  generateZ();
     void  generatePDF();
 
-    QVector<qreal> parameters();
+    QVector<double> parameters();
 
 private:
-    boost::math::uniform_distribution<qreal>* m_uniDist;
+    boost::math::uniform_distribution<double>* m_uniDist;
 };
-
-} // namespace Representation
-} // namespace Tigon
 
 #endif // UNIFORMDISTRIBUTION_H

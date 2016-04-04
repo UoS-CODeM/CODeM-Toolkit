@@ -15,26 +15,22 @@
 ****************************************************************************/
 #ifndef LINEARINTERPOLATOR_H
 #define LINEARINTERPOLATOR_H
-#include <tigon/tigon_global.h>
-#include <tigon/tigonconstants.h>
+
+
 #include <tigon/Utils/AbstractInterpolator.h>
 
 // Qt Includes
 #include <QtMath>
 #include <QVector>
 
-namespace Tigon {
-
-class LIGER_TIGON_EXPORT LinearInterpolator : public AbstractInterpolator
+class LinearInterpolator : public AbstractInterpolator
 {
 public:
-    LinearInterpolator(QVector<qreal> xv, QVector<qreal> yv);
+    LinearInterpolator(QVector<double> xv, QVector<double> yv);
     ~LinearInterpolator();
 
 protected:
-    qreal baseInterpolate(int j, qreal x);
+    double baseInterpolate(int j, double x);
 };
-
-} // namespace Tigon
 
 #endif // LINEARINTERPOLATOR_H

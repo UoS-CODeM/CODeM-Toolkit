@@ -16,45 +16,44 @@
 #ifndef CODEMDISTRIBUTION_H
 #define CODEMDISTRIBUTION_H
 
+#include <codemglobal.h>
+
 #include <vector>
 
-class LinearInterpolator;
 
 namespace CODeM{
+class IDistribution;
+//namespace Utils {
+//class LinearInterpolator;
+//}
 
 class CODeMDistribution
 {
 public:
-    CODeMDistribution(IDistribution* d,
-                      const vector<double> oVec,
-                      double lowerBound,
-                      double upperBound,
-                      const vector<double> ideal,
-                      const vector<double> antiIdeal,
-                      double dirPertRad,
-                      double dirPertNorm);
+    CODeMDistribution(IDistribution*             d,
+                      const std::vector<double>& oVec,
+                      double                     lowerBound,
+                      double                     upperBound,
+                      const std::vector<double>& ideal,
+                      const std::vector<double>& antiIdeal,
+                      double                     dirPertRad,
+                      double                     dirPertNorm);
     ~CODeMDistribution();
 
-    vector<double> sampleDistribution();
-
-    void defineDirectionPertRadius(double r);
-    void definePerturbationNorm(double p);
-    // 2-norm direction
-    void defineDirection(const vector<double> oVec);
-    void defineIdealAndAntiIdeal(const vector<double> ideal,
-                                 const vector<double> antiIdeal);
-    void defineDistribution(IDistribution* d);
-
+    std::vector<double> sampleDistribution();
 
 private:
-    IDistribution*    m_distribution;
-    double                m_directionPertRadius;
-    vector<double>       m_direction;
-    vector<double>       m_ideal;
-    vector<double>       m_antiIdeal;
-    double                m_lb;
-    double                m_ub;
-    double                m_pNorm;
+    // 2-norm direction
+    void defineDirection(const std::vector<double> oVec);
+
+    IDistribution*       m_distribution;
+    double               m_directionPertRadius;
+    std::vector<double>  m_direction;
+    std::vector<double>  m_ideal;
+    std::vector<double>  m_antiIdeal;
+    double               m_lb;
+    double               m_ub;
+    double               m_pNorm;
 };
 
 } //namespace CODeM

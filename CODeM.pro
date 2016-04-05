@@ -37,4 +37,5 @@ HEADERS += \
     libs/WFG/FrameworkFunctions.h \
     libs/WFG/Misc.h \
     libs/WFG/ShapeFunctions.h \
-    libs/WFG/TransFunctions.h
+    libs/WFG/TransFunctions.h \
+    codemglobal.h

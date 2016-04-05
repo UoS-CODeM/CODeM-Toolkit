@@ -19,6 +19,9 @@
 
 using std::vector;
 
+namespace CODeM {
+namespace Utils {
+
 LinearInterpolator::LinearInterpolator(vector<double> x,
                                        vector<double> y)
 {
@@ -153,3 +156,6 @@ double LinearInterpolator::baseInterpolate(int j, double x)
 
     return yy[j] + ((x-xx[j])/(xx[j+1]-xx[j]))*(yy[j+1]-yy[j]);
 }
+
+} // namespace Utils
+} // namespace CODeM

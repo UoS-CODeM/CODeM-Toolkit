@@ -61,7 +61,7 @@ vector<double> directionPerturbation(const vector<double> oVec,
     // perturb within a sphere with r=maxRadius
     double s = 0.0;
     for(int i=0; i<newObjVec.size(); i++) {
-        double rd = TRAND.randUni(2.0, -1.0) *
+        double rd = randUni(2.0, -1.0) *
                 qSqrt(maxRadius*maxRadius - s);
         s += qPow(rd, 2.0);
         newObjVec[i] += rd;

@@ -17,16 +17,17 @@
 #include <core/UncertaintyKernel.h>
 #include <core/CODeMOperators.h>
 #include <core/CODeMDistribution.h>
-#include <core/Distributions/MergedDistribution.h>
-#include <core/Distributions/UniformDistribution.h>
-#include <core/Distributions/PeakDistribution.h>
-#include <tigon/Representation/Mappings/IMapping.h>
-#include <tigon/Representation/Elements/IElement.h>
-#include <tigon/Representation/Constraints/BoxConstraintsData.h>
-#include <tigon/Utils/NormalisationUtils.h>
+#include <core/RandomDistributions.h>
+
+//#include <tigon/Representation/Mappings/IMapping.h>
+//#include <tigon/Representation/Elements/IElement.h>
+//#include <tigon/Representation/Constraints/BoxConstraintsData.h>
+//#include <tigon/Utils/NormalisationUtils.h>
+
 #include <libs/WFG/ExampleProblems.h>
 #include <libs/DTLZ/DTLZProblems.h>
 
+using std::vector;
 using namespace WFGT::Toolkit::Examples::Problems;
 
 namespace CODeM {
@@ -83,7 +84,7 @@ vector<vector<double> > CODeM1Perturb(vector<double> oVec, int nSamp)
     // Sample the distribution
     vector<vector<double> > samples;
     for(int i=0; i<nSamp; i++) {
-        samples.append(cd.sampleDistribution());
+        samples.push_back(cd.sampleDistribution());
     }
     return samples;
 }
@@ -139,7 +140,7 @@ vector<vector<double> > CODeM2Perturb(vector<double> oVec, int nSamp)
     // Sample the distribution
     vector<vector<double> > samples;
     for(int i=0; i<nSamp; i++) {
-        samples.append(cd.sampleDistribution());
+        samples.push_back(cd.sampleDistribution());
     }
     return samples;
 }
@@ -193,9 +194,9 @@ vector<vector<double> > CODeM3Perturb(vector<double> oVec, int nSamp)
 
     // Create the CODeM distribution
     MergedDistribution* d = MergedDistribution*::create();
-    d->appendDistribution(UniformDistribution*(
+    d->push_backDistribution(UniformDistribution*(
                               new UniformDistribution(uniLB, uniUB)), 0.5);
-    d->appendDistribution(PeakDistribution*(
+    d->push_backDistribution(PeakDistribution*(
                               new PeakDistribution(peakTend, peakLoc)), 0.5);
 
     CODeMDistribution cd(d, oVec, lb, ub, ideal, antiIdeal, dirPertRad, distanceNorm);
@@ -203,7 +204,7 @@ vector<vector<double> > CODeM3Perturb(vector<double> oVec, int nSamp)
     // Sample the distribution
     vector<vector<double> > samples;
     for(int i=0; i<nSamp; i++) {
-        samples.append(cd.sampleDistribution());
+        samples.push_back(cd.sampleDistribution());
     }
     return samples;
 }
@@ -259,7 +260,7 @@ vector<vector<double> > CODeM4Perturb(vector<double> oVec, int nSamp)
     // Sample the distribution
     vector<vector<double> > samples;
     for(int i=0; i<nSamp; i++) {
-        samples.append(cd.sampleDistribution());
+        samples.push_back(cd.sampleDistribution());
     }
     return samples;
 }
@@ -320,7 +321,7 @@ vector<vector<double> > CODeM5Perturb(vector<double> iVec,
     // Sample the distribution
     vector<vector<double> > samples;
     for(int i=0; i<nSamp; i++) {
-        samples.append(cd.sampleDistribution());
+        samples.push_back(cd.sampleDistribution());
     }
     return samples;
 }
@@ -382,7 +383,7 @@ vector<vector<double> > CODeM6Perturb(vector<double> iVec, vector<double> oVec,
     // Sample the distribution
     vector<vector<double> > samples;
     for(int i=0; i<nSamp; i++) {
-        samples.append(cd.sampleDistribution());
+        samples.push_back(cd.sampleDistribution());
     }
     return samples;
 }
@@ -423,22 +424,22 @@ BoxConstraintsData* createBoxConstraints(int prob, int nVar)
 
     case 1: case 2: case 3: case 4: case 5:
         for(int i = 0; i < nVar; i++) {
-            lowerBounds.append(IElement(RealType, 0.0));
-            upperBounds.append(IElement(RealType, 2.0*(i+1.0)));
+            lowerBounds.push_back(IElement(RealType, 0.0));
+            upperBounds.push_back(IElement(RealType, 2.0*(i+1.0)));
         }
         break;
 
     case 6:
         for(int i = 0; i < nVar; i++) {
-            lowerBounds.append(IElement(RealType, 0.0));
-            upperBounds.append(IElement(RealType, 1.0));
+            lowerBounds.push_back(IElement(RealType, 0.0));
+            upperBounds.push_back(IElement(RealType, 1.0));
         }
         break;
 
     default:
         for(int i = 0; i < nVar; i++) {
-            lowerBounds.append(IElement(RealType, 0.0));
-            upperBounds.append(IElement(RealType, 1.0));
+            lowerBounds.push_back(IElement(RealType, 0.0));
+            upperBounds.push_back(IElement(RealType, 1.0));
         }
         break;
     }

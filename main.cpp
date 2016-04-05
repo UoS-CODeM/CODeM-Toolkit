@@ -1,5 +1,6 @@
-#include <iostream>
+#include <codemglobal.h>
 
+#include <iostream>
 using namespace std;
 
 int main()

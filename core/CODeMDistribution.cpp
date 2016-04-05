@@ -15,28 +15,30 @@
 ****************************************************************************/
 #include <core/CODeMDistribution.h>
 #include <core/CODeMOperators.h>
-#include <core/Distributions/IDistribution.h>
-#include <tigon/Utils/NormalisationUtils.h>
+#include <core/RandomDistributions.h>
+//#include <tigon/Utils/NormalisationUtils.h>
+
+using std::vector;
 
 namespace CODeM {
 
-CODeMDistribution::CODeMDistribution(IDistribution* d,
-                                     const vector<double> oVec,
-                                     double lowerBound,
-                                     double upperBound,
-                                     const vector<double> ideal,
-                                     const vector<double> antiIdeal,
-                                     double dirPertRad,
-                                     double dirPertNorm)
-    : m_lb(lowerBound),
+CODeMDistribution::CODeMDistribution(IDistribution*        d,
+                                     const vector<double>& oVec,
+                                     double                lowerBound,
+                                     double                upperBound,
+                                     const vector<double>& ideal,
+                                     const vector<double>& antiIdeal,
+                                     double                dirPertRad,
+                                     double                dirPertNorm)
+    : m_distribution(d),
+      m_directionPertRadius(dirPertRad >= 0.0 ? dirPertRad : 0.0),
+      m_ideal(ideal),
+      m_antiIdeal(antiIdeal),
+      m_lb(lowerBound),
       m_ub(upperBound),
-      m_pNorm(1)
-{
-    defineDistribution(d);
-    defineIdealAndAntiIdeal(ideal, antiIdeal);
+      m_pNorm(dirPertNorm > 0.0 ? dirPertNorm : 1.0)
+{    
     defineDirection(oVec);
-    defineDirectionPertRadius(dirPertRad);
-    definePerturbationNorm(dirPertNorm);
 }
 
 CODeMDistribution::~CODeMDistribution()
@@ -56,7 +58,7 @@ vector<double> CODeMDistribution::sampleDistribution()
 
     // scale the 2-norm direction vector
     vector<double> samp = m_direction;
-    scale(samp,sFactor);
+    scale(samp, sFactor);
 
     samp = directionPerturbation(samp, m_directionPertRadius, m_pNorm);
 
@@ -65,36 +67,11 @@ vector<double> CODeMDistribution::sampleDistribution()
     return samp;
 }
 
-void CODeMDistribution::defineDirectionPertRadius(double r)
-{
-    if(r >= 0.0) {
-        m_directionPertRadius = r;
-    }
-}
-
-void CODeMDistribution::definePerturbationNorm(double p)
-{
-    if(p > 0.0) {
-        m_pNorm = p;
-    }
-}
-
 void CODeMDistribution::defineDirection(const vector<double> oVec)
 {
     m_direction = oVec;
     normaliseToUnitBox(m_direction, m_ideal, m_antiIdeal);
     toUnitVec(m_direction);
-}
-
-void CODeMDistribution::defineIdealAndAntiIdeal(const vector<double> ideal,
-                                                const vector<double> antiIdeal)
-{
-    m_ideal = ideal;
-    m_antiIdeal = antiIdeal;
-}
-void CODeMDistribution::defineDistribution(IDistribution* d)
-{
-    m_distribution = d;
 }
 
 } // namespace CODeM

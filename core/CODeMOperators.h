@@ -16,8 +16,7 @@
 #ifndef CODEMOPERATORS_H
 #define CODEMOPERATORS_H
 
-
-
+#include <codemglobal.h>
 
 #include <vector>
 
@@ -30,9 +29,8 @@ double skewedDecrease(double val, double alpha);
 double lowOnValue(double val, double zeroVal, double width);
 double highOnValue(double val, double oneVal, double width);
 
-vector<double> directionPerturbation(
-        const vector<double> oVec, double maxRadius, double pNorm=2);
-
+std::vector<double> directionPerturbation(const std::vector<double> oVec,
+                                          double maxRadius, double pNorm=2);
 
 } // namespace CODeM
 

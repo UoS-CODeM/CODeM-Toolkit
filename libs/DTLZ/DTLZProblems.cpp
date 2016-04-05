@@ -14,9 +14,12 @@
 **
 ****************************************************************************/
 
-#include <tigon/Representation/Functions/DTLZ/DTLZProblems.h>
+#include <libs/DTLZ/DTLZProblems.h>
+#include <codemglobal.h>
 
 #include <QtMath>
+
+using std::vector;
 
 namespace DTLZ {
 
@@ -26,7 +29,7 @@ vector<double > DTLZ1(const vector<double >& x, const int M)
     int k = n - M + 1;
     double g = 0.0;
     for (int i = n - k; i < n; i++) {
-        g += (x[i] - 0.5)*(x[i] - 0.5) - qCos(20.0 * pi<double>() * (x[i] - 0.5));
+        g += (x[i] - 0.5)*(x[i] - 0.5) - qCos(20.0 * CODeM::PI * (x[i] - 0.5));
     }
     // This is the DTLZ paper version, but the huge scaling has no added value
 //    g = 100.0 * ((double)k + g);

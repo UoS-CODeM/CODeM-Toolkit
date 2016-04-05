@@ -16,8 +16,7 @@
 #ifndef UNCERTAINTYKERNEL_H
 #define UNCERTAINTYKERNEL_H
 
-
-
+#include <codemglobal.h>
 
 #include <vector>
 class BoxConstraintsData;

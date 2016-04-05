@@ -16,7 +16,12 @@
 #ifndef LINEARINTERPOLATOR_H
 #define LINEARINTERPOLATOR_H
 
+#include <codemglobal.h>
+
 #include <vector>
+
+namespace CODeM {
+namespace Utils {
 
 class LinearInterpolator
 {
@@ -35,14 +40,16 @@ protected:
     int hunt(const double x);
     virtual bool checkConfiguration();
 
-    int n;
-    int mm;
-    int jsav;
-    int cor;
-    int dj;
+    int  n;
+    int  mm;
+    int  jsav;
+    int  cor;
+    int  dj;
     bool m_isConfigured;
     std::vector<double> xx;
     std::vector<double> yy;
 };
 
+} // namespace Utils
+} // namespace CODeM
 #endif // LINEARINTERPOLATOR_H

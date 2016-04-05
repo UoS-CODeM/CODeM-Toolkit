@@ -16,8 +16,7 @@
 #ifndef CODEMPROBLEMS_H
 #define CODEMPROBLEMS_H
 
-
-
+#include <codemglobal.h>
 
 #include <vector>
 

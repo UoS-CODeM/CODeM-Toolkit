@@ -19,7 +19,9 @@
 #include <tigon/Representation/Constraints/BoxConstraintsData.h>
 #include <tigon/Utils/NormalisationUtils.h>
 #include <tigon/Utils/TigonUtils.h>
-#include <qmath.h>
+#include <math.h>
+
+using std::vector;
 
 namespace CODeM {
 
@@ -144,7 +146,7 @@ double UncertaintyKernel::symmetry()
     double symmetryVal = (1.0 - euclideanDist) /
             (1.0 - 1.0/sqrt(m_direction.size()));
 
-    return qPow(symmetryVal, 2.0);
+    return pow(symmetryVal, 2.0);
 }
 
 double UncertaintyKernel::oComponent(int idx) const

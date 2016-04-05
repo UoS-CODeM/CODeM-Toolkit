@@ -16,7 +16,6 @@
 #ifndef DTLZPROBLEMS_H
 #define DTLZPROBLEMS_H
 
-
 #include <vector>
 
 namespace DTLZ {

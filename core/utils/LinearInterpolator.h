@@ -16,21 +16,33 @@
 #ifndef LINEARINTERPOLATOR_H
 #define LINEARINTERPOLATOR_H
 
-
-#include <tigon/Utils/AbstractInterpolator.h>
-
-
-#include <QtMath>
 #include <vector>
 
-class LinearInterpolator : public AbstractInterpolator
+class LinearInterpolator
 {
 public:
-    LinearInterpolator(vector<double> xv, vector<double> yv);
+    LinearInterpolator(std::vector<double> xv, std::vector<double> yv);
     ~LinearInterpolator();
+
+    double interpolate(double xq);
+    std::vector<double> interpolateV(std::vector<double> xq);
+    virtual void defineXY(std::vector<double> x, std::vector<double> y);
+    bool isConfigured();
 
 protected:
     double baseInterpolate(int j, double x);
+    int locate(const double x);
+    int hunt(const double x);
+    virtual bool checkConfiguration();
+
+    int n;
+    int mm;
+    int jsav;
+    int cor;
+    int dj;
+    bool m_isConfigured;
+    std::vector<double> xx;
+    std::vector<double> yy;
 };
 
 #endif // LINEARINTERPOLATOR_H

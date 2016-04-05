@@ -13,7 +13,6 @@ SOURCES += main.cpp \
     core/CODeMOperators.cpp \
     core/CODeMProblems.cpp \
     core/UncertaintyKernel.cpp \
-    core/utils/AbstractInterpolator.cpp \
     core/utils/LinearInterpolator.cpp \
     libs/DTLZ/DTLZProblems.cpp \
     libs/WFG/ExampleProblems.cpp \
@@ -30,7 +29,6 @@ HEADERS += \
     core/CODeMOperators.h \
     core/CODeMProblems.h \
     core/UncertaintyKernel.h \
-    core/utils/AbstractInterpolator.h \
     core/utils/LinearInterpolator.h \
     libs/DTLZ/DTLZProblems.h \
     libs/WFG/ExampleProblems.h \

@@ -104,9 +104,7 @@ class PeakDistribution : public IDistribution
 {
 public:
     PeakDistribution();
-    PeakDistribution(const PeakDistribution& dist);
     PeakDistribution(double tendency, double locality);
-    PeakDistribution(vector<double> parameters);
     virtual ~PeakDistribution();
 
     void  defineTendencyAndLocality(double tendency, double locality);
@@ -115,8 +113,6 @@ public:
 
     void generateZ();
     void generatePDF();
-
-    std::vector<double> parameters();
 
 private:
     double m_tendency;

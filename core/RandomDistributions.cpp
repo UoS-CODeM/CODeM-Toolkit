@@ -85,11 +85,11 @@ void IDistribution::defineBoundaries(double lb, double ub)
 {
     if(lb >= ub) {
         if(lb == 0) {
-            ub = Tigon::DistMinInterval;
+            ub = DistMinInterval;
         } else if(lb > 0) {
-            ub = lb * (1 + Tigon::DistMinInterval);
+            ub = lb * (1 + DistMinInterval);
         } else {
-            lb = ub * (1 + Tigon::DistMinInterval);
+            lb = ub * (1 + DistMinInterval);
         }
     }
 
@@ -165,7 +165,7 @@ void IDistribution::generateEquallySpacedZ()
 {
     m_nSamples = (int)((m_ub-m_lb)/m_dz) + 1;
     m_z.resize(m_nSamples);
-    double zz=m_lb;
+    double zz = m_lb;
     for(int i=0; i<m_z.size()-1; i++) {
         m_z[i] = zz;
         zz += m_dz;
@@ -191,34 +191,11 @@ UniformDistribution::UniformDistribution()
     defineResolution(m_ub-m_lb);
 }
 
-UniformDistribution::UniformDistribution(const UniformDistribution& dist)
-    : IDistribution(dist)
-{
-    m_uniDist = new boost::math::uniform_distribution<double>(m_lb, m_ub);
-}
-
 UniformDistribution::UniformDistribution(double lb, double ub)
 {
     m_uniDist = 0;
     defineBoundaries(lb, ub);
     defineResolution(m_ub-m_lb);
-}
-
-UniformDistribution::UniformDistribution(vector<double> parameters)
-{
-    m_uniDist = 0;
-    double lb = 0.0;
-    double ub = 1.0;
-    if(parameters.size() > 0) {
-        lb = parameters[0];
-        if((parameters.size() > 1) && (parameters[1] > lb)) {
-            ub = parameters[1];
-        } else {
-            ub = lb + Tigon::DistMinInterval;
-        }
-    }
-    defineBoundaries(lb, ub);
-    defineResolution((m_ub-m_lb)/(Tigon::DistNSamples-1));
 }
 
 UniformDistribution::~UniformDistribution()
@@ -231,11 +208,11 @@ void UniformDistribution::defineBoundaries(double lb, double ub)
 {
     if(lb >= ub) {
         if(lb == 0) {
-            ub = Tigon::DistMinInterval;
+            ub = DistMinInterval;
         } else if(lb > 0) {
-            ub = lb * (1 + Tigon::DistMinInterval);
+            ub = lb * (1 + DistMinInterval);
         } else {
-            lb = ub * (1 + Tigon::DistMinInterval);
+            lb = ub * (1 + DistMinInterval);
         }
     }
 
@@ -245,10 +222,7 @@ void UniformDistribution::defineBoundaries(double lb, double ub)
         delete m_uniDist;
         m_uniDist = 0;
     }
-
-    m_uniDist = new boost::math::uniform_distribution<double>(m_lb, m_ub);
 }
-
 
 double UniformDistribution::sample()
 {
@@ -281,7 +255,7 @@ vector<double> UniformDistribution::parameters()
 /// LINEAR DISTRIBUTION
 LinearDistribution::LinearDistribution()
 {
-    defineResolution((m_ub-m_lb)/(Tigon::DistNSamples-1));
+    defineResolution((m_ub-m_lb)/2.0);
     m_increase = true;
 }
 
@@ -294,7 +268,7 @@ LinearDistribution::LinearDistribution(const LinearDistribution& dist)
 LinearDistribution::LinearDistribution(double lb, double ub)
 {
     defineBoundaries(lb, ub);
-    defineResolution((m_ub-m_lb)/(Tigon::DistNSamples-1));
+    defineResolution((m_ub-m_lb)/(DistNSamples-1));
     m_increase = true;
 }
 
@@ -311,7 +285,7 @@ LinearDistribution::LinearDistribution(vector<double> parameters)
                 m_increase =  false;
             }
         } else {
-            ub = lb + Tigon::DistMinInterval;
+            ub = lb + DistMinInterval;
         }
     }
     defineBoundaries(lb, ub);
@@ -414,7 +388,7 @@ void PeakDistribution::defineTendencyAndLocality(double tendency, double localit
     m_locality = locality;
 
     //TODO: define high resolution at the peak and low at the rest
-    defineResolution(1.0/(m_locality+0.1)/(Tigon::DistNSamples-1));
+    defineResolution(1.0/(m_locality+0.1)/(DistNSamples-1));
 }
 
 double PeakDistribution::tendency() const

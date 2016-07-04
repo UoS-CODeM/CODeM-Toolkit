@@ -14,19 +14,17 @@
 **
 ****************************************************************************/
 #include <core/UncertaintyKernel.h>
-#include <tigon/Representation/Mappings/IMapping.h>
-#include <tigon/Representation/Elements/IElement.h>
-#include <tigon/Representation/Constraints/BoxConstraintsData.h>
-#include <tigon/Utils/NormalisationUtils.h>
-#include <tigon/Utils/TigonUtils.h>
+//#include <tigon/Representation/Constraints/BoxConstraintsData.h>
+//#include <tigon/Utils/NormalisationUtils.h>
+//#include <tigon/Utils/TigonUtils.h>
 #include <math.h>
 
 using std::vector;
 
 namespace CODeM {
 
-UncertaintyKernel::UncertaintyKernel(vector<double> inputs,
-                                     vector<double> outputs,
+UncertaintyKernel::UncertaintyKernel(const vector<double> &inputs,
+                                     const vector<double> &outputs,
                                      BoxConstraintsData* box)
 {
     m_inputs  = inputs;
@@ -38,8 +36,8 @@ UncertaintyKernel::UncertaintyKernel(vector<double> inputs,
     defineDirectedObjectiveBoundaries();
 }
 
-UncertaintyKernel::UncertaintyKernel(vector<double> inputs,
-                                     vector<double> outputs,
+UncertaintyKernel::UncertaintyKernel(const vector<double> &inputs,
+                                     const vector<double> &outputs,
                                      BoxConstraintsData* box,
                                      double lb,
                                      double ub)
@@ -53,11 +51,11 @@ UncertaintyKernel::UncertaintyKernel(vector<double> inputs,
     defineDirectedObjectiveBoundaries(lb, ub);
 }
 
-UncertaintyKernel::UncertaintyKernel(vector<double> inputs,
-                                     vector<double> outputs,
+UncertaintyKernel::UncertaintyKernel(const vector<double> &inputs,
+                                     const vector<double> &outputs,
                                      BoxConstraintsData* box,
-                                     vector<double> ideal,
-                                     vector<double> antiIdeal)
+                                     const vector<double> &ideal,
+                                     const vector<double> &antiIdeal)
 {
     m_inputs  = inputs;
     m_outputs = outputs;
@@ -70,13 +68,13 @@ UncertaintyKernel::UncertaintyKernel(vector<double> inputs,
     defineDirectedObjectiveBoundaries();
 }
 
-UncertaintyKernel::UncertaintyKernel(vector<double> inputs,
-                                     vector<double> outputs,
+UncertaintyKernel::UncertaintyKernel(const vector<double> &inputs,
+                                     const vector<double> &outputs,
                                      BoxConstraintsData* box,
                                      double lb,
                                      double ub,
-                                     vector<double> ideal,
-                                     vector<double> antiIdeal)
+                                     const vector<double> &ideal,
+                                     const vector<double> &antiIdeal)
 {
     m_inputs  = inputs;
     m_outputs = outputs;
@@ -88,11 +86,11 @@ UncertaintyKernel::UncertaintyKernel(vector<double> inputs,
     defineDirectedObjectiveBoundaries(lb, ub);
 }
 
-UncertaintyKernel::UncertaintyKernel(vector<double> outputs,
+UncertaintyKernel::UncertaintyKernel(const vector<double> &outputs,
                                      double lb,
                                      double ub,
-                                     vector<double> ideal,
-                                     vector<double> antiIdeal)
+                                     const vector<double> &ideal,
+                                     const vector<double> &antiIdeal)
 {
     m_outputs = outputs;
     defineIdealAndAntiIdeal(vector<double>(outputs.size(), 0.0),
@@ -190,8 +188,8 @@ void UncertaintyKernel::defineDirectedObjectiveBoundaries()
     m_ub = directedBoxedIntervalLength(m_direction);
 }
 
-void UncertaintyKernel::defineIdealAndAntiIdeal(vector<double> ideal,
-                                           vector<double> antiIdeal)
+void UncertaintyKernel::defineIdealAndAntiIdeal(const vector<double> &ideal,
+                                                const vector<double> &antiIdeal)
 {
     if(ideal.size() == antiIdeal.size()) {
         for(int i=0; i<ideal.size(); i++) {

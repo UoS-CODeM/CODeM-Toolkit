@@ -17,7 +17,6 @@
 #define CODEMDISTRIBUTION_H
 
 #include <codemglobal.h>
-
 #include <vector>
 
 
@@ -44,7 +43,7 @@ public:
 
 private:
     // 2-norm direction
-    void defineDirection(const std::vector<double> oVec);
+    void defineDirection(const std::vector<double> &oVec);
 
     IDistribution*       m_distribution;
     double               m_directionPertRadius;

@@ -67,7 +67,7 @@ vector<double> CODeMDistribution::sampleDistribution()
     return samp;
 }
 
-void CODeMDistribution::defineDirection(const vector<double> oVec)
+void CODeMDistribution::defineDirection(const vector<double> &oVec)
 {
     m_direction = oVec;
     normaliseToUnitBox(m_direction, m_ideal, m_antiIdeal);

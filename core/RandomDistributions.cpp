@@ -16,10 +16,13 @@
 #include <core/RandomDistributions.h>
 #include <core/utils/LinearInterpolator.h>
 #include <random>
+#include <complex>
+#include <math.h>
+#include <algorithm>
 
 
 using CODeM::Utils::LinearInterpolator;
-using std::vector;
+using namespace std;
 
 namespace CODeM {
 
@@ -417,14 +420,14 @@ void PeakDistribution::generatePDF()
     double shift = PI * m_tendency;
     double N = DistPeakMinN + m_locality
             * (DistPeakMaxN - DistPeakMinN);
-    vector<qcomplex> psiN(m_nSamples,qcomplex(0,0));
-    double nMax = qMax(3*N, DistPeakMinNBasisFunc);
-    nMax = qMin(nMax, DistPeakMaxNBasisFunc);
-    for(double n=1.0; n<=nMax; n++) {
-        double cNn = sqrt( (qPow(N, n) * exp(-N) / boost::math::factorial<double>(n)));
+    vector<complex> psiN(m_nSamples, complex(0,0));
+    double nMax = max(3*N, DistPeakMinNBasisFunc);
+    nMax = min(nMax, DistPeakMaxNBasisFunc);
+    for(int n=1; n<=nMax; n++) {
+        double cNn = sqrt( (pow(N, n) * exp(-N) / tgamma(n+1)));
         vector<double> psi = eigenFunction(n);
         for(int i=0; i<m_nSamples; i++) {
-            qcomplex j(0, 1);
+            complex j(0, 1);
             psiN[i] += cNn * exp(-j*shift*(n+0.5)) * psi[i];
         }
     }
@@ -444,7 +447,7 @@ vector<double> PeakDistribution::parameters()
 vector<double> PeakDistribution::eigenFunction(int n)
 {
     double Lz = m_ub - m_lb;
-    double An = qPow(2.0/Lz, 0.5);
+    double An = pow(2.0/Lz, 0.5);
 
     vector<double> psi(m_nSamples, 0);
     for(int i=1; i<m_nSamples-1; i++) {

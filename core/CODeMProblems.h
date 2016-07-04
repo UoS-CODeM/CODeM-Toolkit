@@ -19,57 +19,38 @@
 #include <codemglobal.h>
 
 #include <vector>
+using std::vector;
 
 namespace CODeM {
 
-vector<double>           CODeM1(vector<double> iVec,
-                                                   int k, int nObj);
-vector<vector<double> > CODeM1(vector<double> iVec,
-                                                   int k, int nObj, int nSamp);
-vector<vector<double> > CODeM1Perturb(vector<double> oVec,
-                                                          int nSamp = 1);
+vector<double>          CODeM1(const vector<double> &iVec, int k, int nObj);
+vector<vector<double> > CODeM1(const vector<double> &iVec, int k, int nObj, int nSamp);
+vector<vector<double> > CODeM1Perturb(const vector<double> &oVec, int nSamp = 1);
 
-vector<double>           CODeM2(vector<double> iVec,
-                                                   int k, int nObj);
-vector<vector<double> > CODeM2(vector<double> iVec,
-                                                   int k, int nObj, int nSamp);
-vector<vector<double> > CODeM2Perturb(vector<double> oVec,
-                                                          int nSamp = 1);
+vector<double>          CODeM2(const vector<double> &iVec, int k, int nObj);
+vector<vector<double> > CODeM2(const vector<double> &iVec, int k, int nObj, int nSamp);
+vector<vector<double> > CODeM2Perturb(const vector<double> &oVec, int nSamp = 1);
 
-vector<double>           CODeM3(vector<double> iVec,
-                                                   int k, int nObj);
-vector<vector<double> > CODeM3(vector<double> iVec,
-                                                   int k, int nObj, int nSamp);
-vector<vector<double> > CODeM3Perturb(vector<double> oVec,
-                                                          int nSamp = 1);
+vector<double>          CODeM3(const vector<double> &iVec, int k, int nObj);
+vector<vector<double> > CODeM3(const vector<double> &iVec, int k, int nObj, int nSamp);
+vector<vector<double> > CODeM3Perturb(const vector<double> &oVec, int nSamp = 1);
 
-vector<double>           CODeM4(vector<double> iVec,
-                                                   int k, int nObj);
-vector<vector<double> > CODeM4(vector<double> iVec,
-                                                   int k, int nObj, int nSamp);
-vector<vector<double> > CODeM4Perturb(vector<double> oVec,
-                                                          int nSamp = 1);
+vector<double>          CODeM4(const vector<double> &iVec, int k, int nObj);
+vector<vector<double> > CODeM4(const vector<double> &iVec, int k, int nObj, int nSamp);
+vector<vector<double> > CODeM4Perturb(const vector<double> &oVec, int nSamp = 1);
 
 // CODeM5Perturb must have both decision and objective vectors defined
-vector<double>           CODeM5(vector<double> iVec,
-                                                   int k, int nObj);
-vector<vector<double> > CODeM5(vector<double> iVec,
-                                                   int k, int nObj, int nSamp);
-vector<vector<double> > CODeM5Perturb(vector<double> iVec,
-                                                          vector<double> oVec,
-                                                          int nSamp = 1);
+vector<double>          CODeM5(const vector<double> &iVec, int k, int nObj);
+vector<vector<double> > CODeM5(const vector<double> &iVec, int k, int nObj, int nSamp);
+vector<vector<double> > CODeM5Perturb(const vector<double> &iVec,
+                                      const vector<double> &oVec, int nSamp = 1);
 
-vector<double>           CODeM6(vector<double> iVec,
-                                                   int nObj);
-vector<vector<double> > CODeM6(vector<double> iVec,
-                                                   int nObj, int nSamp);
-vector<vector<double> > CODeM6Perturb(vector<double> iVec,
-                                                          vector<double> oVec,
-                                                          int nSamp = 1);
+vector<double>          CODeM6(const vector<double> &iVec, int nObj);
+vector<vector<double> > CODeM6(const vector<double> &iVec, int nObj, int nSamp);
+vector<vector<double> > CODeM6Perturb(const vector<double> &iVec,
+                                      const vector<double> &oVec, int nSamp = 1);
 
-vector<double> deterministicOVec(int prob,
-                                                    vector<double> iVec,
-                                                    int nObj, int k=0);
+vector<double> deterministicOVec(int prob, const vector<double> &iVec, int nObj, int k=0);
 
 BoxConstraintsData* createBoxConstraints(int prob, int nVar);
 } // namespace CODeM

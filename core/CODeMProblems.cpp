@@ -32,7 +32,7 @@ using namespace WFGT::Toolkit::Examples::Problems;
 
 namespace CODeM {
 
-vector<double> CODeM1(vector<double> iVec, int k, int nObj)
+vector<double> CODeM1(const vector<double> &iVec, int k, int nObj)
 
 {
     // Evaluate the decision vector
@@ -42,7 +42,7 @@ vector<double> CODeM1(vector<double> iVec, int k, int nObj)
     return CODeM1Perturb(oVec)[0];
 }
 
-vector<vector<double> > CODeM1(vector<double> iVec,
+vector<vector<double> > CODeM1(const vector<double> &iVec,
                                 int k, int nObj, int nSamp)
 {
     // Evaluate the decision vector
@@ -52,7 +52,7 @@ vector<vector<double> > CODeM1(vector<double> iVec,
     return CODeM1Perturb(oVec, nSamp);
 }
 
-vector<vector<double> > CODeM1Perturb(vector<double> oVec, int nSamp)
+vector<vector<double> > CODeM1Perturb(const vector<double> &oVec, int nSamp)
 {
     // Set the uncertainty kernel
     vector<double> ideal(oVec.size(), 0);
@@ -89,7 +89,7 @@ vector<vector<double> > CODeM1Perturb(vector<double> oVec, int nSamp)
     return samples;
 }
 
-vector<double> CODeM2(vector<double> iVec, int k, int nObj)
+vector<double> CODeM2(const vector<double> &iVec, int k, int nObj)
 {
     // Evaluate the decision vector
     vector<double> oVec =
@@ -98,8 +98,7 @@ vector<double> CODeM2(vector<double> iVec, int k, int nObj)
     return CODeM2Perturb(oVec)[0];
 }
 
-vector<vector<double> > CODeM2(vector<double> iVec,
-                                int k, int nObj, int nSamp)
+vector<vector<double> > CODeM2(const vector<double> &iVec, int k, int nObj, int nSamp)
 {
     // Evaluate the decision vector
     vector<double> oVec =
@@ -108,7 +107,7 @@ vector<vector<double> > CODeM2(vector<double> iVec,
     return CODeM2Perturb(oVec, nSamp);
 }
 
-vector<vector<double> > CODeM2Perturb(vector<double> oVec, int nSamp)
+vector<vector<double> > CODeM2Perturb(const vector<double> &oVec, int nSamp)
 {
     // Set the uncertainty kernel
     vector<double> ideal(oVec.size(), 0.0);
@@ -145,7 +144,7 @@ vector<vector<double> > CODeM2Perturb(vector<double> oVec, int nSamp)
     return samples;
 }
 
-vector<double> CODeM3(vector<double> iVec, int k, int nObj)
+vector<double> CODeM3(const vector<double> &iVec, int k, int nObj)
 {
     // Evaluate the decision vector
     vector<double> oVec =
@@ -154,8 +153,7 @@ vector<double> CODeM3(vector<double> iVec, int k, int nObj)
     return CODeM3Perturb(oVec)[0];
 }
 
-vector<vector<double> > CODeM3(vector<double> iVec,
-                                int k, int nObj, int nSamp)
+vector<vector<double> > CODeM3(const vector<double> &iVec, int k, int nObj, int nSamp)
 {
     // Evaluate the decision vector
     vector<double> oVec =
@@ -164,7 +162,7 @@ vector<vector<double> > CODeM3(vector<double> iVec,
     return CODeM3Perturb(oVec, nSamp);
 }
 
-vector<vector<double> > CODeM3Perturb(vector<double> oVec, int nSamp)
+vector<vector<double> > CODeM3Perturb(const vector<double> &oVec, int nSamp)
 {
     // Set the uncertainty kernel
     vector<double> ideal(oVec.size(), 0);
@@ -209,7 +207,7 @@ vector<vector<double> > CODeM3Perturb(vector<double> oVec, int nSamp)
     return samples;
 }
 
-vector<double> CODeM4(vector<double> iVec, int k, int nObj)
+vector<double> CODeM4(const vector<double> &iVec, int k, int nObj)
 {
     // Evaluate the decision vector
     vector<double> oVec =
@@ -218,8 +216,7 @@ vector<double> CODeM4(vector<double> iVec, int k, int nObj)
     return CODeM4Perturb(oVec)[0];
 }
 
-vector<vector<double> > CODeM4(vector<double> iVec,
-                                int k, int nObj, int nSamp)
+vector<vector<double> > CODeM4(const vector<double> &iVec, int k, int nObj, int nSamp)
 {
     // Evaluate the decision vector
     vector<double> oVec =
@@ -228,7 +225,7 @@ vector<vector<double> > CODeM4(vector<double> iVec,
     return CODeM4Perturb(oVec, nSamp);
 }
 
-vector<vector<double> > CODeM4Perturb(vector<double> oVec, int nSamp)
+vector<vector<double> > CODeM4Perturb(const vector<double> &oVec, int nSamp)
 {
     // Set the uncertainty kernel
     vector<double> ideal(oVec.size(), 0.0);
@@ -265,7 +262,7 @@ vector<vector<double> > CODeM4Perturb(vector<double> oVec, int nSamp)
     return samples;
 }
 
-vector<double> CODeM5(vector<double> iVec, int k, int nObj)
+vector<double> CODeM5(const vector<double> &iVec, int k, int nObj)
 {
     // Evaluate the decision vector
     vector<double> oVec =
@@ -274,8 +271,7 @@ vector<double> CODeM5(vector<double> iVec, int k, int nObj)
     return CODeM5Perturb(iVec, oVec)[0];
 }
 
-vector<vector<double> > CODeM5(vector<double> iVec,
-                                int k, int nObj, int nSamp)
+vector<vector<double> > CODeM5(const vector<double> &iVec, int k, int nObj, int nSamp)
 {
     // Evaluate the decision vector
     vector<double> oVec =
@@ -284,9 +280,8 @@ vector<vector<double> > CODeM5(vector<double> iVec,
     return CODeM5Perturb(iVec, oVec, nSamp);
 }
 
-vector<vector<double> > CODeM5Perturb(vector<double> iVec,
-                                       vector<double> oVec,
-                                       int nSamp)
+vector<vector<double> > CODeM5Perturb(const vector<double> &iVec,
+                                      const vector<double> &oVec, int nSamp)
 {
     // Set the uncertainty kernel
     vector<double> ideal(oVec.size(), 0.0);
@@ -326,7 +321,7 @@ vector<vector<double> > CODeM5Perturb(vector<double> iVec,
     return samples;
 }
 
-vector<double> CODeM6(vector<double> iVec, int nObj)
+vector<double> CODeM6(const vector<double> &iVec, int nObj)
 {
     // Evaluate the decision vector
     vector<double> oVec = DTLZ::DTLZ1(iVec, nObj);
@@ -334,7 +329,7 @@ vector<double> CODeM6(vector<double> iVec, int nObj)
     return CODeM6Perturb(iVec, oVec)[0];
 }
 
-vector<vector<double> > CODeM6(vector<double> iVec,
+vector<vector<double> > CODeM6(const vector<double> &iVec,
                                 int nObj, int nSamp)
 {
     // Evaluate the decision vector
@@ -343,7 +338,8 @@ vector<vector<double> > CODeM6(vector<double> iVec,
     return CODeM6Perturb(iVec, oVec, nSamp);
 }
 
-vector<vector<double> > CODeM6Perturb(vector<double> iVec, vector<double> oVec,
+vector<vector<double> > CODeM6Perturb(const vector<double> &iVec,
+                                      const vector<double> &oVec,
                                        int nSamp)
 {
     // Set the uncertainty kernel
@@ -388,7 +384,7 @@ vector<vector<double> > CODeM6Perturb(vector<double> iVec, vector<double> oVec,
     return samples;
 }
 
-vector<double> deterministicOVec(int prob, vector<double> iVec, int nObj, int k)
+vector<double> deterministicOVec(int prob, const vector<double> &iVec, int nObj, int k)
 {
     vector<double> oVec;
 

@@ -19,38 +19,42 @@
 #include <codemglobal.h>
 
 #include <vector>
-class BoxConstraintsData;
+using std::vector;
 
 namespace CODeM {
 
+namespace Utils {
+class BoxConstraintsData;
+}
+using namespace Utils;
 class UncertaintyKernel
 {
 public:
-    UncertaintyKernel(vector<double> inputs,
-                      vector<double> outputs,
+    UncertaintyKernel(const vector<double> &inputs,
+                      const vector<double> &outputs,
                       BoxConstraintsData* box);
-    UncertaintyKernel(vector<double> inputs,
-                      vector<double> outputs,
+    UncertaintyKernel(const vector<double> &inputs,
+                      const vector<double> &outputs,
                       BoxConstraintsData* box,
                       double lb,
                       double ub);
-    UncertaintyKernel(vector<double> inputs,
-                      vector<double> outputs,
+    UncertaintyKernel(const vector<double> &inputs,
+                      const vector<double> &outputs,
                       BoxConstraintsData* box,
-                      vector<double> ideal,
-                      vector<double> antiIdeal);
-    UncertaintyKernel(vector<double> inputs,
-                      vector<double> outputs,
+                      const vector<double> &ideal,
+                      const vector<double> &antiIdeal);
+    UncertaintyKernel(const vector<double> &inputs,
+                      const vector<double> &outputs,
                       BoxConstraintsData* box,
                       double lb,
                       double ub,
-                      vector<double> ideal,
-                      vector<double> antiIdeal);
-    UncertaintyKernel(vector<double> outputs,
+                      const vector<double> &ideal,
+                      const vector<double> &antiIdeal);
+    UncertaintyKernel(const vector<double> &outputs,
                       double lb,
                       double ub,
-                      vector<double> ideal,
-                      vector<double> antiIdeal);
+                      const vector<double> &ideal,
+                      const vector<double> &antiIdeal);
     ~UncertaintyKernel();
 
     double proximity();
@@ -61,23 +65,24 @@ public:
     vector<double> direction() const;
 
 private:
-    void defineIdealAndAntiIdeal(vector<double> ideal, vector<double> antiIdeal);
+    void defineIdealAndAntiIdeal(const vector<double> &ideal,
+                                 const vector<double> &antiIdeal);
     // use normalised 2-norm values in objective space
     void defineDirectedObjectiveBoundaries(double lb, double ub);
     // set the lb to 0 and the ub to the directed boxed interval length
     void defineDirectedObjectiveBoundaries();
 
     // The design and objective values of the IMapping are not normalised
-    vector<double>       m_inputs;
+    vector<double>      m_inputs;
     vector<double>      m_outputs;
-    BoxConstraintsData*  m_box;
-    vector<double>        m_ideal;
-    vector<double>    m_antiIdeal;
-    vector<double>    m_direction;
+    BoxConstraintsData* m_box;
+    vector<double>      m_ideal;
+    vector<double>      m_antiIdeal;
+    vector<double>      m_direction;
     double              m_distance;
     // normalised 2-norm values
-    double                    m_ub;
-    double                    m_lb;
+    double              m_ub;
+    double              m_lb;
 
     void calcDirectionAndDistance();
 };

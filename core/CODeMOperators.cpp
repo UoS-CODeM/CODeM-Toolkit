@@ -15,8 +15,8 @@
 ****************************************************************************/
 #include <core/CODeMOperators.h>
 #include <random>
-#include <tigon/Utils/NormalisationUtils.h>
-#include <qmath.h>
+#include <math.h>
+//#include <tigon/Utils/NormalisationUtils.h>
 
 namespace CODeM {
 
@@ -27,43 +27,42 @@ double linearDecrease(double val)
 
 double skewedIncrease(double val, double alpha)
 {
-    return (alpha<0) ? 1.0 : qPow(val, alpha);
+    return (alpha<0) ? 1.0 : pow(val, alpha);
 }
 
 double skewedDecrease(double val, double alpha)
 {
-    return (alpha<0) ? 0.0 : 1.0 - qPow(val, alpha);
+    return (alpha<0) ? 0.0 : 1.0 - pow(val, alpha);
 }
 
 double lowOnValue(double val, double zeroVal, double width)
 {
-    double ret = 4.0 / qPow(width, 2.0) * qPow(val-zeroVal , 2.0);
+    double ret = 4.0 / pow(width, 2.0) * pow(val-zeroVal , 2.0);
     return (ret>1.0) ? 1.0 : ret;
 }
 
 double highOnValue(double val, double oneVal, double width)
 {
-    double ret = 1.0 - 4.0 / qPow(width, 2.0) * qPow(val-oneVal, 2.0);
+    double ret = 1.0 - 4.0 / pow(width, 2.0) * pow(val-oneVal, 2.0);
     return (ret<0.0) ? 0.0 : ret;
 }
 
-vector<double> directionPerturbation(const vector<double> oVec,
+std::vector<double> directionPerturbation(const std::vector<double> &oVec,
                                      double maxRadius, double pNorm)
 {
     // project on the k-1 simplex
-    vector<double> newObjVec(oVec);
+    std::vector<double> newObjVec(oVec);
     toUnitVec(newObjVec, 1.0);
 
     // calculate the p-distance
-    vector<double> vec(oVec);
+    std::vector<double> vec(oVec);
     double dist = magnitudeAndDirectionP(vec, pNorm);
 
     // perturb within a sphere with r=maxRadius
     double s = 0.0;
     for(int i=0; i<newObjVec.size(); i++) {
-        double rd = randUni(2.0, -1.0) *
-                qSqrt(maxRadius*maxRadius - s);
-        s += qPow(rd, 2.0);
+        double rd = (randUni() * 2.0 -1.0) * sqrt(maxRadius*maxRadius - s);
+        s += pow(rd, 2.0);
         newObjVec[i] += rd;
     }
 

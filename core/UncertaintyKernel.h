@@ -30,29 +30,17 @@ using namespace Utils;
 class UncertaintyKernel
 {
 public:
-    UncertaintyKernel(const vector<double> &inputs,
-                      const vector<double> &outputs,
-                      BoxConstraintsData* box);
-    UncertaintyKernel(const vector<double> &inputs,
-                      const vector<double> &outputs,
-                      BoxConstraintsData* box,
-                      double lb,
-                      double ub);
-    UncertaintyKernel(const vector<double> &inputs,
-                      const vector<double> &outputs,
-                      BoxConstraintsData* box,
-                      const vector<double> &ideal,
-                      const vector<double> &antiIdeal);
-    UncertaintyKernel(const vector<double> &inputs,
-                      const vector<double> &outputs,
-                      BoxConstraintsData* box,
-                      double lb,
-                      double ub,
-                      const vector<double> &ideal,
-                      const vector<double> &antiIdeal);
     UncertaintyKernel(const vector<double> &outputs,
                       double lb,
                       double ub,
+                      const vector<double> &ideal,
+                      const vector<double> &antiIdeal);
+    UncertaintyKernel(const vector<double> &inputs,
+                      const vector<double> &outputs,
+                      double lb,
+                      double ub,
+                      const vector<double> &inputsLowerBounds,
+                      const vector<double> &inputsUpperBounds,
                       const vector<double> &ideal,
                       const vector<double> &antiIdeal);
     ~UncertaintyKernel();
@@ -67,6 +55,8 @@ public:
 private:
     void defineIdealAndAntiIdeal(const vector<double> &ideal,
                                  const vector<double> &antiIdeal);
+    void defineInputsBounds(const vector<double> &lowerBounds,
+                            const vector<double> &upperBounds);
     // use normalised 2-norm values in objective space
     void defineDirectedObjectiveBoundaries(double lb, double ub);
     // set the lb to 0 and the ub to the directed boxed interval length
@@ -75,14 +65,15 @@ private:
     // The design and objective values of the IMapping are not normalised
     vector<double>      m_inputs;
     vector<double>      m_outputs;
-    BoxConstraintsData* m_box;
     vector<double>      m_ideal;
     vector<double>      m_antiIdeal;
+    vector<double>      m_inLowerBounds;
+    vector<double>      m_inUpperBounds;
     vector<double>      m_direction;
     double              m_distance;
     // normalised 2-norm values
-    double              m_ub;
-    double              m_lb;
+    double              m_dirUpperBound;
+    double              m_dirLowerBound;
 
     void calcDirectionAndDistance();
 };

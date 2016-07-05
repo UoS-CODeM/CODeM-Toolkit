@@ -66,9 +66,9 @@ vector<double > DTLZ2(const vector<double >& x, const int M)
     for (j=(M-1); j >= 0; j--) {
         coss = 1.0;
         for (i=0; i<M-j-1; i++) {
-            coss *= cos(x[i]*pi<double>()/2.0) ;
+            coss *= cos(x[i]*CODeM::PI/2.0) ;
         }
-        sine = (j>0) ? ((j==M-1) ? sin(x[M-j-1]*pi<double>()/2.0) : sin(x[i]*pi<double>()/2.0)) : 1.0;
+        sine = (j>0) ? ((j==M-1) ? sin(x[M-j-1]*CODeM::PI/2.0) : sin(x[i]*CODeM::PI/2.0)) : 1.0;
         y[j] = (1.0+g) * coss * sine;
     }
 

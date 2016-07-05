@@ -36,8 +36,7 @@ vector<double> CODeM1(const vector<double> &iVec, int k, int nObj)
 
 {
     // Evaluate the decision vector
-    vector<double> oVec =
-            vector<double>::fromStdVector(WFG4(iVec.toStdVector(), k, nObj));
+    vector<double> oVec = WFG4(iVec, k, nObj);
 
     return CODeM1Perturb(oVec)[0];
 }
@@ -46,8 +45,7 @@ vector<vector<double> > CODeM1(const vector<double> &iVec,
                                 int k, int nObj, int nSamp)
 {
     // Evaluate the decision vector
-    vector<double> oVec =
-            vector<double>::fromStdVector(WFG4(iVec.toStdVector(), k, nObj));
+    vector<double> oVec = WFG4(iVec, k, nObj);
 
     return CODeM1Perturb(oVec, nSamp);
 }
@@ -92,8 +90,7 @@ vector<vector<double> > CODeM1Perturb(const vector<double> &oVec, int nSamp)
 vector<double> CODeM2(const vector<double> &iVec, int k, int nObj)
 {
     // Evaluate the decision vector
-    vector<double> oVec =
-            vector<double>::fromStdVector(WFG4(iVec.toStdVector(), k, nObj));
+    vector<double> oVec = WFG4(iVec, k, nObj);
 
     return CODeM2Perturb(oVec)[0];
 }
@@ -101,8 +98,7 @@ vector<double> CODeM2(const vector<double> &iVec, int k, int nObj)
 vector<vector<double> > CODeM2(const vector<double> &iVec, int k, int nObj, int nSamp)
 {
     // Evaluate the decision vector
-    vector<double> oVec =
-            vector<double>::fromStdVector(WFG4(iVec.toStdVector(), k, nObj));
+    vector<double> oVec = WFG4(iVec, k, nObj);
 
     return CODeM2Perturb(oVec, nSamp);
 }
@@ -147,8 +143,7 @@ vector<vector<double> > CODeM2Perturb(const vector<double> &oVec, int nSamp)
 vector<double> CODeM3(const vector<double> &iVec, int k, int nObj)
 {
     // Evaluate the decision vector
-    vector<double> oVec =
-            vector<double>::fromStdVector(WFG4(iVec.toStdVector(), k, nObj));
+    vector<double> oVec = WFG4(iVec, k, nObj);
 
     return CODeM3Perturb(oVec)[0];
 }
@@ -156,8 +151,7 @@ vector<double> CODeM3(const vector<double> &iVec, int k, int nObj)
 vector<vector<double> > CODeM3(const vector<double> &iVec, int k, int nObj, int nSamp)
 {
     // Evaluate the decision vector
-    vector<double> oVec =
-            vector<double>::fromStdVector(WFG4(iVec.toStdVector(), k, nObj));
+    vector<double> oVec = WFG4(iVec, k, nObj);
 
     return CODeM3Perturb(oVec, nSamp);
 }
@@ -210,8 +204,7 @@ vector<vector<double> > CODeM3Perturb(const vector<double> &oVec, int nSamp)
 vector<double> CODeM4(const vector<double> &iVec, int k, int nObj)
 {
     // Evaluate the decision vector
-    vector<double> oVec =
-            vector<double>::fromStdVector(WFG6(iVec.toStdVector(), k, nObj));
+    vector<double> oVec = WFG6(iVec, k, nObj);
 
     return CODeM4Perturb(oVec)[0];
 }
@@ -219,8 +212,7 @@ vector<double> CODeM4(const vector<double> &iVec, int k, int nObj)
 vector<vector<double> > CODeM4(const vector<double> &iVec, int k, int nObj, int nSamp)
 {
     // Evaluate the decision vector
-    vector<double> oVec =
-            vector<double>::fromStdVector(WFG6(iVec.toStdVector(), k, nObj));
+    vector<double> oVec = WFG6(iVec, k, nObj);
 
     return CODeM4Perturb(oVec, nSamp);
 }
@@ -265,8 +257,7 @@ vector<vector<double> > CODeM4Perturb(const vector<double> &oVec, int nSamp)
 vector<double> CODeM5(const vector<double> &iVec, int k, int nObj)
 {
     // Evaluate the decision vector
-    vector<double> oVec =
-            vector<double>::fromStdVector(WFG8(iVec.toStdVector(), k, nObj));
+    vector<double> oVec = WFG8(iVec, k, nObj);
 
     return CODeM5Perturb(iVec, oVec)[0];
 }
@@ -274,8 +265,7 @@ vector<double> CODeM5(const vector<double> &iVec, int k, int nObj)
 vector<vector<double> > CODeM5(const vector<double> &iVec, int k, int nObj, int nSamp)
 {
     // Evaluate the decision vector
-    vector<double> oVec =
-            vector<double>::fromStdVector(WFG8(iVec.toStdVector(), k, nObj));
+    vector<double> oVec = WFG8(iVec, k, nObj);
 
     return CODeM5Perturb(iVec, oVec, nSamp);
 }
@@ -390,15 +380,15 @@ vector<double> deterministicOVec(int prob, const vector<double> &iVec, int nObj,
 
     switch(prob) {
     case 1: case 2: case 3:
-        oVec = vector<double>::fromStdVector(WFG4(iVec.toStdVector(), k, nObj));
+        oVec = WFG4(iVec, k, nObj);
         break;
 
     case 4:
-        oVec = vector<double>::fromStdVector(WFG6(iVec.toStdVector(), k, nObj));
+        oVec = WFG6(iVec, k, nObj);
         break;
 
     case 5:
-        oVec = vector<double>::fromStdVector(WFG8(iVec.toStdVector(), k, nObj));
+        oVec = WFG8(iVec, k, nObj);
         break;
 
     case 6:

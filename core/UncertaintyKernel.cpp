@@ -14,12 +14,11 @@
 **
 ****************************************************************************/
 #include <core/UncertaintyKernel.h>
-//#include <tigon/Representation/Constraints/BoxConstraintsData.h>
-//#include <tigon/Utils/NormalisationUtils.h>
-//#include <tigon/Utils/TigonUtils.h>
+#include <core/utils/ScalingUtils.h>
 #include <math.h>
 
 using std::vector;
+using namespace CODeM::Utils;
 
 namespace CODeM {
 
@@ -89,7 +88,7 @@ void UncertaintyKernel::calcDirectionAndDistance()
     normaliseToUnitBox(m_direction, m_ideal, m_antiIdeal);
 
     // m_distance in 2-norm
-    m_distance = magnitudeAndDirectionP(m_direction, 2.0);
+    m_distance = magnitudeP(m_direction, 2.0);
 
     // normalise the direction vector to the k-1 simplex
     toUnitVec(m_direction, 1.0);
@@ -122,7 +121,7 @@ double UncertaintyKernel::symmetry()
 
 double UncertaintyKernel::oComponent(int idx) const
 {
-    if(!isInRange(idx, m_outputs.size())) {
+    if((idx < 0) || (idx >= m_outputs.size())) {
         return -1.0;
     }
     double oc = (m_outputs[idx]-m_ideal[idx]) / (m_antiIdeal[idx]-m_ideal[idx]);
@@ -131,11 +130,11 @@ double UncertaintyKernel::oComponent(int idx) const
 
 double UncertaintyKernel::dComponent(int idx) const
 {
-    if(!isInRange(idx, m_inputs.size())) {
+    if((idx < 0) || (idx >= m_inputs.size())) {
         return -1.0;
     }
-    double lb = m_box->lowerBounds().at(idx).value<double>();
-    double ub = m_box->upperBounds().at(idx).value<double>();
+    double lb = m_inLowerBounds[idx];
+    double ub = m_inUpperBounds[idx];
     double d  = m_inputs.at(idx);
 
     double dRatio = (d-lb)/(ub-lb);

@@ -14,9 +14,11 @@
 **
 ****************************************************************************/
 #include <core/CODeMOperators.h>
+#include <core/utils/ScalingUtils.h>
 #include <random>
 #include <math.h>
-//#include <tigon/Utils/NormalisationUtils.h>
+
+using namespace CODeM::Utils;
 
 namespace CODeM {
 
@@ -55,8 +57,7 @@ std::vector<double> directionPerturbation(const std::vector<double> &oVec,
     toUnitVec(newObjVec, 1.0);
 
     // calculate the p-distance
-    std::vector<double> vec(oVec);
-    double dist = magnitudeAndDirectionP(vec, pNorm);
+    double dist = magnitudeP(oVec, pNorm);
 
     // perturb within a sphere with r=maxRadius
     double s = 0.0;

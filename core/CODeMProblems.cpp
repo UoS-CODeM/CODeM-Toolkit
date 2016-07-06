@@ -18,17 +18,14 @@
 #include <core/CODeMOperators.h>
 #include <core/CODeMDistribution.h>
 #include <core/RandomDistributions.h>
-
-//#include <tigon/Representation/Mappings/IMapping.h>
-//#include <tigon/Representation/Elements/IElement.h>
-//#include <tigon/Representation/Constraints/BoxConstraintsData.h>
-//#include <tigon/Utils/NormalisationUtils.h>
+#include <core/utils/ScalingUtils.h>
 
 #include <libs/WFG/ExampleProblems.h>
 #include <libs/DTLZ/DTLZProblems.h>
 
 using std::vector;
 using namespace WFGT::Toolkit::Examples::Problems;
+using namespace CODeM::Utils;
 
 namespace CODeM {
 
@@ -74,8 +71,7 @@ vector<vector<double> > CODeM1Perturb(const vector<double> &oVec, int nSamp)
     dirPertRad = 0.0;
 
     // Create the CODeM distribution
-    PeakDistribution* d = PeakDistribution*(
-                new PeakDistribution(peakTend, peakLoc));
+    PeakDistribution* d = new PeakDistribution(peakTend, peakLoc);
 
     CODeMDistribution cd(d, oVec, lb, ub, ideal, antiIdeal, dirPertRad, distanceNorm);
 
@@ -127,8 +123,7 @@ vector<vector<double> > CODeM2Perturb(const vector<double> &oVec, int nSamp)
     dirPertRad = 0.1 * uk.symmetry();
 
     // Create the CODeM distribution
-    UniformDistribution* d = UniformDistribution*(
-                new UniformDistribution(uniLB, uniUB));
+    UniformDistribution* d =new UniformDistribution(uniLB, uniUB);
 
     CODeMDistribution cd(d, oVec, lb, ub, ideal, antiIdeal, dirPertRad, distanceNorm);
 
@@ -185,11 +180,9 @@ vector<vector<double> > CODeM3Perturb(const vector<double> &oVec, int nSamp)
     dirPertRad = 0.04*lowOnValue(uk.oComponent(0), 0.45, 0.3);
 
     // Create the CODeM distribution
-    MergedDistribution* d = MergedDistribution*::create();
-    d->push_backDistribution(UniformDistribution*(
-                              new UniformDistribution(uniLB, uniUB)), 0.5);
-    d->push_backDistribution(PeakDistribution*(
-                              new PeakDistribution(peakTend, peakLoc)), 0.5);
+    MergedDistribution* d = new MergedDistribution;
+    d->appendDistribution(new UniformDistribution(uniLB, uniUB), 0.5);
+    d->appendDistribution(new PeakDistribution(peakTend, peakLoc), 0.5);
 
     CODeMDistribution cd(d, oVec, lb, ub, ideal, antiIdeal, dirPertRad, distanceNorm);
 
@@ -241,8 +234,7 @@ vector<vector<double> > CODeM4Perturb(const vector<double> &oVec, int nSamp)
     dirPertRad = 0.2*linearDecrease(uk.symmetry())+0.01;
 
     // Create the CODeM distribution
-    PeakDistribution* d = PeakDistribution*(
-                new PeakDistribution(peakTend, peakLoc));
+    PeakDistribution* d = new PeakDistribution(peakTend, peakLoc);
 
     CODeMDistribution cd(d, oVec, lb, ub, ideal, antiIdeal, dirPertRad, distanceNorm);
 
@@ -282,9 +274,12 @@ vector<vector<double> > CODeM5Perturb(const vector<double> &iVec,
     double lb = 2.0/4.0;
     double ub = 1.0;
 
-    BoxConstraintsData* box = createBoxConstraints(5, iVec.size());
+    vector<double> inLB(size(iVec));
+    vector<double> inUB(size(iVec));
 
-    UncertaintyKernel uk(iVec, oVec, box, lb, ub, ideal, antiIdeal);
+    createInputBounds(inLB, inUB, 5);
+
+    UncertaintyKernel uk(iVec, oVec, lb, ub, inLB, inUB, ideal, antiIdeal);
 
     // Evaluate the uncertainty parameters
     double uniLB, uniUB, uniLoc, dirPertRad;
@@ -298,8 +293,7 @@ vector<vector<double> > CODeM5Perturb(const vector<double> &iVec,
     dirPertRad = 0.1 * uk.dComponent(0);
 
     // Create the CODeM distribution
-    UniformDistribution* d = UniformDistribution*(
-                new UniformDistribution(uniLB, uniUB));
+    UniformDistribution* d =new UniformDistribution(uniLB, uniUB);
 
     CODeMDistribution cd(d, oVec, lb, ub, ideal, antiIdeal, dirPertRad, distanceNorm);
 
@@ -342,7 +336,7 @@ vector<vector<double> > CODeM6Perturb(const vector<double> &iVec,
 
     vector<double> normVec(oVec);
     toUnitVec(normVec, 2.0);
-    double sFactor = magnitudeAndDirectionP(normVec, 1);
+    double sFactor = magnitudeP(normVec, 1);
 
     double ub = 1.0 / sFactor;
     double lb = 0.5 / maxVal / sFactor;
@@ -361,8 +355,7 @@ vector<vector<double> > CODeM6Perturb(const vector<double> &iVec,
     dirPertRad = 0.2 * uk.oComponent(0);
 
     // Create the CODeM distribution
-    UniformDistribution* d = UniformDistribution*(
-                new UniformDistribution(uniLB, uniUB));
+    UniformDistribution* d = new UniformDistribution(uniLB, uniUB);
 
     CODeMDistribution cd(d, oVec, lb, ub, ideal, antiIdeal, dirPertRad, distanceNorm);
 
@@ -401,39 +394,29 @@ vector<double> deterministicOVec(int prob, const vector<double> &iVec, int nObj,
     return oVec;
 }
 
-BoxConstraintsData* createBoxConstraints(int prob, int nVar)
+void createInputBounds(vector<double> &lBounds,
+                       vector<double> &uBounds,
+                       int prob)
 {
-    vector<IElement> lowerBounds;
-    vector<IElement> upperBounds;
+    size_t nVar = lBounds.size();
 
     switch(prob) {
 
     case 1: case 2: case 3: case 4: case 5:
         for(int i = 0; i < nVar; i++) {
-            lowerBounds.push_back(IElement(RealType, 0.0));
-            upperBounds.push_back(IElement(RealType, 2.0*(i+1.0)));
+            lBounds[i] = 0.0;
+            uBounds[i] = 2.0 * (i + 1.0);
         }
         break;
 
     case 6:
-        for(int i = 0; i < nVar; i++) {
-            lowerBounds.push_back(IElement(RealType, 0.0));
-            upperBounds.push_back(IElement(RealType, 1.0));
-        }
-        break;
-
     default:
         for(int i = 0; i < nVar; i++) {
-            lowerBounds.push_back(IElement(RealType, 0.0));
-            upperBounds.push_back(IElement(RealType, 1.0));
+            lBounds[i] = 0.0;
+            uBounds[i] = 1.0;
         }
         break;
     }
-
-    BoxConstraintsData* box = BoxConstraintsData*::create();
-    box->defineLowerBounds(lowerBounds);
-    box->defineUpperBounds(upperBounds);
-    return box;
 }
 
 } // namespace CODeM

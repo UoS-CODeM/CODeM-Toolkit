@@ -21,7 +21,8 @@ SOURCES += main.cpp \
     libs/WFG/FrameworkFunctions.cpp \
     libs/WFG/Misc.cpp \
     libs/WFG/ShapeFunctions.cpp \
-    libs/WFG/TransFunctions.cpp
+    libs/WFG/TransFunctions.cpp \
+    core/utils/ScalingUtils.cpp
 
 HEADERS += \
     core/RandomDistributions.h \
@@ -38,4 +39,5 @@ HEADERS += \
     libs/WFG/Misc.h \
     libs/WFG/ShapeFunctions.h \
     libs/WFG/TransFunctions.h \
-    codemglobal.h
+    codemglobal.h \
+    core/utils/ScalingUtils.h

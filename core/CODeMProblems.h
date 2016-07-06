@@ -52,7 +52,7 @@ vector<vector<double> > CODeM6Perturb(const vector<double> &iVec,
 
 vector<double> deterministicOVec(int prob, const vector<double> &iVec, int nObj, int k=0);
 
-BoxConstraintsData* createBoxConstraints(int prob, int nVar);
+void createInputBounds(vector<double> &lBounds, vector<double> &uBounds, int prob);
 } // namespace CODeM
 
 #endif // CODEMPROBLEMS_H

@@ -16,8 +16,9 @@
 #include <core/CODeMDistribution.h>
 #include <core/CODeMOperators.h>
 #include <core/RandomDistributions.h>
-//#include <tigon/Utils/NormalisationUtils.h>
+#include <core/utils/ScalingUtils.h>
 
+using namespace CODeM::Utils;
 using std::vector;
 
 namespace CODeM {
@@ -48,7 +49,7 @@ CODeMDistribution::~CODeMDistribution()
 
 vector<double> CODeMDistribution::sampleDistribution()
 {
-    if(m_distribution.isNull()) {
+    if(m_distribution == 0) {
         return vector<double>(0);
     }
     double sFactor = m_distribution->sample();

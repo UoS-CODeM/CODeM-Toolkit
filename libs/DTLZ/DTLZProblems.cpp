@@ -25,7 +25,7 @@ namespace DTLZ {
 
 vector<double > DTLZ1(const vector<double >& x, const int M)
 {
-    int n = x.size();
+    int n = (int)x.size();
     int k = n - M + 1;
     double g = 0.0;
     for (int i = n - k; i < n; i++) {
@@ -53,7 +53,7 @@ vector<double > DTLZ1(const vector<double >& x, const int M)
 vector<double > DTLZ2(const vector<double >& x, const int M)
 {
     int i,j;
-    int n = x.size();
+    int n = (int)x.size();
     int k = n - M + 1;
     double g = 0.0;
     double coss, sine;

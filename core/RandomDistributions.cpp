@@ -451,7 +451,7 @@ vector<double> PeakDistribution::eigenFunction(int n)
 
     vector<double> psi(m_nSamples, 0);
     for(int i=1; i<m_nSamples-1; i++) {
-        psi[i] = An*sin(boost::math::constants::pi<double>()*n*(m_z[i]-m_lb)/Lz);
+        psi[i] = An * sin(PI * n * (m_z[i] - m_lb) / Lz);
     }
     return psi;
 }
@@ -470,7 +470,7 @@ MergedDistribution::~MergedDistribution()
 
 void MergedDistribution::generateZ()
 {
-    int nDistributions = m_distributions.size();
+    int nDistributions = (int)m_distributions.size();
 
     if(nDistributions == 0) {
         return;
@@ -521,7 +521,7 @@ void MergedDistribution::addZSamplesOfOneDistribution(IDistribution* d)
 
 void MergedDistribution::generatePDF()
 {
-    int nDistributions = m_distributions.size();
+    size_t nDistributions = m_distributions.size();
 
     if(nDistributions == 0) {
         return;

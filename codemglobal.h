@@ -6,7 +6,7 @@
 
 namespace CODeM {
 
-double randUni() { return (double)(std::rand() / RAND_MAX); }
+double randUni() { return (double)(std::rand()) / RAND_MAX; }
 
 const double PI(3.14159265358979323846264338327950288419716939937510582097494459230781640628620899);
 

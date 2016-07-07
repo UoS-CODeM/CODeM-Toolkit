@@ -1,16 +1,26 @@
 /****************************************************************************
 **
-** Copyright (C) 2012-2015 The University of Sheffield (www.sheffield.ac.uk)
+** The MIT License (MIT)
 **
-** This file is part of Liger.
+** Copyright (c) 2016 The University of Sheffield (www.sheffield.ac.uk)
 **
-** GNU Lesser General Public License Usage
-** This file may be used under the terms of the GNU Lesser General
-** Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** Permission is hereby granted, free of charge, to any person obtaining a copy
+** of this software and associated documentation files (the "Software"), to deal
+** in the Software without restriction, including without limitation the rights
+** to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+** copies of the Software, and to permit persons to whom the Software is
+** furnished to do so, subject to the following conditions:
+**
+** The above copyright notice and this permission notice shall be included in all
+** copies or substantial portions of the Software.
+**
+** THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+** IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+** FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+** AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+** LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+** OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+** SOFTWARE
 **
 ****************************************************************************/
 #ifndef DISTRIBUTIONS_H
@@ -43,13 +53,14 @@ public:
     double              upperBound()                     const;
     std::vector<double> zSamples();
 
+protected:
     virtual void generateZ() = 0;
     virtual void generatePDF() = 0;
+    void computeDistribution();
     virtual void calculateCDF();
     void generateEquallySpacedZ();
     void normalise();
 
-protected:
     double                      m_dz;
     double                      m_lb;
     double                      m_ub;
@@ -90,13 +101,11 @@ public:
     void   generateZ();
     void   generatePDF();
 
-    bool isIncreasing()     const;
-    void defineIncreasing(bool a);
-
-    std::vector<double> parameters();
+    bool isAscend()     const;
+    void defineAscend(bool a);
 
 private:
-    bool m_increase;
+    bool m_ascend;
 };
 
 

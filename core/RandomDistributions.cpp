@@ -42,7 +42,8 @@ IDistribution::IDistribution()
       m_ub(1.0),
       m_dz(1.0),
       m_nSamples(0),
-      m_quantileInterpolator(0)
+      m_quantileInterpolator(0),
+      m_updated(false)
 {
 
 }
@@ -56,27 +57,39 @@ IDistribution::~IDistribution()
 
 double IDistribution::sample()
 {
-    if(m_quantileInterpolator == 0) {
+    if(!m_updated) {
         computeDistribution();
     }
+
     // A value between 0-1: 0==>lb , 1==>ub
     double sample = m_quantileInterpolator->interpolate(randUni());
     return sample;
 }
 
+vector<double> IDistribution::zSamples()
+{
+    if(!m_updated) {
+        computeDistribution();
+    }
+
+    return m_z;
+}
+
 vector<double> IDistribution::pdf()
 {
-    if(m_pdf.empty() || m_pdf.size() != m_nSamples) {
-        conputeDistribution();
+    if(!m_updated) {
+        computeDistribution();
     }
+
     return m_pdf;
 }
 
 vector<double> IDistribution::cdf()
 {
-    if(m_cdf.empty() || m_cdf.size() != m_nSamples) {
-        calculateCDF();
+    if(!m_updated) {
+        computeDistribution();
     }
+
     return m_cdf;
 }
 
@@ -86,6 +99,8 @@ void IDistribution::defineResolution(double dz)
         // make sure the range is a multiple of m_dz, and m_dz <= dz
         m_dz = (m_ub-m_lb) / ceil((m_ub-m_lb)/dz);
     }
+
+    m_updated = false;
 }
 
 double IDistribution::resolution() const
@@ -114,15 +129,7 @@ void IDistribution::defineBoundaries(double lb, double ub)
 
     defineResolution(m_dz * ratio);
 
-    if(!m_z.empty()) {
-        for(int i=0; i<m_nSamples; i++) {
-            m_z[i] = lb + ratio * (m_z[i] - m_lb);
-        }
-    }
-
-    if(!m_pdf.empty()) {
-        normalise();
-    }
+    m_updated = false;
 }
 
 double IDistribution::lowerBound() const
@@ -135,113 +142,84 @@ double IDistribution::upperBound() const
     return m_ub;
 }
 
-vector<double> IDistribution::zSamples()
-{
-    if(m_z.empty()) {
-        generateZ();
-    }
-    return m_z;
-}
-
 void IDistribution::computeDistribution()
 {
     m_z.clear();
     m_pdf.clear();
     m_cdf.clear();
 
-
+    generateZ();
+    generatePDF();
+    calculateCDF();
 
     if(m_quantileInterpolator == 0) {
         m_quantileInterpolator = new LinearInterpolator(m_cdf, m_z);
+    } else {
+        m_quantileInterpolator->defineXY(m_cdf, m_z);
     }
+
+    m_updated = true;
 }
 
 void IDistribution::calculateCDF()
 {
-    if(m_pdf.empty()) {
-        generatePDF();
-    }
-    m_cdf.fill(0.0, m_nSamples);
+    m_cdf.assign(m_nSamples, 0.0);
     double cur  = 0.0;
     double next = 0.0;
     for(int i=0; i<m_nSamples-1; i++) {
         cur  = m_pdf[i];
         next = m_pdf[i+1];
-        m_cdf[i+1] = m_cdf[i] + (cur+next)/2 * (m_z[i+1] - m_z[i]);
+        m_cdf[i+1] = m_cdf[i] + (cur+next)/2.0 * (m_z[i+1] - m_z[i]);
     }
 
     // normalise
-    double factor = m_cdf.last();
+    double factor = *(m_cdf.end());
     if(factor == 1.0) {
         return;
     } else if(factor == 0.0) {
         double probability = 1.0/(m_ub - m_lb);
-        m_pdf = vector<double>(m_nSamples, probability);
+        m_pdf.assign(m_nSamples, probability);
         calculateCDF();
     } else {
-        for(int i=0; i<m_cdf.size(); i++) {
-            m_pdf[i] /= factor;
-            m_cdf[i] /= factor;
-        }
+//        for(int i=0; i<m_cdf.size(); i++) {
+//            m_pdf[i] /= factor;
+//            m_cdf[i] /= factor;
+//        }
+        // Try this instead. TODO: remove the comment if it works
+        transform(m_pdf.begin(), m_pdf.end(), m_pdf.begin(),
+                  [factor](double p){return p/factor;});
+        transform(m_cdf.begin(), m_cdf.end(), m_cdf.begin(),
+                  [factor](double p){return p/factor;});
     }
 }
 
 void IDistribution::generateEquallySpacedZ()
 {
-    m_nSamples = (int)((m_ub-m_lb)/m_dz) + 1;
+    m_nSamples = (int)((m_ub - m_lb) / m_dz) + 1;
     m_z.resize(m_nSamples);
     double zz = m_lb;
-    for(int i=0; i<m_z.size()-1; i++) {
+    for(int i = 0; i < m_z.size() - 1; i++) {
         m_z[i] = zz;
         zz += m_dz;
     }
-    m_z[m_z.size()-1] = m_ub;
+    m_z[m_z.size() - 1] = m_ub;
 }
-
-void IDistribution::normalise()
-{
-    if(m_pdf.empty()) {
-        return;
-    }
-
-    calculateCDF();
-}
-
 
 /// UNIFORM DISTRIBUTION
 UniformDistribution::UniformDistribution()
 {
-    m_uniDist = 0;
-    defineBoundaries(0.0, 1.0);
-    defineResolution(m_ub-m_lb);
+
 }
 
 UniformDistribution::UniformDistribution(double lb, double ub)
 {
-    m_uniDist = 0;
     defineBoundaries(lb, ub);
-    defineResolution(m_ub-m_lb);
+    defineResolution(m_ub - m_lb);
 }
 
 UniformDistribution::~UniformDistribution()
 {
-    delete m_uniDist;
-    m_uniDist = 0;
-}
 
-void UniformDistribution::defineBoundaries(double lb, double ub)
-{
-    if(lb >= ub) {
-        if(lb == 0) {
-            ub = DistMinInterval;
-        } else if(lb > 0) {
-            ub = lb * (1 + DistMinInterval);
-        } else {
-            lb = ub * (1 + DistMinInterval);
-        }
-    }
-
-    IDistribution::defineBoundaries(lb, ub);
 }
 
 double UniformDistribution::sample()
@@ -256,59 +234,22 @@ void UniformDistribution::generateZ()
 
 void UniformDistribution::generatePDF()
 {
-    if(m_z.empty()) {
-        generateZ();
-    }
-
     double probability = 1.0/(m_ub - m_lb);
-    m_pdf = vector<double>(m_nSamples, probability);
+    m_pdf.assign(m_nSamples, probability);
 }
-
-vector<double> UniformDistribution::parameters()
-{
-    vector<double> params;
-    params << lowerBound() << upperBound();
-    return params;
-}
-
 
 /// LINEAR DISTRIBUTION
 LinearDistribution::LinearDistribution()
+    : m_ascend(true)
 {
-    defineResolution((m_ub-m_lb)/2.0);
-    m_ascend = true;
+    defineResolution((m_ub-m_lb) / 2.0);
 }
 
-LinearDistribution::LinearDistribution(const LinearDistribution& dist)
-    : IDistribution(dist)
-{
-    m_ascend = dist.m_ascend;
-}
-
-LinearDistribution::LinearDistribution(double lb, double ub)
+LinearDistribution::LinearDistribution(double lb, double ub, bool ascend)
+    : m_ascend(ascend)
 {
     defineBoundaries(lb, ub);
     defineResolution((m_ub-m_lb) / 2.0);
-    m_ascend = true;
-}
-
-LinearDistribution::LinearDistribution(vector<double> parameters)
-{
-    double lb = 0.0;
-    double ub = 1.0;
-    m_ascend = true;
-    if(parameters.size() > 0) {
-        lb = parameters[0];
-        if((parameters.size() > 1) && (parameters[1] > lb)) {
-            ub = parameters[1];
-            if((parameters.size() < 3) && (parameters[2] <= 0.0)) {
-                m_ascend =  false;
-            }
-        } else {
-            ub = lb + DistMinInterval;
-        }
-    }
-    defineBoundaries(lb, ub);
 }
 
 LinearDistribution::~LinearDistribution()
@@ -321,9 +262,9 @@ double LinearDistribution::sample()
     double r = randUni();
     double samp;
     if(m_ascend) {
-        samp = m_lb + sqrt(r)*(m_ub-m_lb);
+        samp = m_lb + sqrt(r) * (m_ub - m_lb);
     } else {
-        samp = m_ub - sqrt(1-r)*(m_ub-m_lb);
+        samp = m_ub - sqrt(1 - r) * (m_ub - m_lb);
     }
     return samp;
 }
@@ -359,17 +300,18 @@ bool LinearDistribution::isAscend() const
 
 void LinearDistribution::defineAscend(bool a)
 {
-    bool oldDir = m_ascend;
-    m_ascend = a;
-    if(m_ascend != oldDir && !m_pdf.empty()) {
-        generatePDF();
+    if(m_ascend != a) {
+        m_updated = false;
     }
+    m_ascend = a;
 }
 
 /// PEAK DISTRIBUTION
 PeakDistribution::PeakDistribution()
+    : m_tendency(0.5),
+      m_locality(1.0)
 {
-    defineTendencyAndLocality(0.5, 1.0);
+    defineResolution(1.0 / (DistNSamples - 1));
 }
 
 PeakDistribution::PeakDistribution(double tendency, double locality)
@@ -399,7 +341,6 @@ void PeakDistribution::defineTendencyAndLocality(double tendency, double localit
 
     m_locality = locality;
 
-    //TODO: define high resolution at the peak and low at the rest
     defineResolution(1.0/(m_locality+0.1)/(DistNSamples-1));
 }
 
@@ -420,45 +361,34 @@ void PeakDistribution::generateZ()
 
 void PeakDistribution::generatePDF()
 {
-    if(m_z.empty()) {
-        generateZ();
-    }
-
-    m_pdf = vector<double>(m_nSamples);
+    m_pdf.resize(m_nSamples);
 
     double shift = PI * m_tendency;
     double N = DistPeakMinN + m_locality
             * (DistPeakMaxN - DistPeakMinN);
-    vector<complex> psiN(m_nSamples, complex(0,0));
+    vector<complex<double> > psiN(m_nSamples, complex<double>(0, 0));
+
     double nMax = max(3*N, DistPeakMinNBasisFunc);
     nMax = min(nMax, DistPeakMaxNBasisFunc);
-    for(int n=1; n<=nMax; n++) {
-        double cNn = sqrt( (pow(N, n) * exp(-N) / tgamma(n+1)));
+    for(int n = 1; n <= nMax; n++) {
+        double cNn = sqrt( (pow(N, n) * exp(-N) / tgamma(n + 1.0)));
         vector<double> psi = eigenFunction(n);
         for(int i=0; i<m_nSamples; i++) {
-            complex j(0, 1);
-            psiN[i] += cNn * exp(-j*shift*(n+0.5)) * psi[i];
+            complex<double> j(0.0, 1.0);
+            psiN[i] += cNn * exp(-j * shift * (n + 0.5)) * psi[i];
         }
     }
     for(int i=0; i<m_nSamples; i++) {
         m_pdf[i] = real(conj(psiN[i]) * psiN[i]);
     }
-    normalise();
-}
-
-vector<double> PeakDistribution::parameters()
-{
-    vector<double> params;
-    params << m_tendency << m_locality;
-    return params;
 }
 
 vector<double> PeakDistribution::eigenFunction(int n)
 {
     double Lz = m_ub - m_lb;
-    double An = pow(2.0/Lz, 0.5);
+    double An = sqrt(2.0 / Lz);
 
-    vector<double> psi(m_nSamples, 0);
+    vector<double> psi(m_nSamples, 0.0);
     for(int i=1; i<m_nSamples-1; i++) {
         psi[i] = An * sin(PI * n * (m_z[i] - m_lb) / Lz);
     }
@@ -474,7 +404,9 @@ MergedDistribution::MergedDistribution()
 
 MergedDistribution::~MergedDistribution()
 {
-
+    for(int i = 0; i < m_distributions.size(); i++) {
+        delete m_distributions[i];
+    }
 }
 
 void MergedDistribution::generateZ()
@@ -540,14 +472,11 @@ void MergedDistribution::generatePDF()
         return;
     }
 
-    generateZ();
-
-    m_pdf = vector<double>(m_nSamples, 0.0);
+    m_pdf.resize(m_nSamples);
 
     for(int i=0; i<nDistributions; i++) {
         addOnePDF(m_distributions[i], m_ratios[i]);
     }
-    normalise();
 }
 
 void MergedDistribution::addOnePDF(IDistribution* d, double ratio)
@@ -591,47 +520,8 @@ void MergedDistribution::appendDistribution(IDistribution* d)
 void MergedDistribution::appendDistribution(IDistribution* d, double ratio)
 {
     m_distributions.push_back(d);
-    m_ratios.push_back(std::max(ratio, 0.0));
-    if(!m_pdf.empty()) {
-        generatePDF();
-    } else if(m_nSamples > 0) {
-        addZSamplesOfOneDistribution(d);
-    }
-    generatePDF();
+    m_ratios.push_back(max(ratio, 0.0));
+    computeDistribution();
 }
-
-void MergedDistribution::removeDistribution(IDistribution* d)
-{
-    int idx = m_distributions.indexOf(d);
-    if(idx >= 0) {
-        removeDistribution(idx);
-    }
-}
-
-void MergedDistribution::removeDistribution(int idx)
-{
-    m_distributions.remove(idx);
-    m_ratios.remove(idx);
-    if(!m_z.empty()) {
-        generateZ();
-    }
-    if(!m_pdf.empty()) {
-        generatePDF();
-    }
-}
-
-void MergedDistribution::changeRatio(IDistribution* d, double newRatio)
-{
-    int idx = m_distributions.indexOf(d);
-    if(idx >= 0) {
-        changeRatio(idx, newRatio);
-    }
-}
-
-void MergedDistribution::changeRatio(int idx, double newRatio)
-{
-    m_ratios[idx] = std::max(newRatio, 0.0);
-}
-
 
 } // namespace CODeM

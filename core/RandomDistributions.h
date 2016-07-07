@@ -43,6 +43,7 @@ public:
     virtual ~IDistribution();
 
     virtual double      sample();
+    std::vector<double> zSamples();
     std::vector<double> pdf();
     std::vector<double> cdf();
 
@@ -51,24 +52,26 @@ public:
     double              resolution()                     const;
     double              lowerBound()                     const;
     double              upperBound()                     const;
-    std::vector<double> zSamples();
 
 protected:
-    virtual void generateZ() = 0;
-    virtual void generatePDF() = 0;
-    void computeDistribution();
-    virtual void calculateCDF();
-    void generateEquallySpacedZ();
-    void normalise();
+    void                computeDistribution();
+    virtual void        generateZ() = 0;
+    virtual void        generatePDF() = 0;
+    void                generateEquallySpacedZ();
+
+    double              m_lb;
+    double              m_ub;
+    std::vector<double> m_z;
+    std::vector<double> m_pdf;
+    int                 m_nSamples;
+    bool                m_updated;
+
+private:
+    void                calculateCDF();
 
     double                      m_dz;
-    double                      m_lb;
-    double                      m_ub;
-    std::vector<double>         m_z;
-    std::vector<double>         m_pdf;
-    std::vector<double>         m_cdf;
-    int                         m_nSamples;
     Utils::LinearInterpolator*  m_quantileInterpolator;
+    std::vector<double>         m_cdf;
 
 };
 
@@ -79,8 +82,6 @@ public:
     UniformDistribution();
     UniformDistribution(double lb, double ub);
     virtual ~UniformDistribution();
-
-    void defineBoundaries(double lb, double ub);
 
     double sample();
 
@@ -93,8 +94,7 @@ class LinearDistribution : public IDistribution
 {
 public:
     LinearDistribution();
-    LinearDistribution(double lb, double ub, bool increase);
-    LinearDistribution(std::vector<double> parameters);
+    LinearDistribution(double lb, double ub, bool ascend = true);
     virtual ~LinearDistribution();
 
     double sample();
@@ -143,13 +143,6 @@ public:
 
     void appendDistribution(IDistribution* d);
     void appendDistribution(IDistribution* d, double ratio);
-
-    void removeDistribution(IDistribution* d);
-    void removeDistribution(int          idx);
-
-
-    void changeRatio(IDistribution* d, double newRatio);
-    void changeRatio(int          idx, double newRatio);
 
 private:
     std::vector<IDistribution*> m_distributions;

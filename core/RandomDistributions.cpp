@@ -28,12 +28,13 @@ namespace CODeM {
 
 /// IDISTRIBUTION
 IDistribution::IDistribution()
+    : m_lb(0.0),
+      m_ub(1.0),
+      m_dz(1.0),
+      m_nSamples(0),
+      m_quantileInterpolator(0)
 {
-    m_nSamples = 0;
-    m_lb = 0;
-    m_ub = 1;
-    m_dz = (m_ub-m_lb)/(DistMinNSamples - 1);
-    m_quantileInterpolator = 0;
+
 }
 
 IDistribution::~IDistribution()
@@ -46,9 +47,7 @@ IDistribution::~IDistribution()
 double IDistribution::sample()
 {
     if(m_quantileInterpolator == 0) {
-        m_quantileInterpolator = new LinearInterpolator(cdf(), zSamples());
-    } else {
-        m_quantileInterpolator->defineXY(cdf(), zSamples());
+        computeDistribution();
     }
     // A value between 0-1: 0==>lb , 1==>ub
     double sample = m_quantileInterpolator->interpolate(randUni());
@@ -58,7 +57,7 @@ double IDistribution::sample()
 vector<double> IDistribution::pdf()
 {
     if(m_pdf.empty() || m_pdf.size() != m_nSamples) {
-        generatePDF();
+        conputeDistribution();
     }
     return m_pdf;
 }
@@ -132,6 +131,19 @@ vector<double> IDistribution::zSamples()
         generateZ();
     }
     return m_z;
+}
+
+void IDistribution::computeDistribution()
+{
+    m_z.clear();
+    m_pdf.clear();
+    m_cdf.clear();
+
+
+
+    if(m_quantileInterpolator == 0) {
+        m_quantileInterpolator = new LinearInterpolator(m_cdf, m_z);
+    }
 }
 
 void IDistribution::calculateCDF()
@@ -220,11 +232,6 @@ void UniformDistribution::defineBoundaries(double lb, double ub)
     }
 
     IDistribution::defineBoundaries(lb, ub);
-
-    if(m_uniDist != 0) {
-        delete m_uniDist;
-        m_uniDist = 0;
-    }
 }
 
 double UniformDistribution::sample()
@@ -259,33 +266,33 @@ vector<double> UniformDistribution::parameters()
 LinearDistribution::LinearDistribution()
 {
     defineResolution((m_ub-m_lb)/2.0);
-    m_increase = true;
+    m_ascend = true;
 }
 
 LinearDistribution::LinearDistribution(const LinearDistribution& dist)
     : IDistribution(dist)
 {
-    m_increase = dist.m_increase;
+    m_ascend = dist.m_ascend;
 }
 
 LinearDistribution::LinearDistribution(double lb, double ub)
 {
     defineBoundaries(lb, ub);
-    defineResolution((m_ub-m_lb)/(DistNSamples-1));
-    m_increase = true;
+    defineResolution((m_ub-m_lb) / 2.0);
+    m_ascend = true;
 }
 
 LinearDistribution::LinearDistribution(vector<double> parameters)
 {
     double lb = 0.0;
     double ub = 1.0;
-    m_increase = true;
+    m_ascend = true;
     if(parameters.size() > 0) {
         lb = parameters[0];
         if((parameters.size() > 1) && (parameters[1] > lb)) {
             ub = parameters[1];
             if((parameters.size() < 3) && (parameters[2] <= 0.0)) {
-                m_increase =  false;
+                m_ascend =  false;
             }
         } else {
             ub = lb + DistMinInterval;
@@ -303,7 +310,7 @@ double LinearDistribution::sample()
 {
     double r = randUni();
     double samp;
-    if(m_increase) {
+    if(m_ascend) {
         samp = m_lb + sqrt(r)*(m_ub-m_lb);
     } else {
         samp = m_ub - sqrt(1-r)*(m_ub-m_lb);
@@ -324,7 +331,7 @@ void LinearDistribution::generatePDF()
 
     double maxProbability = 2/(m_ub - m_lb);
     m_pdf = vector<double>(m_nSamples);
-    if(isIncreasing()) {
+    if(isAscend()) {
         for(int i=0; i<m_nSamples; i++) {
             m_pdf[i] = maxProbability * (m_z[i] - m_lb) / (m_ub - m_lb);
         }
@@ -335,27 +342,19 @@ void LinearDistribution::generatePDF()
     }
 }
 
-bool LinearDistribution::isIncreasing() const
+bool LinearDistribution::isAscend() const
 {
-    return m_increase;
+    return m_ascend;
 }
 
-void LinearDistribution::defineIncreasing(bool a)
+void LinearDistribution::defineAscend(bool a)
 {
-    bool oldDir = m_increase;
-    m_increase = a;
-    if(m_increase != oldDir && !m_pdf.empty()) {
+    bool oldDir = m_ascend;
+    m_ascend = a;
+    if(m_ascend != oldDir && !m_pdf.empty()) {
         generatePDF();
     }
 }
-
-vector<double> LinearDistribution::parameters()
-{
-    vector<double> params;
-    params << lowerBound() << upperBound() << (double)isIncreasing();
-    return params;
-}
-
 
 /// PEAK DISTRIBUTION
 PeakDistribution::PeakDistribution()

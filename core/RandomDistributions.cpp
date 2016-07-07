@@ -493,38 +493,42 @@ void MergedDistribution::generateZ()
 void MergedDistribution::addZSamplesOfOneDistribution(IDistribution* d)
 {
     vector<double> newZ = d->zSamples();
+    if(newZ.empty())  {
+        return;
+    }
+    vector<double>::iterator iNew = newZ.begin();
+    vector<double>::iterator iExist = m_z.begin();
     // merge newZ and m_z into augZ
     vector<double> augZ;
-    int iNew = 0; // iterator for newZ
-    int iAug = 0; // iterator for m_z
 
-    //TODO: avoid adding samples from lower frequency distributions
-    //      to regions with higher freqwency samples
-    while(iNew < newZ.size() && iAug < m_nSamples) {
-        if(newZ[iNew] == m_z[iAug]) {
-            augZ << m_z[iAug++];
+//    int iNew = 0; // iterator for newZ
+//    int iAug = 0; // iterator for m_z
+
+    while((iNew != newZ.end()) && (iExist != m_z.end())) {
+        if(*iNew == *iExist) {
+            augZ.push_back(*iExist++);
             iNew++;
         }
-        else if(newZ[iNew] < m_z[iAug]) {
-            augZ << newZ[iNew++];
+        else if(*iNew < *iExist) {
+            augZ.push_back(*iNew++);
         }
         else {
-            augZ << m_z[iAug++];
+            augZ.push_back(*iExist++);
         }
     }
 
-    while(iNew < newZ.size()) {
-        augZ << newZ[iNew++];
+    while(iNew != newZ.end()) {
+        augZ.push_back(*iNew++);
     }
 
-    while(iAug < m_nSamples) {
-        augZ << m_z[iAug++];
+    while(iExist != m_z.end()) {
+        augZ.push_back(*iExist++);
     }
 
     m_z.swap(augZ);
-    m_lb = m_z.first();
-    m_ub = m_z.last();
-    m_nSamples = m_z.size();
+    m_lb = m_z.front();
+    m_ub = m_z.back();
+    m_nSamples = (int)m_z.size();
     augZ.clear();
 }
 
@@ -550,26 +554,32 @@ void MergedDistribution::addOnePDF(IDistribution* d, double ratio)
 {
     // call this function only after the samples are integrated into m_z
     vector<double> newPDF = d->pdf();
+    if(newPDF.empty()) {
+        return;
+    }
     vector<double> newZ   = d->zSamples();
 
     // find the range of the new pdf
-    int firstIdx = 0;
-    int lastIdx  = m_nSamples - 1;
+    vector<double>::iterator first = m_z.begin();
+    vector<double>::iterator last  = m_z.end();
+    vector<double>::iterator pdfIter  = m_pdf.begin();
 
-    while(newZ.first() > m_z[firstIdx]) {
-        ++firstIdx;
+    while(newZ.front() > *first) {
+        ++first;
+        ++pdfIter;
     }
-    while(newZ.last() < m_z[lastIdx]) {
-        --lastIdx;
+    while(newZ.back() < *last) {
+        --last;
     }
 
-    int nNewSamples = lastIdx - firstIdx + 1;
-
+    //Interpolate the new pdf over the new samples in its range
     LinearInterpolator pdfInterpolator(newZ, newPDF);
-    newPDF = pdfInterpolator.interpolateV(m_z.mid(firstIdx, nNewSamples));
+    newPDF.swap(pdfInterpolator.interpolateV(vector<double>(first, last)));
 
-    for(int i=0; i<nNewSamples; i++) {
-        m_pdf[firstIdx+i] += (newPDF[i] * ratio);
+    // add the new pdf times its weight to the existing pdf
+    vector<double>::iterator newIter;
+    for(newIter = newPDF.begin(); newIter == newPDF.end(); ++newIter, ++pdfIter) {
+        *pdfIter += (*newIter * ratio);
     }
 }
 

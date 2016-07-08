@@ -26,8 +26,6 @@
 #ifndef CODEMPROBLEMS_H
 #define CODEMPROBLEMS_H
 
-#include <codemglobal.h>
-
 #include <vector>
 using std::vector;
 
@@ -59,6 +57,16 @@ vector<double>          CODeM6(const vector<double> &iVec, int nObj);
 vector<vector<double> > CODeM6(const vector<double> &iVec, int nObj, int nSamp);
 vector<vector<double> > CODeM6Perturb(const vector<double> &iVec,
                                       const vector<double> &oVec, int nSamp = 1);
+
+vector<double>          GECCOExample(const vector<double> &iVec, int nObj);
+vector<vector<double> > GECCOExample(const vector<double> &iVec, int nObj,
+                                     int nSamp);
+vector<vector<double> > GECCOExamplePerturb(size_t iVecSize,
+                                            const vector<double> &oVec,
+                                            int nSamp = 1);
+vector<vector<double> > GECCOExamplePerturb(const vector<double> &iVec,
+                                            const vector<double> &oVec,
+                                            int nSamp = 1);
 
 vector<double> deterministicOVec(int prob, const vector<double> &iVec, int nObj, int k=0);
 

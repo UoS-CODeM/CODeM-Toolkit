@@ -23,28 +23,37 @@
 ** SOFTWARE
 **
 ****************************************************************************/
-#ifndef CODEMGLOBAL_H
-#define CODEMGLOBAL_H
+#include <misc/CODeMMisc.h>
+#include <core/CODeMGlobal.h>
 
-//#include <cmath>
-#include <random>
+#include <math.h>
+
+using namespace std;
 
 namespace CODeM {
 
-double randUni() { return (double)(std::rand()) / RAND_MAX; }
-
-const double PI(3.14159265358979323846264338327950288419716939937510582097494459230781640628620899);
-
-/// Distribution constants
-const int    DistMinNSamples(3);
-const int    DistNSamples(500);
-const double DistMinInterval(0.001);
-const double DistPeakMinN(1.0);
-const double DistPeakMaxN(50.0);
-const double DistPeakMinNBasisFunc(30.0);
-const double DistPeakMaxNBasisFunc(150.0);
+vector<vector<double> > simplexLattice(int h, int k, double s)
+{
+    vector<vector<double> > wSet;
+    //terminating criterion
+    if(k==1) {
+        wSet.push_back(vector<double>(1, s));
+    } else {
+        double w = 0.0;
+        for(int i = 0; i < h + 1; ++i) {
+            vector<vector<double> > kMinusOneSimplex
+                    = simplexLattice(h - i, k - 1, s - w);
+            for(int j = 0; j < kMinusOneSimplex.size(); ++j) {
+                vector<double> ww(kMinusOneSimplex.size() + 1);
+                ww[0] = w;
+                copy(kMinusOneSimplex[j].begin(), kMinusOneSimplex[j].end(),
+                     ww.begin()+1);
+                wSet.push_back(ww);
+            }
+            w += s / h;
+        }
+    }
+    return wSet;
+}
 
 } // namespace CODeM
-
-#endif // CODEMGLOBAL_H
-

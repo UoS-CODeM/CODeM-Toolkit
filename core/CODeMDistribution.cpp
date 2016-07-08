@@ -54,7 +54,7 @@ CODeMDistribution::CODeMDistribution(IDistribution*        d,
 
 CODeMDistribution::~CODeMDistribution()
 {
-
+    delete m_distribution;
 }
 
 vector<double> CODeMDistribution::sampleDistribution()

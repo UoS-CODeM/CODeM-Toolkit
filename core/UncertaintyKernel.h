@@ -26,7 +26,7 @@
 #ifndef UNCERTAINTYKERNEL_H
 #define UNCERTAINTYKERNEL_H
 
-#include <codemglobal.h>
+#include <core/CODeMGlobal.h>
 
 #include <vector>
 using std::vector;

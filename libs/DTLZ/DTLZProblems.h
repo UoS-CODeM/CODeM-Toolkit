@@ -20,6 +20,8 @@
 
 namespace DTLZ {
 
+std::vector<double > DTLZ1Modified(const std::vector<double >& x,
+                                   const int M);
 std::vector<double > DTLZ1(const std::vector<double >& x, const int M);
 std::vector<double > DTLZ2(const std::vector<double >& x, const int M);
 

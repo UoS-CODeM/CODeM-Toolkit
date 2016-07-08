@@ -371,7 +371,7 @@ void PeakDistribution::generatePDF()
     double nMax = max(3*N, DistPeakMinNBasisFunc);
     nMax = min(nMax, DistPeakMaxNBasisFunc);
     for(int n = 1; n <= nMax; n++) {
-        double cNn = sqrt( (pow(N, n) * exp(-N) / tgamma(n + 1.0)));
+        double cNn = sqrt( (pow(N, n) * exp(-N) / factorial(n)));
         vector<double> psi = eigenFunction(n);
         for(int i=0; i<m_nSamples; i++) {
             complex<double> j(0.0, 1.0);

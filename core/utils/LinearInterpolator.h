@@ -26,7 +26,7 @@
 #ifndef LINEARINTERPOLATOR_H
 #define LINEARINTERPOLATOR_H
 
-#include <codemglobal.h>
+#include <core/CODeMGlobal.h>
 
 #include <vector>
 

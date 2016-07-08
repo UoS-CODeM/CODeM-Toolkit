@@ -26,7 +26,7 @@
 #ifndef NORMALISATIONUTILS_H
 #define NORMALISATIONUTILS_H
 
-#include <codemglobal.h>
+#include <core/CODeMGlobal.h>
 #include <vector>
 
 using std::vector;

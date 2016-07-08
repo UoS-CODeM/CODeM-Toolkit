@@ -26,7 +26,7 @@
 #ifndef DISTRIBUTIONS_H
 #define DISTRIBUTIONS_H
 
-#include <codemglobal.h>
+#include <core/CODeMGlobal.h>
 
 #include <vector>
 

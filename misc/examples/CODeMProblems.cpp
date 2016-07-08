@@ -23,7 +23,7 @@
 ** SOFTWARE
 **
 ****************************************************************************/
-#include <core/CODeMProblems.h>
+#include <misc/examples/CODeMProblems.h>
 #include <core/UncertaintyKernel.h>
 #include <core/CODeMOperators.h>
 #include <core/CODeMDistribution.h>
@@ -318,7 +318,7 @@ vector<vector<double> > CODeM5Perturb(const vector<double> &iVec,
 vector<double> CODeM6(const vector<double> &iVec, int nObj)
 {
     // Evaluate the decision vector
-    vector<double> oVec = DTLZ::DTLZ1(iVec, nObj);
+    vector<double> oVec = DTLZ::DTLZ1Modified(iVec, nObj);
 
     return CODeM6Perturb(iVec, oVec)[0];
 }
@@ -327,7 +327,7 @@ vector<vector<double> > CODeM6(const vector<double> &iVec,
                                 int nObj, int nSamp)
 {
     // Evaluate the decision vector
-    vector<double> oVec = DTLZ::DTLZ1(iVec, nObj);
+    vector<double> oVec = DTLZ::DTLZ1Modified(iVec, nObj);
 
     return CODeM6Perturb(iVec, oVec, nSamp);
 }
@@ -377,6 +377,71 @@ vector<vector<double> > CODeM6Perturb(const vector<double> &iVec,
     return samples;
 }
 
+vector<double> GECCOExample(const vector<double> &iVec, int nObj)
+{
+    // Evaluate the decision vector
+    vector<double> oVec = DTLZ::DTLZ1Modified(iVec, nObj);
+
+    return GECCOExamplePerturb(iVec, oVec)[0];
+}
+
+vector<vector<double> > GECCOExample(const vector<double> &iVec, int nObj, int nSamp)
+{
+    // Evaluate the decision vector
+    vector<double> oVec = DTLZ::DTLZ1Modified(iVec, nObj);
+
+    return GECCOExamplePerturb(iVec, oVec, nSamp);
+}
+
+vector<vector<double> > GECCOExamplePerturb(size_t iVecSize, const vector<double> &oVec,
+                                            int nSamp)
+{
+    // Set the uncertainty kernel
+    vector<double> ideal(oVec.size(), 0.0);
+
+    double maxVal = 1.125 * (iVecSize - oVec.size() + 1) + 0.5;
+    vector<double> antiIdeal(oVec.size(), maxVal);
+
+    vector<double> normVec(oVec);
+    toUnitVec(normVec, 2.0);
+    double sFactor = magnitudeP(normVec, 1);
+
+    double ub = 1.0 / sFactor;
+    double lb = 0.5 / maxVal / sFactor;
+
+    UncertaintyKernel uk(oVec, lb, ub, ideal, antiIdeal);
+
+    // Evaluate the uncertainty parameters
+    double uniLB, uniUB, uniLoc, dirPertRad;
+
+    uniLB  = uk.proximity();
+    uniLoc = 0.9 + 0.1 * lowOnValue(uk.proximity(), 0.0, 1.0);
+    uniUB  = 1.0 -  uniLoc * (1.0-uniLB);
+
+    double distanceNorm = 1.0;
+
+    dirPertRad = 0.02 + 0.1 * linearDecrease(uk.symmetry());
+
+    // Create the CODeM distribution
+    UniformDistribution* d = new UniformDistribution(uniLB, uniUB);
+
+    CODeMDistribution cd(d, oVec, lb, ub, ideal, antiIdeal, dirPertRad, distanceNorm);
+
+    // Sample the distribution
+    vector<vector<double> > samples;
+    for(int i=0; i<nSamp; i++) {
+        samples.push_back(cd.sampleDistribution());
+    }
+    return samples;
+}
+
+vector<vector<double> > GECCOExamplePerturb(const vector<double> &iVec,
+                                            const vector<double> &oVec, int nSamp)
+{
+    return GECCOExamplePerturb(iVec.size(), oVec, nSamp);
+}
+
+
 vector<double> deterministicOVec(int prob, const vector<double> &iVec, int nObj, int k)
 {
     vector<double> oVec;
@@ -394,8 +459,8 @@ vector<double> deterministicOVec(int prob, const vector<double> &iVec, int nObj,
         oVec = WFG8(iVec, k, nObj);
         break;
 
-    case 6:
-        oVec = DTLZ::DTLZ1(iVec, nObj);
+    case 6: case 7:
+        oVec = DTLZ::DTLZ1Modified(iVec, nObj);
         break;
     default:
         break;
@@ -419,7 +484,7 @@ void createInputBounds(vector<double> &lBounds,
         }
         break;
 
-    case 6:
+    case 6: case 7:
     default:
         for(int i = 0; i < nVar; i++) {
             lBounds[i] = 0.0;

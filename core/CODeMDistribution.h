@@ -26,7 +26,7 @@
 #ifndef CODEMDISTRIBUTION_H
 #define CODEMDISTRIBUTION_H
 
-#include <codemglobal.h>
+#include <core/CODeMGlobal.h>
 #include <vector>
 
 

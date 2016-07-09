@@ -284,8 +284,8 @@ vector<vector<double> > CODeM5Perturb(const vector<double> &iVec,
     double lb = 2.0/4.0;
     double ub = 1.0;
 
-    vector<double> inLB(size(iVec));
-    vector<double> inUB(size(iVec));
+    vector<double> inLB(iVec.size());
+    vector<double> inUB(iVec.size());
 
     createInputBounds(inLB, inUB, 5);
 

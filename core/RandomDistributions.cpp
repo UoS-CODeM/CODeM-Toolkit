@@ -503,7 +503,8 @@ void MergedDistribution::addOnePDF(IDistribution* d, double ratio)
 
     //Interpolate the new pdf over the new samples in its range
     LinearInterpolator pdfInterpolator(newZ, newPDF);
-    newPDF.swap(pdfInterpolator.interpolateV(vector<double>(first, last)));
+    vector<double> tmp = pdfInterpolator.interpolateV(vector<double>(first, last));
+    newPDF.swap(tmp);
 
     // add the new pdf times its weight to the existing pdf
     vector<double>::iterator newIter;

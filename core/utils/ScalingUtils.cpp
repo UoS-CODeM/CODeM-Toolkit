@@ -45,7 +45,8 @@ double magnitudeP(const vector<double> &vec, double p)
 
 void toUnitVec(vector<double>& vec, double norm)
 {
-    magnitudeP(vec, norm);
+    double magnitude = magnitudeP(vec, norm);
+    scale(vec, 1.0/magnitude);
 }
 
 double distanceP(const vector<double> &m, const vector<double> &c, double p)

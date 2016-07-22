@@ -459,7 +459,7 @@ vector<double> deterministicOVec(int prob, const vector<double> &iVec, int nObj,
         oVec = WFG8(iVec, k, nObj);
         break;
 
-    case 6: case 7:
+    case 6: case 0:
         oVec = DTLZ::DTLZ1Modified(iVec, nObj);
         break;
     default:

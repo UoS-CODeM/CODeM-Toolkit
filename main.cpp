@@ -109,7 +109,7 @@ int main(int argc, char** argv)
         return EXIT_FAILURE;
     }
 
-    // set defaults
+    /// Set default values
     int seed   = 0;
     int nObj   = 2;
     int nVars  = 10;
@@ -118,6 +118,7 @@ int main(int argc, char** argv)
     int prob   = 0;
 
 
+    /// Parse command line inputs
     int argInd = 1;
     while(argInd < argc) {
         string arg = argv[argInd++];
@@ -230,99 +231,74 @@ int main(int argc, char** argv)
         }
     }
 
+    /// Define the random seed
     if(seed < 0) {
         randomSeed();
     } else {
         defineSeed(seed);
     }
 
-    cout << "seed   = " << seed   << endl;
-    cout << "nObj   = " << nObj   << endl;
-    cout << "nVars  = " << nVars  << endl;
-    cout << "nSols  = " << nSols  << endl;
-    cout << "nSamps = " << nSamps << endl;
-    cout << "prob   = " << prob   << endl;
+    /// Pareto optimal solutions for the problem
+    vector<vector<double> > paretoDeterministic;
+    vector<vector<vector<double> > > paretoObj;
+
+    vector<vector<double> > paretoDirVars = simplexLattice(nSols-1, 2);
+
+    for(int i=0; i<paretoDirVars.size(); i++) {
+        vector<double> iVec(nVars, 0.5);
+        iVec[0] = paretoDirVars[i][0];
+        vector<double> determObjVec = deterministicOVec(prob, iVec, nObj);
+        paretoDeterministic.push_back(determObjVec);
+        vector<vector<double> > oVecSamps = CODeM::GECCOExample(iVec, nObj, nSamps);
+        paretoObj.push_back(oVecSamps);
+    }
+
+    /// Random solutions
+    vector<vector<double> > randDeterministic;
+    vector<vector<vector<double> > > randObj;
+    for(int i=0; i<nSols; i++) {
+        vector<double> iVec;
+        for(int j=0; j<nVars; j++) {
+            iVec.push_back(randUni());
+        }
+        vector<double> determObjVec = deterministicOVec(prob, iVec, nObj);
+        randDeterministic.push_back(determObjVec);
+        vector<vector<double> > oVecSamps = CODeM::GECCOExample(iVec, nObj, nSamps);
+        randObj.push_back(oVecSamps);
+    }
+
+    // Display the results
+    cout << "\n% Optimal vectors:" << endl;
+    for(int v=0; v<paretoObj.size(); v++) {
+        cout << "paretoObj{" << v+1 << "} = [";
+        for(int i=0; i<paretoObj[v].size(); i++) {
+            printVector(paretoObj[v][i]);
+        }
+        cout << "];" << endl;
+    }
+
+    cout << "\n% Random vectors:" << endl;
+    for(int v=0; v<randObj.size(); v++) {
+        cout << "randObj{" << v+1 << "} = [";
+        for(int i=0; i<randObj[v].size(); i++) {
+            printVector(randObj[v][i]);
+        }
+        cout << "];" << endl;
+    }
+
+    cout << "\n% Optimal deterministic vectors:" << endl;
+    cout << "determOptimal = [";
+    for(int i=0; i<paretoDeterministic.size(); i++) {
+        printVector(paretoDeterministic[i]);
+    }
+    cout << "];" << endl;
+
+    cout << "\n% Random deterministic vectors:" << endl;
+    cout << "determRand = [";
+    for(int i=0; i<randDeterministic.size(); i++) {
+        printVector(randDeterministic[i]);
+    }
+    cout << "];\n" << endl;
+
+    return EXIT_SUCCESS;
 }
-
-//int main()
-//{
-//    defineSeed(0);
-
-//    int nObj = 2;
-//    int nVar = 6;
-//    int nPareto = 5;
-//    int nRand   = 10;
-//    int nSamp = 50;
-
-//    vector<vector<double> > paretoDeterministic;
-//    vector<vector<double> > randDeterministic;
-//    vector<vector<vector<double> > > paretoObj;
-//    vector<vector<vector<double> > > randObj;
-
-//    vector<vector<double> > paretoDirVars = simplexLattice(nPareto-1, 2);
-
-//    // Pareto optimal vectors
-//    for(int i=0; i<paretoDirVars.size(); i++) {
-//        vector<double> iVec(nVar, 0.5);
-//        iVec[0] = paretoDirVars[i][0];
-//        vector<double> determObjVec = deterministicOVec(7, iVec, nObj);
-//        paretoDeterministic.push_back(determObjVec);
-//        vector<vector<double> > oVecSamps = CODeM::GECCOExample(iVec, nObj, nSamp);
-//        paretoObj.push_back(oVecSamps);
-//    }
-
-//    // Random vectors
-//    for(int i=0; i<nRand; i++) {
-//        vector<double> iVec;
-//        for(int j=0; j<nVar; j++) {
-//            iVec.push_back(randUni());
-//        }
-//        vector<double> determObjVec = deterministicOVec(7, iVec, nObj);
-//        randDeterministic.push_back(determObjVec);
-//        vector<vector<double> > oVecSamps = CODeM::GECCOExample(iVec, nObj, nSamp);
-//        randObj.push_back(oVecSamps);
-//    }
-
-//    // Display the results
-//    cout << "\n% Optimal vectors:" << endl;
-//    for(int v=0; v<paretoObj.size(); v++) {
-//        cout << "paretoObj{" << v+1 << "} = [";
-//        for(int i=0; i<paretoObj[v].size(); i++) {
-//            printVector(paretoObj[v][i]);
-//        }
-//        cout << "];" << endl;
-//    }
-
-//    cout << "\n% Random vectors:" << endl;
-//    for(int v=0; v<randObj.size(); v++) {
-//        cout << "randObj{" << v+1 << "} = [";
-//        for(int i=0; i<randObj[v].size(); i++) {
-//            printVector(randObj[v][i]);
-//        }
-//        cout << "];" << endl;
-//    }
-
-//    cout << "\n% Optimal deterministic vectors:" << endl;
-//    cout << "determOptimal = [";
-//    for(int i=0; i<paretoDeterministic.size(); i++) {
-//        printVector(paretoDeterministic[i]);
-//    }
-//    cout << "];" << endl;
-
-//    cout << "\n% Random deterministic vectors:" << endl;
-//    cout << "determRand = [";
-//    for(int i=0; i<randDeterministic.size(); i++) {
-//        printVector(randDeterministic[i]);
-//    }
-//    cout << "];\n" << endl;
-
-//    return 0;
-//}
-
-//int main(int argc, char** argv)
-//{
-//    for(int i = 0; i < argc; ++i) {
-//        cout << "Argument " << i << ": " << argv[i] << endl;
-//    }
-//    return 0;
-//}

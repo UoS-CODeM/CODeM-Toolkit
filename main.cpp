@@ -39,7 +39,7 @@ using namespace CODeM;
 inline void defineSeed(int seed) {std::srand(seed);}
 inline void randomSeed() {std::srand((unsigned)std::time(0));}
 
-void dispVector(vector<double> vec, string sep=", ", string endVec="; ")
+void printVector(vector<double> vec, string sep=", ", string endVec="; ")
 {
     for(auto i = vec.begin(); i != (vec.end() -1); ++i) {
         cout << *i << sep;
@@ -47,12 +47,11 @@ void dispVector(vector<double> vec, string sep=", ", string endVec="; ")
     cout << vec.back() << endVec;
 }
 
-void showUsage(progName) {
+void showUsage(char* progName)
+{
+    cout << "\nUsage: " << progName << " [OPTION(S)]\n\n";
 
-    printf("\n"
-           "Usage: %s [OPTION(S)]\n\n", progName);
-
-    printf(
+    cout <<
 "This program evaluates a set of candidate solutions for an uncertain           \n"
 " multiobjective optimization problem using the CODeM toolkit. The output of the\n"
 " program is a set of decision vectors and a set of objective vectors for each  \n"
@@ -60,79 +59,189 @@ void showUsage(progName) {
 " samples from the random variate.                                              \n\n"
 
 "Options:                                                                       \n"
-" -h, --help                Print this summary and exit.                        \n"
-" -v, --version             Print version number and exit.                      \n"
-" -f, --file    = FILENAME  An input file with all the configuration options.   \n"
-"                           If FILENAME is not specified, the options are       \n"
-"                           configured from the command. FILENAME may include a \n"
-"                           relative or absolute path.                          \n"
-" -o, --output  = FILENAME  A file to write the outputs. If FILENAME is not     \n"
-"                           specified, the output is printed to the console.    \n"
+"--------                                                                       \n"
+" -h, --help                Print this summary and exit.                        \n\n"
+//" -i, --inFile  = FILENAME  An input file with all the configuration options.   \n"
+//"                           If FILENAME is not specified, the options are       \n"
+//"                           configured from the command. FILENAME may include a \n"
+//"                           relative or absolute path.                          \n\n"
+" -f, --file    = FILENAME  A file to write the outputs. If FILENAME is not     \n"
+"                           specified, the output is printed to the console.    \n\n"
 " -p, --problem = NUMBER    A chioce of benchmark problem from the CODeM suite. \n"
 "                           Use NUMBER = 0 for the problem in the GECCO'16      \n"
 "                           paper. Use NUMBER = 1,...,6 for CODeM1,...,CODeM6.  \n"
-" -x, --solSet  = SET       A set of decision vectors to evaluate. SET needs to \n"
-"                           be provided within double qoutes, where each vector \n"
-"                           is separated with a semicolon, and the elements     \n"
-"                           within a vector separated with a space. e.g., a set \n"
-"                           of three vectors with two variables each:           \n"
-"                           SET = \"1.1 1.2; 2.1 2.2; 3.0 4.0\"                 \n"
-"                           If SET is not specified two defalut sets are        \n"
-"                           generated: one with solutions that are optimal for  \n"
-"                           the deterministic problem, and one with random      \n"
-"                           vectors. Their sizes are specified with the -s and  \n"
-"                           -n options.                                         \n"
+"                           Default is NUMBER = 0.                              \n\n"
+//" -x, --solSet  = SET       A set of decision vectors to evaluate. SET needs to \n"
+//"                           be provided within double qoutes, where each vector \n"
+//"                           is separated with a semicolon, and the elements     \n"
+//"                           within a vector separated with a space. e.g., a set \n"
+//"                           of three vectors with two variables each:           \n"
+//"                           SET = \"1.1 1.2; 2.1 2.2; 3.0 4.0\"                 \n"
+//"                           If SET is not specified two defalut sets are        \n"
+//"                           generated: one with solutions that are optimal for  \n"
+//"                           the deterministic problem, and one with random      \n"
+//"                           vectors. Their sizes are specified with the -s and  \n"
+//"                           -n options.                                         \n\n"
 " -m, --nObj    = NUMBER    The dimensionality of the objective space. If NUMBER\n"
-"                           is not specified, the default is 2 objectives.      \n"
+"                           is not specified, the default is 2 objectives.      \n\n"
 " -d, --nVars   = NUMBER    The dimensionality of the decision space. If NUMBER \n"
-"                           is not specified, the default is nObj + 10.         \n"
+"                           is not specified, the default is 10, or nobj + 1    \n"
+"                           when nObj >= 9.                                     \n\n"
 " -s, --nSols   = NUMBER    The number of decision vectors to evaluate. Two     \n"
 "                           sets of size NUMBER are generated: one with         \n"
 "                           solutions that are optimal for the deterministic    \n"
 "                           problem, and one with random vectors. If NUMBER is  \n"
-"                           not specified, the default value is NUMBER = 10.    \n"
+"                           not specified, the default value is NUMBER = 10.    \n\n"
 " -n, --nSamps  = NUMBER    The number of function evaluations for each decision\n"
 "                           vector. if NUMER is not specified, the default value\n"
-"                           is NUMBER = 5."
-"\n");
-
+"                           is NUMBER = 5.                                      \n\n"
+" -r, --rndSeed = NUMBER    The seed for the pseudo-random number generator. If \n"
+"                           NUMBER is not specified, the default seed is 0. For \n"
+"                           a random seed, based on the CPU time, provide a     \n"
+"                           negative value for NUMBER.                          \n"
+"\n";
 }
-
-
-//int main(int argc, char* argv[])
-//{
-//    if (argc < 3) {
-//        showUsage(argv[0]);
-//        return 1;
-//    }
-//    std::vector <std::string> sources;
-//    std::string destination;
-//    for (int i = 1; i < argc; ++i) {
-//        std::string arg = argv[i];
-//        if ((arg == "-h") || (arg == "--help")) {
-//            show_usage(argv[0]);
-//            return 0;
-//        } else if ((arg == "-d") || (arg == "--destination")) {
-//            if (i + 1 < argc) { // Make sure we aren't at the end of argv!
-//                destination = argv[i++]; // Increment 'i' so we don't get the argument as the next argv[i].
-//            } else { // Uh-oh, there was no argument to the destination option.
-//                  std::cerr << "--destination option requires one argument." << std::endl;
-//                return 1;
-//            }
-//        } else {
-//            sources.push_back(argv[i]);
-//        }
-//    }
-//    return move(sources, destination);
-//}
-
 
 int main(int argc, char** argv)
 {
-    for(int i = 0; i < argc; ++i) {
-        cout << "Argument " << i << ": " << argv[i] << endl;
+    if (argc < 2) {
+        showUsage(argv[0]);
+        return EXIT_FAILURE;
     }
-    return 0;
+
+    // set defaults
+    int seed   = 0;
+    int nObj   = 2;
+    int nVars  = 10;
+    int nSols  = 10;
+    int nSamps = 5;
+    int prob   = 0;
+
+
+    int argInd = 1;
+    while(argInd < argc) {
+        string arg = argv[argInd++];
+
+        if ((arg == "-h") || (arg == "--help")) {
+            showUsage(argv[0]);
+            return EXIT_SUCCESS;
+
+        } else if ((arg == "-f") || (arg == "--file")) {
+            if (argInd < argc) {
+                freopen(argv[argInd++], "w", stdout);
+            } else {
+                cerr << "--file option requires one argument." << endl;
+                return EXIT_FAILURE;
+            }
+
+        } else if ((arg == "-p") || (arg == "--problem")) {
+            if (argInd < argc) {
+                int argI = atoi(argv[argInd++]);
+                if((argI >= 0) && (argI <= 6)) {
+                    prob = argI;
+                } else {
+                    cerr << "Invalid argument for --problem option: Requires a "
+                            "number between 0-6." << endl;
+                    return EXIT_FAILURE;
+                }
+            } else {
+                cerr << "--problem option requires one argument." << endl;
+                return EXIT_FAILURE;
+            }
+            // TODO: accept a set to evaluate
+            //        } else if ((arg == "-x") || (arg == "--solSet")) {
+            //            if (argInd < argc) {
+
+            //            } else {
+            //                cerr << "--solSet option requires one argument." << endl;
+            //                return EXIT_FAILURE;
+            //            }
+
+        } else if ((arg == "-m") || (arg == "--nObj")) {
+            if (argInd < argc) {
+                int argI = atoi(argv[argInd++]);
+                if(argI >= 2) {
+                    nObj = argI;
+                } else {
+                    cerr << "Invalid argument for --nObj option: Number of "
+                            "objectives must be larger than 1." << endl;
+                    return EXIT_FAILURE;
+                }
+            } else {
+                cerr << "--nObj option requires one argument." << endl;
+                return EXIT_FAILURE;
+            }
+
+        } else if ((arg == "-d") || (arg == "--nVars")) {
+            if (argInd < argc) {
+                int argI = atoi(argv[argInd++]);
+                if(argI >= 3) {
+                    nVars = argI;
+                } else {
+                    cerr << "Invalid argument for --nVars option: Number of "
+                            "variables must be larger than 2." << endl;
+                    return EXIT_FAILURE;
+                }
+            } else {
+                cerr << "--nVars option requires one argument." << endl;
+                return EXIT_FAILURE;
+            }
+
+        } else if ((arg == "-s") || (arg == "--nSols")) {
+            if (argInd < argc) {
+                int argI = atoi(argv[argInd++]);
+                if(argI >= 0) {
+                    nSols = argI;
+                } else {
+                    cerr << "Invalid argument for --nSols option: Number of "
+                            "solutions must be larger than 0." << endl;
+                    return EXIT_FAILURE;
+                }
+            } else {
+                cerr << "--nSols option requires one argument." << endl;
+                return EXIT_FAILURE;
+            }
+
+        } else if ((arg == "-n") || (arg == "--nSamps")) {
+            if (argInd < argc) {
+                int argI = atoi(argv[argInd++]);
+                if(argI >= 0) {
+                    nSamps = argI;
+                } else {
+                    cerr << "Invalid argument for --nSamps option: Number of "
+                            "solutions must be larger than 0." << endl;
+                    return EXIT_FAILURE;
+                }
+            } else {
+                cerr << "--nSamps option requires one argument." << endl;
+                return EXIT_FAILURE;
+            }
+
+        } else if ((arg == "-r") || (arg == "--rndSeed")) {
+            if (argInd < argc) {
+                seed = atoi(argv[argInd++]);
+            } else {
+                cerr << "--rndSeed option requires one argument." << endl;
+                return EXIT_FAILURE;
+            }
+        } else {
+            cerr << "Unknown argument " << arg << endl;
+            return EXIT_FAILURE;
+        }
+    }
+
+    if(seed < 0) {
+        randomSeed();
+    } else {
+        defineSeed(seed);
+    }
+
+    cout << "seed   = " << seed   << endl;
+    cout << "nObj   = " << nObj   << endl;
+    cout << "nVars  = " << nVars  << endl;
+    cout << "nSols  = " << nSols  << endl;
+    cout << "nSamps = " << nSamps << endl;
+    cout << "prob   = " << prob   << endl;
 }
 
 //int main()
@@ -179,7 +288,7 @@ int main(int argc, char** argv)
 //    for(int v=0; v<paretoObj.size(); v++) {
 //        cout << "paretoObj{" << v+1 << "} = [";
 //        for(int i=0; i<paretoObj[v].size(); i++) {
-//            dispVector(paretoObj[v][i]);
+//            printVector(paretoObj[v][i]);
 //        }
 //        cout << "];" << endl;
 //    }
@@ -188,7 +297,7 @@ int main(int argc, char** argv)
 //    for(int v=0; v<randObj.size(); v++) {
 //        cout << "randObj{" << v+1 << "} = [";
 //        for(int i=0; i<randObj[v].size(); i++) {
-//            dispVector(randObj[v][i]);
+//            printVector(randObj[v][i]);
 //        }
 //        cout << "];" << endl;
 //    }
@@ -196,16 +305,24 @@ int main(int argc, char** argv)
 //    cout << "\n% Optimal deterministic vectors:" << endl;
 //    cout << "determOptimal = [";
 //    for(int i=0; i<paretoDeterministic.size(); i++) {
-//        dispVector(paretoDeterministic[i]);
+//        printVector(paretoDeterministic[i]);
 //    }
 //    cout << "];" << endl;
 
 //    cout << "\n% Random deterministic vectors:" << endl;
 //    cout << "determRand = [";
 //    for(int i=0; i<randDeterministic.size(); i++) {
-//        dispVector(randDeterministic[i]);
+//        printVector(randDeterministic[i]);
 //    }
 //    cout << "];\n" << endl;
 
+//    return 0;
+//}
+
+//int main(int argc, char** argv)
+//{
+//    for(int i = 0; i < argc; ++i) {
+//        cout << "Argument " << i << ": " << argv[i] << endl;
+//    }
 //    return 0;
 //}

@@ -497,7 +497,7 @@ void MergedDistribution::addOnePDF(IDistribution* d, double ratio)
         ++first;
         ++pdfIter;
     }
-    while(newZ.back() < *last) {
+    while(newZ.back() < *(last - 1)) {
         --last;
     }
 

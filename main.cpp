@@ -61,6 +61,8 @@ void showUsage(char* progName)
 "Options:                                                                       \n"
 "--------                                                                       \n"
 " -h, --help                Print this summary and exit.                        \n\n"
+"     --default             Run the default test problem from the GECCO'16 paper\n"
+"                           using default settings as specified below.          \n\n"
 //" -i, --inFile  = FILENAME  An input file with all the configuration options.   \n"
 //"                           If FILENAME is not specified, the options are       \n"
 //"                           configured from the command. FILENAME may include a \n"
@@ -126,6 +128,12 @@ int main(int argc, char** argv)
         if ((arg == "-h") || (arg == "--help")) {
             showUsage(argv[0]);
             return EXIT_SUCCESS;
+
+        } else if (arg == "--default") {
+            if(argc != 2) {
+                cerr << "--default option must be the only argument." << endl;
+                return EXIT_FAILURE;
+            }// else run with default settings
 
         } else if ((arg == "-f") || (arg == "--file")) {
             if (argInd < argc) {

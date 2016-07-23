@@ -55,6 +55,8 @@ vector<vector<double> > CODeM5Perturb(const vector<double> &iVec,
 
 vector<double>          CODeM6(const vector<double> &iVec, int nObj);
 vector<vector<double> > CODeM6(const vector<double> &iVec, int nObj, int nSamp);
+vector<vector<double> > CODeM6Perturb(size_t iVecSize,
+                                      const vector<double> &oVec, int nSamp = 1);
 vector<vector<double> > CODeM6Perturb(const vector<double> &iVec,
                                       const vector<double> &oVec, int nSamp = 1);
 
@@ -71,6 +73,21 @@ vector<vector<double> > GECCOExamplePerturb(const vector<double> &iVec,
 vector<double> deterministicOVec(int prob, const vector<double> &iVec, int nObj, int k=0);
 
 void createInputBounds(vector<double> &lBounds, vector<double> &uBounds, int prob);
+
+bool validArgs(const vector<vector<double> >          &dVectors,
+               const vector<vector<double> >          &oVecDeterm,
+               const vector<vector<vector<double> > > &oVecSamps,
+               int problem, int k);
+
+void optimalSet(vector<vector<double> >          &dVectors,
+                vector<vector<double> >          &oVecDeterm,
+                vector<vector<vector<double> > > &oVecSamps,
+                int problem, int k);
+void randomSet (vector<vector<double> >          &dVectors,
+                vector<vector<double> >          &oVecDeterm,
+                vector<vector<vector<double> > > &oVecSamps,
+                int problem, int k);
+
 } // namespace CODeM
 
 #endif // CODEMPROBLEMS_H

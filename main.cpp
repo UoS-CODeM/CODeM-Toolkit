@@ -84,24 +84,26 @@ void showUsage(char* progName)
 //"                           the deterministic problem, and one with random      \n"
 //"                           vectors. Their sizes are specified with the -s and  \n"
 //"                           -n options.                                         \n\n"
-" -m, --nObj    = NUMBER    The dimensionality of the objective space. If NUMBER\n"
+" -m, --nObj     = NUMBER   The dimensionality of the objective space. If NUMBER\n"
 "                           is not specified, the default is 2 objectives.      \n\n"
-" -d, --nVars   = NUMBER    The dimensionality of the decision space. If NUMBER \n"
-"                           is not specified, the default is 10, or nobj + 1    \n"
-"                           when nObj >= 9.                                     \n\n"
-" -s, --nSols   = NUMBER    The number of decision vectors to evaluate. Two     \n"
+" -d, --nVars    = NUMBER   The dimensionality of the decision space. Must be   \n"
+"                           larger than nObj. If NUMBER is not specified, the   \n"
+"                           default is 10.                                      \n\n"
+" -s, --nSols    = NUMBER   The number of decision vectors to evaluate. Two     \n"
 "                           sets of size NUMBER are generated: one with         \n"
 "                           solutions that are optimal for the deterministic    \n"
 "                           problem, and one with random vectors. If NUMBER is  \n"
 "                           not specified, the default value is NUMBER = 10.    \n\n"
-" -n, --nSamps  = NUMBER    The number of function evaluations for each decision\n"
+" -n, --nSamps   = NUMBER   The number of function evaluations for each decision\n"
 "                           vector. if NUMER is not specified, the default value\n"
 "                           is NUMBER = 5.                                      \n\n"
-" -r, --rndSeed = NUMBER    The seed for the pseudo-random number generator. If \n"
+" -r, --rndSeed  = NUMBER   The seed for the pseudo-random number generator. If \n"
 "                           NUMBER is not specified, the default seed is 0. For \n"
 "                           a random seed, based on the CPU time, provide a     \n"
 "                           negative value for NUMBER.                          \n"
-"\n";
+" -k, --nDirVars = NUMBER   The number of direction related variables for WFG   \n"
+"                           based problems. If NUMBER is not specified, the     \n"
+"                           default of nObj - 1 is used                         \n\n";
 }
 
 int main(int argc, char** argv)
@@ -118,6 +120,7 @@ int main(int argc, char** argv)
     int nSols  = 10;
     int nSamps = 5;
     int prob   = 0;
+    int k      = 0;
 
 
     /// Parse command line inputs
@@ -233,6 +236,15 @@ int main(int argc, char** argv)
                 cerr << "--rndSeed option requires one argument." << endl;
                 return EXIT_FAILURE;
             }
+
+        } else if ((arg == "-k") || (arg == "--nDirVars")) {
+            if (argInd < argc) {
+                k = atoi(argv[argInd++]);
+            } else {
+                cerr << "--nDirVars option requires one argument." << endl;
+                return EXIT_FAILURE;
+            }
+
         } else {
             cerr << "Unknown argument " << arg << endl;
             return EXIT_FAILURE;
@@ -246,67 +258,84 @@ int main(int argc, char** argv)
         defineSeed(seed);
     }
 
-    /// Pareto optimal solutions for the problem
-    vector<vector<double> > paretoDeterministic;
-    vector<vector<vector<double> > > paretoObj;
-
-    vector<vector<double> > paretoDirVars = simplexLattice(nSols-1, 2);
-
-    for(int i=0; i<paretoDirVars.size(); i++) {
-        vector<double> iVec(nVars, 0.5);
-        iVec[0] = paretoDirVars[i][0];
-        vector<double> determObjVec = deterministicOVec(prob, iVec, nObj);
-        paretoDeterministic.push_back(determObjVec);
-        vector<vector<double> > oVecSamps = CODeM::GECCOExample(iVec, nObj, nSamps);
-        paretoObj.push_back(oVecSamps);
+    if(k == 0) {
+        k = nObj - 1;
     }
 
-    /// Random solutions
-    vector<vector<double> > randDeterministic;
-    vector<vector<vector<double> > > randObj;
-    for(int i=0; i<nSols; i++) {
-        vector<double> iVec;
-        for(int j=0; j<nVars; j++) {
-            iVec.push_back(randUni());
-        }
-        vector<double> determObjVec = deterministicOVec(prob, iVec, nObj);
-        randDeterministic.push_back(determObjVec);
-        vector<vector<double> > oVecSamps = CODeM::GECCOExample(iVec, nObj, nSamps);
-        randObj.push_back(oVecSamps);
-    }
+
+    /// Print run configuration settings
+    cout << "%CODeM Toolkit Demosntrator v1.0\n\n"
+         << "%Configuration settings:"  << endl
+         << "rndSeed    = "  << seed    << endl
+         << "nObj       = "  << nObj    << endl
+         << "nVars      = "  << nVars   << endl
+         << "nSols      = "  << nSols   << endl
+         << "nSamps     = "  << nSamps  << endl
+         << "problem    = "  << prob    << endl
+         << "nDirVars   = "  << k       << endl;
+
+
+    /// Construct the set of solutions
+    vector<vector<double> > dVectors(nSols, vector<double>(nVars));
+    vector<vector<double> > oVecDeterm(nSols, vector<double>(nObj));
+    vector<vector<vector<double> > > oVecSamps(nSols,
+                       vector<vector<double> >(nSamps, vector<double>(nObj)));
+
+    /// Assign Pareto optimal values
+    optimalSet(dVectors, oVecDeterm, oVecSamps, prob, k);
 
     // Display the results
-    cout << "\n% Optimal vectors:" << endl;
-    for(int v=0; v<paretoObj.size(); v++) {
-        cout << "paretoObj{" << v+1 << "} = [";
-        for(int i=0; i<paretoObj[v].size(); i++) {
-            printVector(paretoObj[v][i]);
-        }
-        cout << "];" << endl;
-    }
-
-    cout << "\n% Random vectors:" << endl;
-    for(int v=0; v<randObj.size(); v++) {
-        cout << "randObj{" << v+1 << "} = [";
-        for(int i=0; i<randObj[v].size(); i++) {
-            printVector(randObj[v][i]);
-        }
-        cout << "];" << endl;
-    }
-
-    cout << "\n% Optimal deterministic vectors:" << endl;
-    cout << "determOptimal = [";
-    for(int i=0; i<paretoDeterministic.size(); i++) {
-        printVector(paretoDeterministic[i]);
+    cout << "\n% Optimal decision vectors:" << endl;
+    cout << "optSol = [";
+    for(int i = 0; i < dVectors.size(); ++i) {
+        printVector(dVectors[i]);
     }
     cout << "];" << endl;
 
-    cout << "\n% Random deterministic vectors:" << endl;
-    cout << "determRand = [";
-    for(int i=0; i<randDeterministic.size(); i++) {
-        printVector(randDeterministic[i]);
+    cout << "\n% Optimal deterministic objective vectors:" << endl;
+    cout << "optDetermObj = [";
+    for(int i = 0; i < oVecDeterm.size(); ++i) {
+        printVector(oVecDeterm[i]);
     }
-    cout << "];\n" << endl;
+    cout << "];" << endl;
+
+    cout << "\n% Samples for optimal solutions:" << endl;
+    for(int v = 0; v < oVecSamps.size(); ++v) {
+        cout << "optObjSamps{" << v+1 << "} = [";
+        for(int i = 0; i < oVecSamps[v].size(); ++i) {
+            printVector(oVecSamps[v][i]);
+        }
+        cout << "];" << endl;
+    }
+
+//    /// Random solutions
+//    vector<vector<double> > randDeterministic;
+//    vector<vector<vector<double> > > randObj;
+//    for(int i=0; i<nSols; i++) {
+//        vector<double> iVec;
+//        for(int j=0; j<nVars; j++) {
+//            iVec.push_back(randUni());
+//        }
+//        vector<double> determObjVec = deterministicOVec(prob, iVec, nObj);
+//        randDeterministic.push_back(determObjVec);
+//        vector<vector<double> > oVecSamps = CODeM::GECCOExample(iVec, nObj, nSamps);
+//        randObj.push_back(oVecSamps);
+//    }
+
+//    // Display the results
+//    cout << "\n% Optimal deterministic vectors:" << endl;
+//    cout << "determOptimal = [";
+//    for(int i=0; i<paretoDeterministic.size(); i++) {
+//        printVector(paretoDeterministic[i]);
+//    }
+//    cout << "];" << endl;
+
+//    cout << "\n% Random deterministic vectors:" << endl;
+//    cout << "determRand = [";
+//    for(int i=0; i<randDeterministic.size(); i++) {
+//        printVector(randDeterministic[i]);
+//    }
+//    cout << "];\n" << endl;
 
     return EXIT_SUCCESS;
 }

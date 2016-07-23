@@ -320,7 +320,7 @@ vector<double> CODeM6(const vector<double> &iVec, int nObj)
     // Evaluate the decision vector
     vector<double> oVec = DTLZ::DTLZ1Modified(iVec, nObj);
 
-    return CODeM6Perturb(iVec, oVec)[0];
+    return CODeM6Perturb(iVec.size(), oVec)[0];
 }
 
 vector<vector<double> > CODeM6(const vector<double> &iVec,
@@ -329,19 +329,24 @@ vector<vector<double> > CODeM6(const vector<double> &iVec,
     // Evaluate the decision vector
     vector<double> oVec = DTLZ::DTLZ1Modified(iVec, nObj);
 
-    return CODeM6Perturb(iVec, oVec, nSamp);
+    return CODeM6Perturb(iVec.size(), oVec, nSamp);
 }
 
 vector<vector<double> > CODeM6Perturb(const vector<double> &iVec,
                                       const vector<double> &oVec,
                                        int nSamp)
 {
+    return CODeM6Perturb(iVec.size(), oVec, nSamp);
+}
+
+vector<vector<double> > CODeM6Perturb(size_t iVecSize, const vector<double> &oVec, int nSamp)
+{
     // Set the uncertainty kernel
     vector<double> ideal(oVec.size(), 0.0);
 
     // DTLZ1 is modified so the 100 scale of the distance function
     // is not included
-    double maxVal = 1.125 * iVec.size();
+    double maxVal = 1.125 * iVecSize;
     vector<double> antiIdeal(oVec.size(), maxVal);
 
     vector<double> normVec(oVec);
@@ -382,7 +387,7 @@ vector<double> GECCOExample(const vector<double> &iVec, int nObj)
     // Evaluate the decision vector
     vector<double> oVec = DTLZ::DTLZ1Modified(iVec, nObj);
 
-    return GECCOExamplePerturb(iVec, oVec)[0];
+    return GECCOExamplePerturb(iVec.size(), oVec)[0];
 }
 
 vector<vector<double> > GECCOExample(const vector<double> &iVec, int nObj, int nSamp)
@@ -390,7 +395,7 @@ vector<vector<double> > GECCOExample(const vector<double> &iVec, int nObj, int n
     // Evaluate the decision vector
     vector<double> oVec = DTLZ::DTLZ1Modified(iVec, nObj);
 
-    return GECCOExamplePerturb(iVec, oVec, nSamp);
+    return GECCOExamplePerturb(iVec.size(), oVec, nSamp);
 }
 
 vector<vector<double> > GECCOExamplePerturb(size_t iVecSize, const vector<double> &oVec,
@@ -492,6 +497,130 @@ void createInputBounds(vector<double> &lBounds,
         }
         break;
     }
+}
+
+bool validArgs(const vector<vector<double> >          &dVectors,
+               const vector<vector<double> >          &oVecDeterm,
+               const vector<vector<vector<double> > > &oVecSamps,
+               int problem, int k)
+{
+    if((problem < 0) || (problem > 6)) {
+        return false;
+    }
+
+    int nSols = dVectors.size();
+    if((nSols < 1) || (oVecDeterm.size() != nSols)
+                   || (oVecSamps.size()  != nSols)) {
+        return false;
+    }
+
+    int nSamps  = oVecSamps[0].size();
+    if(nSamps < 1) {
+        return false;
+    }
+
+    int nVars = dVectors[0].size();
+    int nObj  = oVecDeterm[0].size();
+    if(oVecSamps[0][0].size() != nObj);
+
+    if((problem == 0) || (problem == 6)) {
+        return (nVars > nObj);
+    } else {
+        return (k >= 1) && (k < nVars) && (nObj >= 2) && (k % ( nObj-1 ) == 0);
+    }
+
+}
+
+void optimalSet(vector<vector<double> >          &dVectors,
+                vector<vector<double> >          &oVecDeterm,
+                vector<vector<vector<double> > > &oVecSamps,
+                int problem, int k)
+{
+    if((problem == 5) ||
+            !validArgs(dVectors, oVecDeterm, oVecSamps, problem, k)) {
+        return;
+    }
+
+    int nSols   = dVectors.size();
+    int nVars   = dVectors[0].size();
+    int nObj    = oVecDeterm[0].size();
+    int nSamps  = oVecSamps[0].size();
+
+    // create optimal decision vectors with random direction variables
+    switch(problem)
+    {
+    case 1: case 2: case 3: case 4:
+    {
+        for(int i = 0; i < nSols; ++i) {
+            for(int j = 0; j < k; ++j) {
+                dVectors[i][j] = randUni() * 2.0 * (j + 1);
+            }
+            for(int j = k; j < nVars; ++j) {
+                dVectors[i][j] = 0.35 * 2.0 * (j + 1);
+            }
+        }
+        break;
+    }
+    case 0: case 6: default:
+    {
+        k = nObj - 1;
+        for(int i = 0; i < nSols; ++i) {
+            for(int j = 0; j < k; ++j) {
+                dVectors[i][j] = randUni();
+            }
+            for(int j = k; j < nVars; ++j) {
+                dVectors[i][j] = 0.5;
+            }
+        }
+        break;
+    }
+    }
+
+    // Evaluate the vectors
+    for(int i = 0; i < nSols; ++i) {
+        oVecDeterm[i] = deterministicOVec(problem, dVectors[i], nObj, k);
+        switch(problem)
+        {
+        case 0: default:
+        {
+            oVecSamps[i] = GECCOExamplePerturb(nVars, oVecDeterm[i], nSamps);
+            break;
+        }
+        case 1:
+        {
+            oVecSamps[i] = CODeM1Perturb(oVecDeterm[i], nSamps);
+            break;
+        }
+        case 2:
+        {
+            oVecSamps[i] =  CODeM2Perturb(oVecDeterm[i], nSamps);
+            break;
+        }
+        case 3:
+        {
+            oVecSamps[i] =  CODeM3Perturb(oVecDeterm[i], nSamps);
+            break;
+        }
+        case 4:
+        {
+            oVecSamps[i] =  CODeM4Perturb(oVecDeterm[i], nSamps);
+            break;
+        }
+        case 6:
+        {
+            oVecSamps[i] =  CODeM6Perturb(nVars, oVecDeterm[i], nSamps);
+            break;
+        }
+        }
+    }
+}
+
+void randomSet(vector<vector<double> >          &dVectors,
+               vector<vector<double> >          &oVecDeterm,
+               vector<vector<vector<double> > > &oVecSamps,
+               int problem, int k)
+{
+
 }
 
 } // namespace CODeM

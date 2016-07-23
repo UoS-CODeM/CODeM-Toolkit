@@ -620,7 +620,76 @@ void randomSet(vector<vector<double> >          &dVectors,
                vector<vector<vector<double> > > &oVecSamps,
                int problem, int k)
 {
+    if(!validArgs(dVectors, oVecDeterm, oVecSamps, problem, k)) {
+        return;
+    }
 
+    int nSols   = dVectors.size();
+    int nVars   = dVectors[0].size();
+    int nObj    = oVecDeterm[0].size();
+    int nSamps  = oVecSamps[0].size();
+
+    // create random decision vectors
+    switch(problem)
+    {
+    case 1: case 2: case 3: case 4:
+    {
+        for(int i = 0; i < nSols; ++i) {
+            for(int j = 0; j < nVars; ++j) {
+                dVectors[i][j] = randUni() * 2.0 * (j + 1);
+            }
+        }
+        break;
+    }
+    case 0: case 6: default:
+    {
+        k = nObj - 1;
+        for(int i = 0; i < nSols; ++i) {
+            for(int j = 0; j < nVars; ++j) {
+                dVectors[i][j] = randUni();
+            }
+        }
+        break;
+    }
+    }
+
+    // Evaluate the vectors
+    for(int i = 0; i < nSols; ++i) {
+        oVecDeterm[i] = deterministicOVec(problem, dVectors[i], nObj, k);
+        switch(problem)
+        {
+        case 0: default:
+        {
+            oVecSamps[i] = GECCOExamplePerturb(nVars, oVecDeterm[i], nSamps);
+            break;
+        }
+        case 1:
+        {
+            oVecSamps[i] = CODeM1Perturb(oVecDeterm[i], nSamps);
+            break;
+        }
+        case 2:
+        {
+            oVecSamps[i] =  CODeM2Perturb(oVecDeterm[i], nSamps);
+            break;
+        }
+        case 3:
+        {
+            oVecSamps[i] =  CODeM3Perturb(oVecDeterm[i], nSamps);
+            break;
+        }
+        case 4:
+        {
+            oVecSamps[i] =  CODeM4Perturb(oVecDeterm[i], nSamps);
+            break;
+        }
+        case 6:
+        {
+            oVecSamps[i] =  CODeM6Perturb(nVars, oVecDeterm[i], nSamps);
+            break;
+        }
+        }
+    }
 }
 
 } // namespace CODeM

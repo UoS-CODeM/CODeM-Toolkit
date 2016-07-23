@@ -264,15 +264,16 @@ int main(int argc, char** argv)
 
 
     /// Print run configuration settings
-    cout << "%CODeM Toolkit Demosntrator v1.0\n\n"
-         << "%Configuration settings:"  << endl
-         << "rndSeed    = "  << seed    << endl
-         << "nObj       = "  << nObj    << endl
-         << "nVars      = "  << nVars   << endl
-         << "nSols      = "  << nSols   << endl
-         << "nSamps     = "  << nSamps  << endl
-         << "problem    = "  << prob    << endl
-         << "nDirVars   = "  << k       << endl;
+    cout << "% CODeM Toolkit Demosntrator v1.0\n"
+            "% Copyright (c) 2016 The University of Sheffield\n\n"
+         << "% Configuration settings:"    << endl
+         << "rndSeed  = " << seed   << ";" << endl
+         << "nObj     = " << nObj   << ";" << endl
+         << "nVars    = " << nVars  << ";" << endl
+         << "nSols    = " << nSols  << ";" << endl
+         << "nSamps   = " << nSamps << ";" << endl
+         << "problem  = " << prob   << ";" << endl
+         << "nDirVars = " << k      << ";" << endl;
 
 
     /// Construct the set of solutions
@@ -282,60 +283,64 @@ int main(int argc, char** argv)
                        vector<vector<double> >(nSamps, vector<double>(nObj)));
 
     /// Assign Pareto optimal values
-    optimalSet(dVectors, oVecDeterm, oVecSamps, prob, k);
+    if(prob == 5) {
+        cout << "\n% Optimal set cannot be analytically derived for CODeM5" << endl;
+    }
+    else
+    {
+        optimalSet(dVectors, oVecDeterm, oVecSamps, prob, k);
+
+        // Display the results
+        cout << "\n% Optimal decision vectors:" << endl;
+        cout << "optSol = [";
+        for(int i = 0; i < dVectors.size(); ++i) {
+            printVector(dVectors[i]);
+        }
+        cout << "];" << endl;
+
+        cout << "\n% Optimal deterministic objective vectors:" << endl;
+        cout << "optDetermObj = [";
+        for(int i = 0; i < oVecDeterm.size(); ++i) {
+            printVector(oVecDeterm[i]);
+        }
+        cout << "];" << endl;
+
+        cout << "\n% Samples for optimal solutions:" << endl;
+        for(int v = 0; v < oVecSamps.size(); ++v) {
+            cout << "optObjSamps{" << v+1 << "} = [";
+            for(int i = 0; i < oVecSamps[v].size(); ++i) {
+                printVector(oVecSamps[v][i]);
+            }
+            cout << "];" << endl;
+        }
+    }
+
+    /// Random solutions
+    randomSet(dVectors, oVecDeterm, oVecSamps, prob, k);
 
     // Display the results
-    cout << "\n% Optimal decision vectors:" << endl;
-    cout << "optSol = [";
+    cout << "\n% Random decision vectors:" << endl;
+    cout << "rndSol = [";
     for(int i = 0; i < dVectors.size(); ++i) {
         printVector(dVectors[i]);
     }
     cout << "];" << endl;
 
-    cout << "\n% Optimal deterministic objective vectors:" << endl;
-    cout << "optDetermObj = [";
+    cout << "\n% Random deterministic objective vectors:" << endl;
+    cout << "rndDetermObj = [";
     for(int i = 0; i < oVecDeterm.size(); ++i) {
         printVector(oVecDeterm[i]);
     }
     cout << "];" << endl;
 
-    cout << "\n% Samples for optimal solutions:" << endl;
+    cout << "\n% Samples for random solutions:" << endl;
     for(int v = 0; v < oVecSamps.size(); ++v) {
-        cout << "optObjSamps{" << v+1 << "} = [";
+        cout << "rndObjSamps{" << v+1 << "} = [";
         for(int i = 0; i < oVecSamps[v].size(); ++i) {
             printVector(oVecSamps[v][i]);
         }
         cout << "];" << endl;
     }
-
-//    /// Random solutions
-//    vector<vector<double> > randDeterministic;
-//    vector<vector<vector<double> > > randObj;
-//    for(int i=0; i<nSols; i++) {
-//        vector<double> iVec;
-//        for(int j=0; j<nVars; j++) {
-//            iVec.push_back(randUni());
-//        }
-//        vector<double> determObjVec = deterministicOVec(prob, iVec, nObj);
-//        randDeterministic.push_back(determObjVec);
-//        vector<vector<double> > oVecSamps = CODeM::GECCOExample(iVec, nObj, nSamps);
-//        randObj.push_back(oVecSamps);
-//    }
-
-//    // Display the results
-//    cout << "\n% Optimal deterministic vectors:" << endl;
-//    cout << "determOptimal = [";
-//    for(int i=0; i<paretoDeterministic.size(); i++) {
-//        printVector(paretoDeterministic[i]);
-//    }
-//    cout << "];" << endl;
-
-//    cout << "\n% Random deterministic vectors:" << endl;
-//    cout << "determRand = [";
-//    for(int i=0; i<randDeterministic.size(); i++) {
-//        printVector(randDeterministic[i]);
-//    }
-//    cout << "];\n" << endl;
 
     return EXIT_SUCCESS;
 }

@@ -26,7 +26,7 @@ $(OBJS): %.o : %.cpp
 	$(CXX) $(CXXFLAG) -o $@ -c $<
 
 test:
-	./$(TARGET)
+	./$(TARGET) --default
 clean:
 	@echo " Cleaning..."; 
 	rm -f $(OBJS)

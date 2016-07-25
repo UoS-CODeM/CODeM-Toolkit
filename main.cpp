@@ -110,7 +110,7 @@ int main(int argc, char** argv)
 {
     if (argc < 2) {
         showUsage(argv[0]);
-        return EXIT_FAILURE;
+        return EXIT_SUCCESS;
     }
 
     /// Set default values

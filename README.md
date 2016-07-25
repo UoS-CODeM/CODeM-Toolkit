@@ -3,9 +3,13 @@ A Generator for Uncertain Scalable Stochastic Multiobjective Test Problems
 
 The code in this repository is a `C++` implementation of the CODeM toolkit that modifies test problems for multiobjective optimization to stochastic problems.
 
-Some examples for stochastic problems that use different features of the toolkit can be found in `misc/examples/CODeMProblems.h`.
+Some examples for stochastic problems that use different features of the toolkit can be found in [`misc/examples/CODeMProblems.h`](misc/examples/CODeMProblems.h).
 
-The application allows the user to evaluate an example problem with two sets of decision vectors: random solutions and Pareto optimal solutions for the underlying deterministic problem.
+Once compiled, the application allows the user to evaluate an example problem with two sets of decision vectors: random solutions and Pareto optimal solutions for the underlying deterministic problem.
+For every decision vector, both deterministic objective vector and samples from the stochastic objective vector are produced.
+
+![2 objectives](/misc/examples/images/exampleProblem2ObjColour.png "Results for Problem 0 with two objectives")
+![3 objectives](/misc/examples/images/exampleProblem3ObjColour.png "Results for Problem 0 with three objectives")
 
 ## Compile
 The file `CODeM.pro` is configured for `Qt` framework, and can be compiled using `qmake`.

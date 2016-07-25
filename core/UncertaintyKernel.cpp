@@ -1,105 +1,87 @@
 /****************************************************************************
 **
-** Copyright (C) 2012-2015 The University of Sheffield (www.sheffield.ac.uk)
+** The MIT License (MIT)
 **
-** This file is part of Liger.
+** Copyright (c) 2016 The University of Sheffield (www.sheffield.ac.uk)
 **
-** GNU Lesser General Public License Usage
-** This file may be used under the terms of the GNU Lesser General
-** Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** Permission is hereby granted, free of charge, to any person obtaining a copy
+** of this software and associated documentation files (the "Software"), to deal
+** in the Software without restriction, including without limitation the rights
+** to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+** copies of the Software, and to permit persons to whom the Software is
+** furnished to do so, subject to the following conditions:
+**
+** The above copyright notice and this permission notice shall be included in all
+** copies or substantial portions of the Software.
+**
+** THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+** IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+** FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+** AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+** LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+** OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+** SOFTWARE
 **
 ****************************************************************************/
 #include <core/UncertaintyKernel.h>
-#include <tigon/Representation/Mappings/IMapping.h>
-#include <tigon/Representation/Elements/IElement.h>
-#include <tigon/Representation/Constraints/BoxConstraintsData.h>
-#include <tigon/Utils/NormalisationUtils.h>
-#include <tigon/Utils/TigonUtils.h>
-#include <qmath.h>
+#include <core/utils/ScalingUtils.h>
+#include <math.h>
+
+using std::vector;
+using namespace CODeM::Utils;
 
 namespace CODeM {
 
-UncertaintyKernel::UncertaintyKernel(vector<double> inputs,
-                                     vector<double> outputs,
-                                     BoxConstraintsData* box)
-{
-    m_inputs  = inputs;
-    m_outputs = outputs;
-    m_box     = box->clone();
-    defineIdealAndAntiIdeal(vector<double>(outputs.size(), 0.0),
-                            vector<double>(outputs.size(), 1.0));
-    calcDirectionAndDistance();
-    defineDirectedObjectiveBoundaries();
-}
-
-UncertaintyKernel::UncertaintyKernel(vector<double> inputs,
-                                     vector<double> outputs,
-                                     BoxConstraintsData* box,
-                                     double lb,
-                                     double ub)
-{
-    m_inputs  = inputs;
-    m_outputs = outputs;
-    m_box     = box->clone();
-    defineIdealAndAntiIdeal(vector<double>(outputs.size(), 0.0),
-                            vector<double>(outputs.size(), 1.0));
-    calcDirectionAndDistance();
-    defineDirectedObjectiveBoundaries(lb, ub);
-}
-
-UncertaintyKernel::UncertaintyKernel(vector<double> inputs,
-                                     vector<double> outputs,
-                                     BoxConstraintsData* box,
-                                     vector<double> ideal,
-                                     vector<double> antiIdeal)
-{
-    m_inputs  = inputs;
-    m_outputs = outputs;
-    m_box     = box->clone();
-    // default values in case of incorrect ideal and antiIdeal
-    defineIdealAndAntiIdeal(vector<double>(outputs.size(), 0.0),
-                            vector<double>(outputs.size(), 1.0));
-    defineIdealAndAntiIdeal(ideal, antiIdeal);
-    calcDirectionAndDistance();
-    defineDirectedObjectiveBoundaries();
-}
-
-UncertaintyKernel::UncertaintyKernel(vector<double> inputs,
-                                     vector<double> outputs,
-                                     BoxConstraintsData* box,
+//UncertaintyKernel::UncertaintyKernel(const vector<double> &inputs,
+//                                     const vector<double> &outputs)
+//    : m_inputs(inputs),
+//      m_outputs(outputs),
+//      m_ideal(vector<double>(outputs.size(), 0.0)),
+//      m_antiIdeal(vector<double>(outputs.size(), 1.0)),
+//      m_lowerBounds(vector<double>(inputs.size(), 0.0)),
+//      m_upperBounds(vector<double>(inputs.size(), 1.0))
+//{
+//    calcDirectionAndDistance();
+//    defineDirectedObjectiveBoundaries();
+//}
+UncertaintyKernel::UncertaintyKernel(const vector<double> &outputs,
                                      double lb,
                                      double ub,
-                                     vector<double> ideal,
-                                     vector<double> antiIdeal)
+                                     const vector<double> &ideal,
+                                     const vector<double> &antiIdeal)
+    : m_outputs(outputs),
+      m_ideal(vector<double>(outputs.size(), 0.0)),
+      m_antiIdeal(vector<double>(outputs.size(), 1.0)),
+      m_dirLowerBound(0.0),
+      m_dirUpperBound(1.0)
 {
-    m_inputs  = inputs;
-    m_outputs = outputs;
-    m_box     = box->clone();
-    defineIdealAndAntiIdeal(vector<double>(outputs.size(), 0.0),
-                            vector<double>(outputs.size(), 1.0));
     defineIdealAndAntiIdeal(ideal, antiIdeal);
     calcDirectionAndDistance();
     defineDirectedObjectiveBoundaries(lb, ub);
 }
 
-UncertaintyKernel::UncertaintyKernel(vector<double> outputs,
+UncertaintyKernel::UncertaintyKernel(const vector<double> &inputs,
+                                     const vector<double> &outputs,
                                      double lb,
                                      double ub,
-                                     vector<double> ideal,
-                                     vector<double> antiIdeal)
+                                     const vector<double> &inputsLowerBounds,
+                                     const vector<double> &inputsUpperBounds,
+                                     const vector<double> &ideal,
+                                     const vector<double> &antiIdeal)
+    : m_inputs(inputs),
+      m_outputs(outputs),
+      m_ideal(vector<double>(outputs.size(), 0.0)),
+      m_antiIdeal(vector<double>(outputs.size(), 1.0)),
+      m_inLowerBounds(vector<double>(inputs.size(), 0.0)),
+      m_inUpperBounds(vector<double>(inputs.size(), 1.0)),
+      m_dirLowerBound(0.0),
+      m_dirUpperBound(1.0)
 {
-    m_outputs = outputs;
-    defineIdealAndAntiIdeal(vector<double>(outputs.size(), 0.0),
-                            vector<double>(outputs.size(), 1.0));
     defineIdealAndAntiIdeal(ideal, antiIdeal);
+    defineInputsBounds(inputsLowerBounds, inputsUpperBounds);
     calcDirectionAndDistance();
     defineDirectedObjectiveBoundaries(lb, ub);
 }
-
 
 UncertaintyKernel::~UncertaintyKernel()
 {
@@ -116,7 +98,7 @@ void UncertaintyKernel::calcDirectionAndDistance()
     normaliseToUnitBox(m_direction, m_ideal, m_antiIdeal);
 
     // m_distance in 2-norm
-    m_distance = magnitudeAndDirectionP(m_direction, 2.0);
+    m_distance = magnitudeP(m_direction, 2.0);
 
     // normalise the direction vector to the k-1 simplex
     toUnitVec(m_direction, 1.0);
@@ -124,12 +106,12 @@ void UncertaintyKernel::calcDirectionAndDistance()
 
 double UncertaintyKernel::proximity()
 {
-    if(m_distance <= m_lb) {
+    if(m_distance <= m_dirLowerBound) {
         return 0.0;
-    } else if(m_distance >= m_ub) {
+    } else if(m_distance >= m_dirUpperBound) {
         return 1.0;
     } else {
-        return (m_distance - m_lb) / (m_ub - m_lb);
+        return (m_distance - m_dirLowerBound) / (m_dirUpperBound - m_dirLowerBound);
     }
 }
 
@@ -144,12 +126,12 @@ double UncertaintyKernel::symmetry()
     double symmetryVal = (1.0 - euclideanDist) /
             (1.0 - 1.0/sqrt(m_direction.size()));
 
-    return qPow(symmetryVal, 2.0);
+    return pow(symmetryVal, 2.0);
 }
 
 double UncertaintyKernel::oComponent(int idx) const
 {
-    if(!isInRange(idx, m_outputs.size())) {
+    if((idx < 0) || (idx >= m_outputs.size())) {
         return -1.0;
     }
     double oc = (m_outputs[idx]-m_ideal[idx]) / (m_antiIdeal[idx]-m_ideal[idx]);
@@ -158,11 +140,11 @@ double UncertaintyKernel::oComponent(int idx) const
 
 double UncertaintyKernel::dComponent(int idx) const
 {
-    if(!isInRange(idx, m_inputs.size())) {
+    if((idx < 0) || (idx >= m_inputs.size())) {
         return -1.0;
     }
-    double lb = m_box->lowerBounds().at(idx).value<double>();
-    double ub = m_box->upperBounds().at(idx).value<double>();
+    double lb = m_inLowerBounds[idx];
+    double ub = m_inUpperBounds[idx];
     double d  = m_inputs.at(idx);
 
     double dRatio = (d-lb)/(ub-lb);
@@ -177,19 +159,19 @@ vector<double> UncertaintyKernel::direction() const
 void UncertaintyKernel::defineDirectedObjectiveBoundaries(double lb, double ub)
 {
     if(ub > lb) {
-        m_lb = lb;
-        m_ub = ub;
+        m_dirLowerBound = lb;
+        m_dirUpperBound = ub;
     }
 }
 
 void UncertaintyKernel::defineDirectedObjectiveBoundaries()
 {
-    m_lb = 0.0;
-    m_ub = directedBoxedIntervalLength(m_direction);
+    m_dirLowerBound = 0.0;
+    m_dirUpperBound = directedBoxedIntervalLength(m_direction);
 }
 
-void UncertaintyKernel::defineIdealAndAntiIdeal(vector<double> ideal,
-                                           vector<double> antiIdeal)
+void UncertaintyKernel::defineIdealAndAntiIdeal(const vector<double> &ideal,
+                                                const vector<double> &antiIdeal)
 {
     if(ideal.size() == antiIdeal.size()) {
         for(int i=0; i<ideal.size(); i++) {
@@ -199,6 +181,20 @@ void UncertaintyKernel::defineIdealAndAntiIdeal(vector<double> ideal,
         }
         m_ideal     = ideal;
         m_antiIdeal = antiIdeal;
+    }
+}
+
+void UncertaintyKernel::defineInputsBounds(const vector<double> &lowerBounds,
+                                           const vector<double> &upperBounds)
+{
+    if(lowerBounds.size() == upperBounds.size()) {
+        for(int i=0; i<lowerBounds.size(); i++) {
+            if(lowerBounds[i] <= upperBounds[i]) {
+                return;
+            }
+        }
+        m_inLowerBounds = lowerBounds;
+        m_inUpperBounds = upperBounds;
     }
 }
 

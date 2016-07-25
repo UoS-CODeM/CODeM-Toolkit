@@ -23,24 +23,37 @@
 ** SOFTWARE
 **
 ****************************************************************************/
-#ifndef CODEMOPERATORS_H
-#define CODEMOPERATORS_H
-
+#include <misc/CODeMMisc.h>
 #include <core/CODeMGlobal.h>
-#include <vector>
+
+#include <math.h>
+
+using namespace std;
 
 namespace CODeM {
 
-// Relations between UncertaintyKernel properties and uncertainty parameters
-double linearDecrease(double val);
-double skewedIncrease(double val, double alpha);
-double skewedDecrease(double val, double alpha);
-double lowOnValue(double val, double zeroVal, double width);
-double highOnValue(double val, double oneVal, double width);
-
-std::vector<double> directionPerturbation(const std::vector<double> &oVec,
-                                          double maxRadius, double pNorm=2);
+vector<vector<double> > simplexLattice(int h, int k, double s)
+{
+    vector<vector<double> > wSet;
+    //terminating criterion
+    if(k==1) {
+        wSet.push_back(vector<double>(1, s));
+    } else {
+        double w = 0.0;
+        for(int i = 0; i < h + 1; ++i) {
+            vector<vector<double> > kMinusOneSimplex
+                    = simplexLattice(h - i, k - 1, s - w);
+            for(int j = 0; j < kMinusOneSimplex.size(); ++j) {
+                vector<double> ww(kMinusOneSimplex.size() + 1);
+                ww[0] = w;
+                copy(kMinusOneSimplex[j].begin(), kMinusOneSimplex[j].end(),
+                     ww.begin()+1);
+                wSet.push_back(ww);
+            }
+            w += s / h;
+        }
+    }
+    return wSet;
+}
 
 } // namespace CODeM
-
-#endif // CODEMOPERATORS_H

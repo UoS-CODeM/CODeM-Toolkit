@@ -16,14 +16,14 @@
 #ifndef DTLZPROBLEMS_H
 #define DTLZPROBLEMS_H
 
-
 #include <vector>
 
 namespace DTLZ {
 
-//vector<double > DTLZ1(const vector<double >& x, const int M);
-vector<double > DTLZ1(const vector<double >& x, const int M);
-vector<double > DTLZ2(const vector<double >& x, const int M);
+std::vector<double > DTLZ1Modified(const std::vector<double >& x,
+                                   const int M);
+std::vector<double > DTLZ1(const std::vector<double >& x, const int M);
+std::vector<double > DTLZ2(const std::vector<double >& x, const int M);
 
 }  // namespace DTLZ
 

@@ -14,23 +14,50 @@
 **
 ****************************************************************************/
 
-#include <tigon/Representation/Functions/DTLZ/DTLZProblems.h>
+#include <libs/DTLZ/DTLZProblems.h>
+#include <core/CODeMGlobal.h>
 
-#include <QtMath>
+#include <math.h>
+
+using std::vector;
 
 namespace DTLZ {
 
-vector<double > DTLZ1(const vector<double >& x, const int M)
+std::vector<double> DTLZ1Modified(const std::vector<double> &x, const int M)
 {
-    int n = x.size();
+    int n = (int)x.size();
     int k = n - M + 1;
     double g = 0.0;
     for (int i = n - k; i < n; i++) {
-        g += (x[i] - 0.5)*(x[i] - 0.5) - qCos(20.0 * pi<double>() * (x[i] - 0.5));
+        g += (x[i] - 0.5)*(x[i] - 0.5) - cos(20.0 * CODeM::PI * (x[i] - 0.5));
     }
     // This is the DTLZ paper version, but the huge scaling has no added value
-//    g = 100.0 * ((double)k + g);
     g = ((double)k + g);
+
+    vector<double> y(M, (1.0 + g) * 0.5);
+
+    for (int i = 0; i < M; i++) {
+        int aux = M - (i + 1);
+        for (int j = 0; j < aux; j++) {
+            y[i] *= x.at(j);
+        }
+        if (i != 0){
+            y[i] *= (1 - x[aux]);
+        }
+    }
+
+    return y;
+}
+
+vector<double > DTLZ1(const vector<double >& x, const int M)
+{
+    int n = (int)x.size();
+    int k = n - M + 1;
+    double g = 0.0;
+    for (int i = n - k; i < n; i++) {
+        g += (x[i] - 0.5)*(x[i] - 0.5) - cos(20.0 * CODeM::PI * (x[i] - 0.5));
+    }
+    g = 100.0 * ((double)k + g);
 
     vector<double> y(M, (1.0 + g) * 0.5);
 
@@ -50,7 +77,7 @@ vector<double > DTLZ1(const vector<double >& x, const int M)
 vector<double > DTLZ2(const vector<double >& x, const int M)
 {
     int i,j;
-    int n = x.size();
+    int n = (int)x.size();
     int k = n - M + 1;
     double g = 0.0;
     double coss, sine;
@@ -63,9 +90,9 @@ vector<double > DTLZ2(const vector<double >& x, const int M)
     for (j=(M-1); j >= 0; j--) {
         coss = 1.0;
         for (i=0; i<M-j-1; i++) {
-            coss *= qCos(x[i]*pi<double>()/2.0) ;
+            coss *= cos(x[i]*CODeM::PI/2.0) ;
         }
-        sine = (j>0) ? ((j==M-1) ? qSin(x[M-j-1]*pi<double>()/2.0) : qSin(x[i]*pi<double>()/2.0)) : 1.0;
+        sine = (j>0) ? ((j==M-1) ? sin(x[M-j-1]*CODeM::PI/2.0) : sin(x[i]*CODeM::PI/2.0)) : 1.0;
         y[j] = (1.0+g) * coss * sine;
     }
 

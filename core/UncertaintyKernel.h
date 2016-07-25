@@ -1,57 +1,58 @@
 /****************************************************************************
 **
-** Copyright (C) 2012-2015 The University of Sheffield (www.sheffield.ac.uk)
+** The MIT License (MIT)
 **
-** This file is part of Liger.
+** Copyright (c) 2016 The University of Sheffield (www.sheffield.ac.uk)
 **
-** GNU Lesser General Public License Usage
-** This file may be used under the terms of the GNU Lesser General
-** Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** Permission is hereby granted, free of charge, to any person obtaining a copy
+** of this software and associated documentation files (the "Software"), to deal
+** in the Software without restriction, including without limitation the rights
+** to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+** copies of the Software, and to permit persons to whom the Software is
+** furnished to do so, subject to the following conditions:
+**
+** The above copyright notice and this permission notice shall be included in all
+** copies or substantial portions of the Software.
+**
+** THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+** IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+** FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+** AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+** LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+** OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+** SOFTWARE
 **
 ****************************************************************************/
 #ifndef UNCERTAINTYKERNEL_H
 #define UNCERTAINTYKERNEL_H
 
-
-
+#include <core/CODeMGlobal.h>
 
 #include <vector>
-class BoxConstraintsData;
+using std::vector;
 
 namespace CODeM {
 
+namespace Utils {
+class BoxConstraintsData;
+}
+using namespace Utils;
 class UncertaintyKernel
 {
 public:
-    UncertaintyKernel(vector<double> inputs,
-                      vector<double> outputs,
-                      BoxConstraintsData* box);
-    UncertaintyKernel(vector<double> inputs,
-                      vector<double> outputs,
-                      BoxConstraintsData* box,
-                      double lb,
-                      double ub);
-    UncertaintyKernel(vector<double> inputs,
-                      vector<double> outputs,
-                      BoxConstraintsData* box,
-                      vector<double> ideal,
-                      vector<double> antiIdeal);
-    UncertaintyKernel(vector<double> inputs,
-                      vector<double> outputs,
-                      BoxConstraintsData* box,
+    UncertaintyKernel(const vector<double> &outputs,
                       double lb,
                       double ub,
-                      vector<double> ideal,
-                      vector<double> antiIdeal);
-    UncertaintyKernel(vector<double> outputs,
+                      const vector<double> &ideal,
+                      const vector<double> &antiIdeal);
+    UncertaintyKernel(const vector<double> &inputs,
+                      const vector<double> &outputs,
                       double lb,
                       double ub,
-                      vector<double> ideal,
-                      vector<double> antiIdeal);
+                      const vector<double> &inputsLowerBounds,
+                      const vector<double> &inputsUpperBounds,
+                      const vector<double> &ideal,
+                      const vector<double> &antiIdeal);
     ~UncertaintyKernel();
 
     double proximity();
@@ -62,23 +63,27 @@ public:
     vector<double> direction() const;
 
 private:
-    void defineIdealAndAntiIdeal(vector<double> ideal, vector<double> antiIdeal);
+    void defineIdealAndAntiIdeal(const vector<double> &ideal,
+                                 const vector<double> &antiIdeal);
+    void defineInputsBounds(const vector<double> &lowerBounds,
+                            const vector<double> &upperBounds);
     // use normalised 2-norm values in objective space
     void defineDirectedObjectiveBoundaries(double lb, double ub);
     // set the lb to 0 and the ub to the directed boxed interval length
     void defineDirectedObjectiveBoundaries();
 
     // The design and objective values of the IMapping are not normalised
-    vector<double>       m_inputs;
+    vector<double>      m_inputs;
     vector<double>      m_outputs;
-    BoxConstraintsData*  m_box;
-    vector<double>        m_ideal;
-    vector<double>    m_antiIdeal;
-    vector<double>    m_direction;
+    vector<double>      m_ideal;
+    vector<double>      m_antiIdeal;
+    vector<double>      m_inLowerBounds;
+    vector<double>      m_inUpperBounds;
+    vector<double>      m_direction;
     double              m_distance;
     // normalised 2-norm values
-    double                    m_ub;
-    double                    m_lb;
+    double              m_dirUpperBound;
+    double              m_dirLowerBound;
 
     void calcDirectionAndDistance();
 };

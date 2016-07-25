@@ -1,1 +1,5 @@
 *.orig
+*.autosave
+*.o
+CODeM
+*.user

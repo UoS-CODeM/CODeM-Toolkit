@@ -23,24 +23,28 @@
 ** SOFTWARE
 **
 ****************************************************************************/
-#ifndef CODEMOPERATORS_H
-#define CODEMOPERATORS_H
+#ifndef CODEMGLOBAL_H
+#define CODEMGLOBAL_H
 
-#include <core/CODeMGlobal.h>
-#include <vector>
+#include <random>
+#include <ctime>
 
 namespace CODeM {
 
-// Relations between UncertaintyKernel properties and uncertainty parameters
-double linearDecrease(double val);
-double skewedIncrease(double val, double alpha);
-double skewedDecrease(double val, double alpha);
-double lowOnValue(double val, double zeroVal, double width);
-double highOnValue(double val, double oneVal, double width);
+inline double randUni() { return (double)(std::rand()) / RAND_MAX; }
 
-std::vector<double> directionPerturbation(const std::vector<double> &oVec,
-                                          double maxRadius, double pNorm=2);
+inline double factorial(double n) {return tgamma(n + 1.0);}
+
+const double PI(3.14159265358979323846264338327950288419716939937510582097494459230781640628620899);
+
+/// Distribution constants
+const int    DistNSamples(500);
+const double DistMinInterval(0.001);
+const double DistPeakMinN(1.0);
+const double DistPeakMaxN(50.0);
+const double DistPeakMinNBasisFunc(30.0);
+const double DistPeakMaxNBasisFunc(150.0);
 
 } // namespace CODeM
 
-#endif // CODEMOPERATORS_H
+#endif // CODEMGLOBAL_H

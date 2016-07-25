@@ -1,60 +1,68 @@
 /****************************************************************************
 **
-** Copyright (C) 2012-2015 The University of Sheffield (www.sheffield.ac.uk)
+** The MIT License (MIT)
 **
-** This file is part of Liger.
+** Copyright (c) 2016 The University of Sheffield (www.sheffield.ac.uk)
 **
-** GNU Lesser General Public License Usage
-** This file may be used under the terms of the GNU Lesser General
-** Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** Permission is hereby granted, free of charge, to any person obtaining a copy
+** of this software and associated documentation files (the "Software"), to deal
+** in the Software without restriction, including without limitation the rights
+** to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+** copies of the Software, and to permit persons to whom the Software is
+** furnished to do so, subject to the following conditions:
+**
+** The above copyright notice and this permission notice shall be included in all
+** copies or substantial portions of the Software.
+**
+** THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+** IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+** FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+** AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+** LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+** OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+** SOFTWARE
 **
 ****************************************************************************/
 #ifndef CODEMDISTRIBUTION_H
 #define CODEMDISTRIBUTION_H
 
+#include <core/CODeMGlobal.h>
 #include <vector>
 
-class LinearInterpolator;
 
 namespace CODeM{
+class IDistribution;
+//namespace Utils {
+//class LinearInterpolator;
+//}
 
 class CODeMDistribution
 {
 public:
-    CODeMDistribution(IDistribution* d,
-                      const vector<double> oVec,
-                      double lowerBound,
-                      double upperBound,
-                      const vector<double> ideal,
-                      const vector<double> antiIdeal,
-                      double dirPertRad,
-                      double dirPertNorm);
+    CODeMDistribution(IDistribution*             d,
+                      const std::vector<double>& oVec,
+                      double                     lowerBound,
+                      double                     upperBound,
+                      const std::vector<double>& ideal,
+                      const std::vector<double>& antiIdeal,
+                      double                     dirPertRad,
+                      double                     dirPertNorm);
     ~CODeMDistribution();
 
-    vector<double> sampleDistribution();
-
-    void defineDirectionPertRadius(double r);
-    void definePerturbationNorm(double p);
-    // 2-norm direction
-    void defineDirection(const vector<double> oVec);
-    void defineIdealAndAntiIdeal(const vector<double> ideal,
-                                 const vector<double> antiIdeal);
-    void defineDistribution(IDistribution* d);
-
+    std::vector<double> sampleDistribution();
 
 private:
-    IDistribution*    m_distribution;
-    double                m_directionPertRadius;
-    vector<double>       m_direction;
-    vector<double>       m_ideal;
-    vector<double>       m_antiIdeal;
-    double                m_lb;
-    double                m_ub;
-    double                m_pNorm;
+    // 2-norm direction
+    void defineDirection(const std::vector<double> &oVec);
+
+    IDistribution*       m_distribution;
+    double               m_directionPertRadius;
+    std::vector<double>  m_direction;
+    std::vector<double>  m_ideal;
+    std::vector<double>  m_antiIdeal;
+    double               m_lb;
+    double               m_ub;
+    double               m_pNorm;
 };
 
 } //namespace CODeM

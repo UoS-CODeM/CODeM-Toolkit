@@ -23,24 +23,18 @@
 ** SOFTWARE
 **
 ****************************************************************************/
-#ifndef CODEMOPERATORS_H
-#define CODEMOPERATORS_H
+#ifndef CODEMMISC_H
+#define CODEMMISC_H
 
-#include <core/CODeMGlobal.h>
 #include <vector>
 
+using std::vector;
 namespace CODeM {
 
-// Relations between UncertaintyKernel properties and uncertainty parameters
-double linearDecrease(double val);
-double skewedIncrease(double val, double alpha);
-double skewedDecrease(double val, double alpha);
-double lowOnValue(double val, double zeroVal, double width);
-double highOnValue(double val, double oneVal, double width);
-
-std::vector<double> directionPerturbation(const std::vector<double> &oVec,
-                                          double maxRadius, double pNorm=2);
+/*  A recursive function that generates a k-1 simplex with h+1 values for every
+ *  component. |x| = s, for every point x = [x_1,...,x_k].
+ *  The default for s is 1. */
+vector<vector<double> > simplexLattice(int h, int k, double s = 1.0);
 
 } // namespace CODeM
-
-#endif // CODEMOPERATORS_H
+#endif // CODEMMISC_H

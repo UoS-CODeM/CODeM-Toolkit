@@ -30,7 +30,7 @@
 
 #include <cassert>
 #include <cmath>
-
+#include <algorithm>
 
 //// Toolkit includes. //////////////////////////////////////////////////////
 

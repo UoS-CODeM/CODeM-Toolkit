@@ -30,6 +30,13 @@
 using std::vector;
 
 namespace CODeM {
+vector<double>          RCP1(const vector<double> &iVec, int k, int nObj);
+vector<vector<double> > RCP1(const vector<double> &iVec, int k, int nObj, int nSamp);
+vector<vector<double> > RCP1Perturb(const vector<double> &oVec, int nSamp = 1);
+
+vector<double>          RCP2(const vector<double> &iVec, int k, int nObj);
+vector<vector<double> > RCP2(const vector<double> &iVec, int k, int nObj, int nSamp);
+vector<vector<double> > RCP2Perturb(const vector<double> &oVec, int nSamp = 1);
 
 vector<double>          CODeM1(const vector<double> &iVec, int k, int nObj);
 vector<vector<double> > CODeM1(const vector<double> &iVec, int k, int nObj, int nSamp);

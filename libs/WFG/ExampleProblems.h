@@ -88,7 +88,8 @@ std::vector< double > WFG4Tunable
   const int k,
   const int M,
   const int nPeaks,
-  const double ruggedness
+  const double ruggedness,
+  const double squeeze
 );
 
 //** The WFG5 problem. ******************************************************

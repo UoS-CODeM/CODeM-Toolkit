@@ -179,30 +179,32 @@ double TransFunctions::s_multi
   return correct_to_01( ( 1.0 + cos( tmp2 ) + 4.0*B*pow( tmp1, 2.0 ) )/( B+2.0 ) );
 }
 
-double TransFunctions::s_multi_squeezed
+double TransFunctions::s_multi_tunable
 (
   const double& y,
   const int A,
   const double& B,
   const double& C,
-  const int D
+  const int D,
+  const double& E
 )
 {
   assert( y >= 0.0 );
   assert( y <= 1.0 );
-  assert( A >= 1 );
+  assert( A >= 0 );
   assert( B >= 0.0 );
-  assert( ( 4.0*A+2.0 )*Misc::PI >= 4.0*B );
   assert( C > 0.0 );
   assert( C < 1.0 );
   assert( D >= 0 );
   assert( D <= 10 );
+  assert( E > 0.0 );
+
 
   const double tmp1 = fabs( y-C )/( 2.0*( floor( C-y )+C ) );
   const double tmp2 = ( 4.0*A+2.0 )*Misc::PI*( 0.5 - tmp1/2.0 );
   const double tmp3 = pow( 1 - fabs(tmp1), 2.0*D ); // squeezing argument
 
-  return correct_to_01( ( 1.0 + cos( tmp2 * tmp3 ) + B * fabs(tmp1) ) / ( B+2.0 ) );
+  return correct_to_01( ( 1.0 + cos( tmp2 * tmp3 ) + B * pow(fabs(tmp1), E) ) / ( B+2.0 ) );
 }
 
 double TransFunctions::r_sum

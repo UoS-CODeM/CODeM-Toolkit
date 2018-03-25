@@ -85,11 +85,12 @@ std::vector< double > WFG4
 std::vector< double > WFG4Tunable
 (
   const std::vector< double >& z,
-  const int k,
-  const int M,
-  const int nPeaks,
+  const int    k,
+  const int    M,
+  const int    nPeaks,
   const double ruggedness,
-  const double squeeze
+  const int    squeeze = 0,
+  const double polyOrder = 2.0
 );
 
 //** The WFG5 problem. ******************************************************

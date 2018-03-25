@@ -40,7 +40,6 @@ using namespace CODeM::Utils;
 namespace CODeM {
 
 vector<double> CODeM1(const vector<double> &iVec, int k, int nObj)
-
 {
     // Evaluate the decision vector
     vector<double> oVec = WFG4(iVec, k, nObj);
@@ -58,6 +57,59 @@ vector<vector<double> > CODeM1(const vector<double> &iVec,
 }
 
 vector<vector<double> > CODeM1Perturb(const vector<double> &oVec, int nSamp)
+{
+    // Set the uncertainty kernel
+    vector<double> ideal(oVec.size(), 0);
+    vector<double> antiIdeal(oVec.size());
+    for(int i=0; i<oVec.size(); i++) {
+        antiIdeal[i] = 3*(i+1);
+    }
+    double lb = 2.0/3.0;
+    double ub = 1.0;
+
+    UncertaintyKernel uk(oVec, lb, ub, ideal, antiIdeal);
+
+    // Evaluate the uncertainty parameters
+    double peakTend, peakLoc, dirPertRad;
+
+    peakTend = uk.proximity();
+    peakLoc  = lowOnValue(uk.proximity(), 0.0, 0.05);
+
+    double distanceNorm = 2.0;
+
+    dirPertRad = 0.0;
+
+    // Create the CODeM distribution
+    PeakDistribution* d = new PeakDistribution(peakTend, peakLoc);
+
+    CODeMDistribution cd(d, oVec, lb, ub, ideal, antiIdeal, dirPertRad, distanceNorm);
+
+    // Sample the distribution
+    vector<vector<double> > samples;
+    for(int i=0; i<nSamp; i++) {
+        samples.push_back(cd.sampleDistribution());
+    }
+    return samples;
+}
+
+vector<double> RCP1(const vector<double> &iVec, int k, int nObj)
+{
+    // Evaluate the decision vector
+    vector<double> oVec = WFG4Tunable(iVec, k, nObj, 5, 10.0);
+
+    return CODeM1Perturb(oVec)[0];
+}
+
+vector<vector<double> > RCP1(const vector<double> &iVec,
+                                int k, int nObj, int nSamp)
+{
+    // Evaluate the decision vector
+    vector<double> oVec = WFG4(iVec, k, nObj);
+
+    return CODeM1Perturb(oVec, nSamp);
+}
+
+vector<vector<double> > RCP1Perturb(const vector<double> &oVec, int nSamp)
 {
     // Set the uncertainty kernel
     vector<double> ideal(oVec.size(), 0);

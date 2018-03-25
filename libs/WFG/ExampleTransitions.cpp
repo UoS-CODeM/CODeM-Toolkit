@@ -275,7 +275,8 @@ vector< double > Transitions::WFG4_t1( const vector< double >& y )
 vector< double > Transitions::WFG4Tunable_t1( const vector< double >& y,
                                               const int    nPeaks,
                                               const double ruggedness,
-                                              const double squeeze)
+                                              const int    squeeze,
+                                              const double polyOrder)
 {
   const int n = static_cast< int >( y.size() );
 
@@ -285,7 +286,8 @@ vector< double > Transitions::WFG4Tunable_t1( const vector< double >& y,
 
   for( int i = 0; i < n; i++ )
   {
-    t.push_back( TransFunctions::s_multi_squeezed( y[i], nPeaks, ruggedness, 0.35, squeeze ) );
+    t.push_back( TransFunctions::s_multi_tunable( y[i], nPeaks, ruggedness, 0.35,
+                                                  squeeze, polyOrder ) );
   }
 
   return t;

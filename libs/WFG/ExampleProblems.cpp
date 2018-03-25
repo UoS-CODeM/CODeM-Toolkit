@@ -151,20 +151,19 @@ vector< double > Problems::WFG4
 }
 
 vector< double > Problems::WFG4Tunable
-(
-  const vector< double >& z,
+(const vector< double >& z,
   const int k,
   const int M,
   const int nPeaks,
   const double ruggedness,
-  const double squeeze
-)
+  const int squeeze
+, const double polyOrder)
 {
   assert( ArgsOK( z, k, M ) );
 
   vector< double > y = WFG_normalise_z( z );
 
-  y = Transitions::WFG4Tunable_t1( y, nPeaks, ruggedness, squeeze );
+  y = Transitions::WFG4Tunable_t1( y, nPeaks, ruggedness, squeeze, polyOrder );
   y = Transitions::WFG2_t3( y, k, M );
 
   return Shapes::WFG4_shape( y );

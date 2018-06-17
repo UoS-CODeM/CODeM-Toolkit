@@ -26,6 +26,7 @@
 #ifndef CODEMPROBLEMS_H
 #define CODEMPROBLEMS_H
 
+#include <cstddef>
 #include <vector>
 using std::vector;
 

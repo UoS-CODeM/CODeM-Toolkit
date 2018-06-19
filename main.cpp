@@ -32,9 +32,14 @@
 #include <iostream>
 #include <stdio.h>
 #include <string>
+#include <iostream>
+#include <fstream>
+
+#include <libs/json/json.hpp>
 
 using namespace std;
 using namespace CODeM;
+using json = nlohmann::json;
 
 inline void defineSeed(int seed) {std::srand(seed);}
 inline void randomSeed() {std::srand((unsigned)std::time(0));}
@@ -69,6 +74,9 @@ void showUsage(char* progName)
 //"                           relative or absolute path.                          \n\n"
 " -f, --file    = FILENAME  A file to write the outputs. If FILENAME is not     \n"
 "                           specified, the output is printed to the console.    \n\n"
+" -j, --jsonFile  = FILENAME  A file to write the outputs in json format.   \n"
+"                           If FILENAME is not specified, the output is     \n"
+"                           printed to the console.    \n\n"
 " -p, --problem = NUMBER    A chioce of benchmark problem from the CODeM suite. \n"
 "                           Use NUMBER = 0 for the problem in the GECCO'16      \n"
 "                           paper. Use NUMBER = 1,...,6 for CODeM1,...,CODeM6.  \n"
@@ -113,6 +121,11 @@ int main(int argc, char** argv)
         return EXIT_SUCCESS;
     }
 
+    /// Set variables for json file writting
+    bool writeJsonFile = false;
+    int jsonFileIndex;
+    json jsonOutput;
+
     /// Set default values
     int seed   = 0;
     int nObj   = 2;
@@ -145,6 +158,16 @@ int main(int argc, char** argv)
                 cerr << "--file option requires one argument." << endl;
                 return EXIT_FAILURE;
             }
+
+        } else if ((arg == "-j") || (arg == "--jsonFile")) {
+            if (argInd < argc) {
+                writeJsonFile = true;
+                jsonFileIndex = argInd++;
+            } else {
+                cerr << "--jsonFile option requires one argument." << endl;
+                return EXIT_FAILURE;
+            }
+
 
         } else if ((arg == "-p") || (arg == "--problem")) {
             if (argInd < argc) {
@@ -275,6 +298,18 @@ int main(int argc, char** argv)
          << "problem  = " << prob   << ";" << endl
          << "nDirVars = " << k      << ";" << endl;
 
+    if (writeJsonFile){
+        json jsonAux;
+        jsonAux["rndSeed"] = seed;
+        jsonAux["nObj"] = nObj;
+        jsonAux["nVars"] = nVars;
+        jsonAux["nSols"] = nSols;
+        jsonAux["nSamps"] = nSamps;
+        jsonAux["problem"] = prob;
+        jsonAux["nDirVars"] = k;
+        jsonOutput["configuration"] = jsonAux;
+    }
+
 
     /// Construct the set of solutions
     vector<vector<double> > dVectors(nSols, vector<double>(nVars));
@@ -285,9 +320,13 @@ int main(int argc, char** argv)
     /// Assign Pareto optimal values
     if(prob == 5) {
         cout << "\n% Optimal set cannot be analytically derived for CODeM5" << endl;
+        if (writeJsonFile){
+            jsonOutput["status"] = "Optimal set cannot be analytically derived for CODeM5";
+        }
     }
     else
     {
+        jsonOutput["status"] = "Optimal set can be analytically derived for CODeM5";
         optimalSet(dVectors, oVecDeterm, oVecSamps, prob, k);
 
         // Display the results
@@ -297,6 +336,9 @@ int main(int argc, char** argv)
             printVector(dVectors[i]);
         }
         cout << "];" << endl;
+        if (writeJsonFile){
+            jsonOutput["optSol"] = dVectors;
+        }
 
         cout << "\n% Optimal deterministic objective vectors:" << endl;
         cout << "optDetermObj = [";
@@ -304,6 +346,9 @@ int main(int argc, char** argv)
             printVector(oVecDeterm[i]);
         }
         cout << "];" << endl;
+        if (writeJsonFile){
+            jsonOutput["optDetermObj"] = oVecDeterm;
+        }
 
         cout << "\n% Samples for optimal solutions:" << endl;
         for(int v = 0; v < oVecSamps.size(); ++v) {
@@ -312,6 +357,9 @@ int main(int argc, char** argv)
                 printVector(oVecSamps[v][i]);
             }
             cout << "];" << endl;
+        }
+        if (writeJsonFile){
+            jsonOutput["optObjSamps"] = oVecSamps;
         }
     }
 
@@ -325,6 +373,9 @@ int main(int argc, char** argv)
         printVector(dVectors[i]);
     }
     cout << "];" << endl;
+    if (writeJsonFile){
+        jsonOutput["rndSol"] = dVectors;
+    }
 
     cout << "\n% Random deterministic objective vectors:" << endl;
     cout << "rndDetermObj = [";
@@ -332,6 +383,9 @@ int main(int argc, char** argv)
         printVector(oVecDeterm[i]);
     }
     cout << "];" << endl;
+    if (writeJsonFile){
+        jsonOutput["rndDetermObj"] = oVecDeterm;
+    }
 
     cout << "\n% Samples for random solutions:" << endl;
     for(int v = 0; v < oVecSamps.size(); ++v) {
@@ -340,6 +394,16 @@ int main(int argc, char** argv)
             printVector(oVecSamps[v][i]);
         }
         cout << "];" << endl;
+    }
+    if (writeJsonFile){
+        jsonOutput["rndObjSamps"] = oVecSamps;
+    }
+
+    if (writeJsonFile){
+    
+        std::ofstream ofs(argv[jsonFileIndex], std::ofstream::out);
+        ofs << jsonOutput.dump(2);
+        ofs.close();
     }
 
     return EXIT_SUCCESS;

@@ -320,13 +320,9 @@ int main(int argc, char** argv)
     /// Assign Pareto optimal values
     if(prob == 5) {
         cout << "\n% Optimal set cannot be analytically derived for CODeM5" << endl;
-        if (writeJsonFile){
-            jsonOutput["status"] = "Optimal set cannot be analytically derived for CODeM5";
-        }
     }
     else
     {
-        jsonOutput["status"] = "Optimal set can be analytically derived for CODeM5";
         optimalSet(dVectors, oVecDeterm, oVecSamps, prob, k);
 
         // Display the results

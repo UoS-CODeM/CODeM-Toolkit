@@ -35,6 +35,7 @@ For a full list of options type `CODeM`, `CODeM -h` or `CODeM --help`.
 
 The output from the program is formatted as `Matlab` syntax for convenient analysis of the results.
 To write the results into a file instead of the console, use the option `-f FILENAME` or `--file FILENAME`.
+The program also allows to generate an output in JSON format. Use `-j FILENAME` or `--jsonFile FILENAME` for this.
 
 ## Citation
 Please use the following citation when referring to this work in a sceintific publication:
